@@ -1,0 +1,61 @@
+name: Docs
+
+# Every push verifies the site still builds.
+# Publishing to GitHub Pages happens only when you trigger it by hand
+# (Actions tab -> Docs -> Run workflow), so nothing goes live by accident.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish to GitHub Pages"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # --strict fails the build on broken internal links or anchors
+      - name: Build site
+        run: mkdocs build --strict
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
