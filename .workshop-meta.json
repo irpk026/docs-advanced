@@ -1,45 +1,38 @@
 {
-  "level" : "beginner-intermediate",
-  "objectives" : [
-
+  "level": "intermediate-advanced",
+  "objectives": [
+    "Detect real-time anomalies in a Kafka event stream with Flink SQL",
+    "Create watsonx Orchestrate tools, a knowledge base and an agent using IBM Bob",
+    "Bridge a stream to an AI agent and validate its output against a JSON schema",
+    "Publish schema-valid AI decisions back onto Kafka with at-least-once semantics"
   ],
-  "partNotes" : {
-    "part0-setup" : {
-      "checkpoints" : [
-
-      ],
-      "commonIssues" : "",
-      "environment" : {
-        "capacity" : "",
-        "credentials" : [
-
-        ],
-        "leadTime" : "Reserve at least 48h ahead — provisioning can take several hours and some collections need approval.",
-        "platform" : "confluent-cloud",
-        "prerequisites" : [
-
-        ],
-        "reservationURL" : "",
-        "setupCommands" : "",
-        "teardown" : "",
-        "verifyCommand" : "",
-        "verifyExpectation" : ""
+  "partNotes": {
+    "part0-setup": {
+      "checkpoints": [],
+      "commonIssues": "",
+      "environment": {
+        "capacity": "",
+        "credentials": [],
+        "leadTime": "Reserve at least 48h ahead — provisioning can take several hours and some collections need approval.",
+        "platform": "confluent-cloud",
+        "prerequisites": [],
+        "reservationURL": "",
+        "setupCommands": "",
+        "teardown": "",
+        "verifyCommand": "",
+        "verifyExpectation": ""
       },
-      "privateNotes" : "",
-      "setupInstructions" : "",
-      "talkingPoints" : [
-
-      ],
-      "timingNote" : ""
+      "privateNotes": "",
+      "setupInstructions": "",
+      "talkingPoints": [],
+      "timingNote": ""
     },
-    "part2-confluent" : {
-      "checkpoints" : [
-
-      ],
-      "commonIssues" : "",
-      "environment" : {
-        "capacity" : "",
-        "credentials" : [
+    "part2-confluent": {
+      "checkpoints": [],
+      "commonIssues": "",
+      "environment": {
+        "capacity": "",
+        "credentials": [
           "KAFKA_API_KEY — from the Confluent Cloud cluster (API keys page)",
           "KAFKA_API_SECRET — from the Confluent Cloud cluster (API keys page)",
           "KAFKA_BOOTSTRAP_SERVERS — from the Confluent Cloud cluster (API keys page)",
@@ -51,50 +44,46 @@
           "WXO_INSTANCE_CLOUD — from the watsonx Orchestrate instance (Settings → API details)",
           "WXO_INSTANCE_URL — from the watsonx Orchestrate instance (Settings → API details)"
         ],
-        "leadTime" : "Reserve at least 48h ahead — provisioning can take several hours and some collections need approval.",
-        "platform" : "techzone",
-        "prerequisites" : [
+        "leadTime": "Reserve at least 48h ahead — provisioning can take several hours and some collections need approval.",
+        "platform": "techzone",
+        "prerequisites": [
           {
-            "checkCommand" : "python3 --version",
-            "id" : "BD77472B-C7A7-49C4-AC19-46572C4FCEB8",
-            "minVersion" : "3.11",
-            "name" : "Python"
+            "checkCommand": "python3 --version",
+            "id": "BD77472B-C7A7-49C4-AC19-46572C4FCEB8",
+            "minVersion": "3.11",
+            "name": "Python"
           },
           {
-            "checkCommand" : "ibmcloud version",
-            "id" : "0AC424B9-7635-469C-9D78-328D6A899698",
-            "minVersion" : "2.0",
-            "name" : "IBM Cloud CLI"
+            "checkCommand": "ibmcloud version",
+            "id": "0AC424B9-7635-469C-9D78-328D6A899698",
+            "minVersion": "2.0",
+            "name": "IBM Cloud CLI"
           },
           {
-            "checkCommand" : "curl --version",
-            "id" : "90764492-EC77-4412-BC14-440857A28415",
-            "minVersion" : "",
-            "name" : "curl"
+            "checkCommand": "curl --version",
+            "id": "90764492-EC77-4412-BC14-440857A28415",
+            "minVersion": "",
+            "name": "curl"
           }
         ],
-        "reservationURL" : "",
-        "setupCommands" : "",
-        "teardown" : "",
-        "verifyCommand" : "",
-        "verifyExpectation" : ""
+        "reservationURL": "",
+        "setupCommands": "",
+        "teardown": "",
+        "verifyCommand": "",
+        "verifyExpectation": ""
       },
-      "privateNotes" : "",
-      "setupInstructions" : "",
-      "talkingPoints" : [
-
-      ],
-      "timingNote" : ""
+      "privateNotes": "",
+      "setupInstructions": "",
+      "talkingPoints": [],
+      "timingNote": ""
     }
   },
-  "partOrder" : [
+  "partOrder": [
     "part0-setup",
     "part2-confluent"
   ],
-  "prerequisites" : [
-
-  ],
-  "schemaVersion" : 2,
-  "subtitle" : "",
-  "title" : "docs-advanced"
+  "prerequisites": [],
+  "schemaVersion": 2,
+  "subtitle": "Openslava 2026 — hands-on lab",
+  "title": "Event-Driven AI Agents with watsonx Orchestrate"
 }

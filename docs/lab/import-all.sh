@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# import-all.sh — Advanced Part 2: Event-Driven AI Agents with Confluent Cloud
-# Run from the advanced/part2-confluent/ directory.
+# import-all.sh — Event-Driven AI Agents with Confluent Cloud
+# Run from your bobchestrate-confluent/ workspace folder.
 # Usage: bash import-all.sh
 #
 # NOTE: This script verifies the watsonx Orchestrate side of the lab.
@@ -11,8 +11,8 @@ set -euo pipefail
 
 echo ""
 echo "╔══════════════════════════════════════════════════╗"
-echo "║  Advanced Part 2 — Event-Driven AI Agents        ║"
-echo "║  watsonx Orchestrate verification script         ║"
+echo "║  Event-Driven AI Agents — wxO verification       ║"
+echo "║  Checks tools, knowledge base and agent          ║"
 echo "╚══════════════════════════════════════════════════╝"
 echo ""
 

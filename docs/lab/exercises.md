@@ -1,13 +1,13 @@
-# Advanced Part 2 — Stretch Exercises
+# Stretch Exercises
 
 <!--lab estimatedMinutes=20 difficulty=medium-->
 
-## Exercise 1 — Detect LOW_STOCK Events in Flink SQL
-
-Work through these after completing the main lab. They're designed to push your understanding of event-driven AI patterns further.
+Work through these after completing the main lab. They're designed to push your
+understanding of event-driven AI patterns further.
 
 ---
 
+## Exercise 1 — Detect LOW_STOCK Events in Flink SQL
 
 Add a second Flink SQL `INSERT INTO` statement that fires on low absolute stock levels (not just velocity spikes), writing `anomalyType = 'LOW_STOCK'` alerts to the same output topic.
 
@@ -37,4 +37,5 @@ Replace the local-file-based `JSONDeserializer` in `consume_velocity_alerts_with
 
 ---
 
-[← Back to Advanced Part 2](README.md)
+[← Back to the lab](index.md){ .md-button }
+[Workshop home](../index.md){ .md-button }

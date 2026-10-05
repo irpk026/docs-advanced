@@ -1,138 +1,23 @@
-# Advanced Part 2: Event-Driven AI Agents with Confluent Cloud
+# Event-Driven AI Agents with Confluent Cloud
 
-**Duration:** 75 minutes
+<p align="center">
+  <img src="images/bobchestrate-confluent.png" alt="Event-driven AI agents lab" width="640">
+</p>
 
-## Prerequisites Check
-
-Before starting, ensure you have:
-
-- [ ] Python 3.11–3.13 installed
-- [ ] `uv` installed
-- [ ] IBM Bob IDE installed
-- [ ] watsonx Orchestrate SaaS access (your instructor will provide environment/access information)
-- [ ] Confluent Cloud access (your instructor will provide environment/access information)
-
-### Step 1: Verify Python Installation
-
-Open a terminal and run:
-
-```bash
-python --version
-# or
-python3 --version
-```
-
-You need Python **3.11, 3.12, or 3.13**. If Python is not installed:
-
-=== "Mac"
-    ```bash
-    # Using Homebrew (recommended)
-    brew install python@3.11
-
-    # Or download the installer from:
-    # https://www.python.org/downloads/
-    ```
-
-=== "Windows"
-    ```powershell
-    # Using winget
-    winget install Python.Python.3.11
-
-    # Or download the installer from:
-    # https://www.python.org/downloads/
-    # ⚠️ Check "Add Python to PATH" during installation
-    ```
+**Duration:** 75–90 minutes · **Difficulty:** ⭐⭐⭐⭐
 
 ---
 
-### Step 2: Verify uv Installation
+## Before you start
 
-```bash
-uv --version
-```
+This lab assumes you completed [Part 0 — Setup & Environment](../setup/index.md).
+You should already have the `bobchestrate-confluent/` workspace open in Bob IDE, a
+Python virtual environment, the ADK installed, and `orchestrate agents list` working.
 
-If `uv` is not installed:
+You also need a **Confluent Cloud** account — the free trial is enough.
+Sign up at [confluent.cloud](https://confluent.cloud) if you don't have one.
 
-=== "Mac"
-    ```bash
-    # Using Homebrew
-    brew install uv
-
-    # Or using the official installer
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    ```
-
-=== "Windows"
-    ```powershell
-    # Using winget
-    winget install astral-sh.uv
-
-    # Or using the official installer (PowerShell)
-    powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-    ```
-
-After installing, open a new terminal and run `uv --version` again to confirm.
-
----
-
-## Before You Start — Workspace Setup
-
-This lab uses a **pre-configured workspace zip** that gives you the Bob IDE configuration and all the pre-built Python code in one download. You do not need to clone any repository.
-
-### Step 1: Download the workspace zip
-
-Download [`bobchestrate-confluent.zip`](https://github.com/juseljuk/bobchestrate-workshop/raw/main/advanced/part2-confluent/bobchestrate-confluent.zip) and save it to your Downloads folder.
-
-### Step 2: Extract the zip
-
-**Mac/Linux:**
-
-```bash
-cd ~/Desktop
-unzip ~/Downloads/bobchestrate-confluent.zip
-# This creates: ~/Desktop/bobchestrate-confluent/
-```
-
-**Windows (PowerShell):**
-
-```powershell
-cd $env:USERPROFILE\Desktop
-Expand-Archive -Path "$env:USERPROFILE\Downloads\bobchestrate-confluent.zip" -DestinationPath .
-# This creates: Desktop\bobchestrate-confluent\
-```
-
-After extracting you will have:
-
-```
-bobchestrate-confluent/
-├── .bob/                               # Bob IDE configuration (auto-loaded)
-│   ├── custom_modes.yaml               # WXO Agent Architect mode
-│   ├── mcp.json                        # ADK + docs MCP servers
-│   ├── rules/
-│   │   └── wxo-dev-rule-enhanced.md    # wxO best-practice rule
-│   └── skills/
-│       └── wxo-langgraph/              # LangGraph skill (also useful here)
-└── retail-inventory-optimization/      # Pre-built lab code and data
-    ├── pyproject.toml
-    ├── uv.lock
-    ├── fashion-inventory-consumer/     # Python scripts
-    ├── fashion-inventory-setup/        # Schemas, Flink SQL, test data
-    └── labs/part2-watsonx-orchestrate/
-        └── inventory-alert-demo-knowledge/   # Knowledge base documents
-```
-
-> **Note:** The `.bob` folder may appear hidden in your file explorer — that's expected. Bob IDE finds it automatically.
-
-### Step 3: Open the folder in Bob IDE
-
-1. Open Bob IDE
-2. Click **File** → **Open Folder**
-3. Navigate to the extracted `bobchestrate-confluent` folder and click **Open**
-4. Click **Yes, I trust the author** when prompted
-
-Bob IDE will detect `.bob/` automatically. You should see **WXO Agent Architect** available in the mode selector.
-
-### Step 4: Install dependencies
+### Install the lab dependencies
 
 Open a terminal in Bob IDE (**Terminal** → **New Terminal**) and run:
 
@@ -141,54 +26,26 @@ cd retail-inventory-optimization
 uv sync --locked
 ```
 
-This installs `confluent-kafka`, `ibm-watsonx-orchestrate`, `python-dotenv`, and all other dependencies from the locked versions in `uv.lock`.
+This installs `confluent-kafka`, `ibm-watsonx-orchestrate`, `python-dotenv`, `jsonschema`
+and the rest, at the exact versions pinned in `uv.lock`.
 
-### Step 5: Install the watsonx Orchestrate ADK VS Code Extension
-
-> ⚠️ **If you already have the extension installed**, please reload the Bob IDE window first! This ensures the extension properly detects your new virtual environment. Open the Command Palette (`Cmd+Shift+P` on Mac / `Ctrl+Shift+P` on Windows/Linux), type **"Developer: Reload Window"** and select it. The Bob IDE window reloads and the extension will restart. You can then proceed directly to Step 6. Do **NOT** use the extension to initialise the workspace!
-
-1. Open the Extensions view in Bob IDE (`Cmd+Shift+X` on Mac / `Ctrl+Shift+X` on Windows/Linux)
-2. Search for **"watsonx Orchestrate"**
-3. Click **Install** on the **"watsonx Orchestrate ADK"** extension
-4. Wait for the installation to complete
-5. Reload Bob IDE if prompted
-6. You should now see the extension icon appear in the Activity Bar — you do **NOT** need to open it. Do **NOT** initialize the workspace using the extension, as this can cause issues.
-
-### Step 6: Install the watsonx Orchestrate SDK
-
-1. Look at the status bar at the bottom of Bob IDE — you should see a red ❌ indicating the ADK is not installed in your new virtual environment
-2. Click the red ❌
-3. Select the option to install the ADK
-4. Wait for installation to complete — the status bar will show a green ✅ with the version number
-
-### Step 7: Create your `.env` file
+### Create your `.env` file
 
 ```bash
 cd fashion-inventory-consumer
 cp .env.example .env
 ```
 
-Leave all values as placeholders for now — you'll fill them in during the lab (Confluent credentials in Section 2–3, wxO credentials in Section 5).
+Leave the values as placeholders for now — you'll fill in the Confluent credentials in
+[Section 2](#section-2-confluent-cloud-setup-15-min) and the watsonx Orchestrate
+credentials in [Section 5](#section-5-configure-the-python-consumer-5-min).
 
-### Step 8: Verify your wxO ADK connection
-
-If you haven't connected the ADK to your wxO environment yet, do it now (**NOTE**: your instructor will provide the needed instance URL and API Key):
-
-```bash
-orchestrate env add -n confluent-lab -u <your-wxo-instance-url>
-orchestrate env activate confluent-lab -a <your-wxo-api-key>
-orchestrate agents list
-```
-
-Any output (even an empty list) without an error means you're connected.
-
-### ✅ Ready to start when:
-
-- [ ] `bobchestrate-confluent/` is open in Bob IDE and **WXO Agent Architect** mode appears in the mode selector
-- [ ] `uv sync --locked` completed without errors
-- [ ] `.env` file exists in `fashion-inventory-consumer/`
-- [ ] `orchestrate agents list` returns without error
-- [ ] You have a Confluent Cloud account (free trial is fine)
+!!! success "Ready to start when"
+    - [ ] `bobchestrate-confluent/` is open in Bob IDE and **WXO Agent Architect** appears in the mode selector
+    - [ ] `uv sync --locked` completed without errors
+    - [ ] `.env` exists in `fashion-inventory-consumer/`
+    - [ ] `orchestrate agents list` returns without error
+    - [ ] You can log in to Confluent Cloud
 
 ---
 
@@ -221,7 +78,7 @@ All Python code is **pre-built** in `retail-inventory-optimization/`. Your job i
 
 ---
 
-## Using Bob for This Lab
+## Using Bob for this lab
 
 Bob (in **WXO Agent Architect mode**) handles the watsonx Orchestrate side — creating tools, a knowledge base, and the agent. The prompts in Section 4 are written to be copy-pasted directly.
 
@@ -441,21 +298,11 @@ Also note your **Schema Registry URL** from the Schema Registry panel — this i
 
 Before adding the AI layer, verify that Flink SQL correctly detects velocity spikes.
 
-### 3.1 Install dependencies
+### 3.1 Fill in your Confluent credentials
 
-```bash
-cd retail-inventory-optimization
-uv sync --locked
-```
-
-### 3.2 Configure credentials
-
-```bash
-cd fashion-inventory-consumer
-cp .env.example .env
-```
-
-Edit `.env` and fill in the Confluent section (leave the `WXO_*` lines as-is for now):
+Edit `retail-inventory-optimization/fashion-inventory-consumer/.env` and fill in the
+Confluent section with the values from [Section 2.6](#26-generate-api-keys). Leave the
+`WXO_*` lines as placeholders for now:
 
 ```bash
 KAFKA_BOOTSTRAP_SERVERS=pkc-xxxxx.us-east-1.aws.confluent.cloud:9092
@@ -467,7 +314,7 @@ SCHEMA_REGISTRY_API_KEY=your_schema_registry_api_key
 SCHEMA_REGISTRY_API_SECRET=your_schema_registry_api_secret
 ```
 
-### 3.3 Run the test producer
+### 3.2 Run the test producer
 
 ```bash
 cd retail-inventory-optimization/fashion-inventory-consumer
@@ -476,7 +323,7 @@ uv run produce_inventory_events.py --csv-file ../fashion-inventory-setup/data/te
 
 This produces a series of SALE events with large `quantityChange` values — designed to trigger the Flink velocity detector.
 
-### 3.4 Run the basic consumer to verify alerts
+### 3.3 Run the basic consumer to verify alerts
 
 ```bash
 uv run consume_velocity_alerts.py
@@ -984,20 +831,21 @@ The most common causes:
 
 ---
 
-## Exercises
+## Verify your watsonx Orchestrate setup
 
-See [`exercises.md`](exercises.md) for stretch challenges.
+After completing Section 4, run the verification script to confirm the tools, knowledge
+base and agent all exist:
 
----
-
-## Import Everything
-
-Run the verification script after completing Section 4 to confirm your wxO setup:
+1. Download [:material-download: **`import-all.sh`**](import-all.sh) into your
+   `bobchestrate-confluent/` folder
+2. Run it with your wxO environment active:
 
 ```bash
-cd advanced/part2-confluent
 bash import-all.sh
 ```
+
+Every line should show ✅. Anything showing ❌ points you back to the section that
+creates it.
 
 ---
 
@@ -1039,6 +887,5 @@ orchestrate knowledge-bases list
 
 ---
 
-[Take the Quiz →](quiz.md){ .md-button .md-button--primary }
-[Exercises](exercises.md){ .md-button }
-[← Back to Advanced Workshop Home](../index.md){ .md-button }
+[Stretch exercises →](exercises.md){ .md-button .md-button--primary }
+[← Workshop home](../index.md){ .md-button }
