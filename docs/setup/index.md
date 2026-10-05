@@ -1,4 +1,4 @@
-# Part 0 — Setup & Environment
+# Setup & Environment
 
 <p align="center">
   <img src="images/image_setup_adv.png" alt="Setting up the advanced workshop environment" width="640">
@@ -9,20 +9,11 @@
 Everything in this part is preparation. By the end you will have accounts, a configured
 Bob IDE workspace, and a working `orchestrate` CLI — the starting line for the lab itself.
 
-!!! tip "Already set up?"
-    If your instructor provided a pre-configured environment, skip to
-    [Step 7 — Open the workspace in Bob IDE](#step-7-open-the-workspace-in-bob-ide) and
-    confirm the checklist at the [end of this page](#youre-ready-when).
-
 ---
 
 ## Step 1: Create your watsonx Orchestrate instance
 
 Create a free watsonx Orchestrate trial instance. This takes about 5–10 minutes.
-
-!!! info "Instructor-provided environment"
-    If your instructor is handing out a watsonx Orchestrate instance URL and API key,
-    skip this step and go to [Step 2](#step-2-start-your-ibm-bob-trial).
 
 ### 1.1 Start the trial
 
@@ -361,9 +352,6 @@ actually use them.
 
 **Instance URL:** copy the **Service instance URL** from the same API details page.
 
-!!! info "Instructor-provided environment"
-    Your instructor will give you the instance URL and API key directly.
-
 ### 12.2 Add and activate the environment
 
 === "Using the ADK CLI"
@@ -443,10 +431,19 @@ Any output without an error — including an empty list — means you're connect
 ??? failure "`.bob` folder not found / WXO Agent Architect mode missing"
     The `.bob` folder must sit at the root of the folder you opened in Bob IDE:
 
-    ```bash
-    ls -la bobchestrate-confluent/
-    # You should see: .bob/  .venv/  retail-inventory-optimization/
-    ```
+    === "Mac / Linux"
+
+        ```bash
+        ls -la bobchestrate-confluent/
+        # You should see: .bob/  .venv/  retail-inventory-optimization/
+        ```
+
+    === "Windows"
+
+        ```powershell
+        Get-ChildItem -Force bobchestrate-confluent\
+        # You should see: .bob  .venv  retail-inventory-optimization
+        ```
 
     If it's missing, redo [Step 6](#step-6-download-and-extract-the-workshop-workspace) and
     extract into a fresh location.

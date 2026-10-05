@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WxO ToolBox</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--vscode-font-family);
+      font-size: 13px;
+      color: var(--vscode-foreground);
+      background: var(--vscode-editor-background);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── App header ── */
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: var(--vscode-titleBar-activeBackground);
+      border-bottom: 1px solid var(--vscode-panel-border);
+      flex-shrink: 0;
+    }
+    .app-header-icon { font-size: 1.4em; }
+    .app-header-title {
+      font-weight: 600;
+      font-size: 1em;
+      color: var(--vscode-titleBar-activeForeground);
+    }
+    .app-header-version {
+      font-size: 0.75em;
+      opacity: 0.6;
+      margin-left: 2px;
+    }
+    .app-header-spacer { flex: 1; }
+    .ext-link {
+      font-size: 0.78em;
+      color: var(--vscode-textLink-foreground);
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid var(--vscode-textLink-foreground);
+      border-radius: 10px;
+      padding: 2px 9px;
+      white-space: nowrap;
+      opacity: 0.85;
+    }
+    .ext-link:hover { opacity: 1; text-decoration: underline; }
+    .trace-id-link {
+      color: var(--vscode-textLink-foreground);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .trace-id-link:hover { text-decoration: underline; }
+
+    /* ── Tab bar ── */
+    .tab-bar {
+      display: flex;
+      background: var(--vscode-tab-inactiveBackground, var(--vscode-editorGroupHeader-tabsBackground));
+      border-bottom: 1px solid var(--vscode-panel-border);
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+    .tab-bar::-webkit-scrollbar { height: 2px; }
+    .tab-btn {
+      padding: 8px 16px;
+      border: none;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--vscode-tab-inactiveForeground);
+      cursor: pointer;
+      font-size: 12px;
+      font-family: var(--vscode-font-family);
+      white-space: nowrap;
+      transition: color 0.1s;
+    }
+    .tab-btn:hover { color: var(--vscode-tab-activeForeground); background: var(--vscode-tab-hoverBackground); }
+    .tab-btn.active {
+      color: var(--vscode-tab-activeForeground);
+      border-bottom-color: var(--vscode-tab-activeBorderTop, var(--vscode-focusBorder));
+      background: var(--vscode-tab-activeBackground);
+    }
+
+    /* ── Tab content ── */
+    .tab-body { flex: 1; overflow-y: auto; padding: 16px; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ── Forms ── */
+    .field { margin-bottom: 12px; }
+    label { display: block; margin-bottom: 4px; font-size: 12px; opacity: 0.8; }
+    input[type="text"], select, textarea {
+      width: 100%;
+      max-width: 340px;
+      padding: 5px 8px;
+      background: var(--vscode-input-background);
+      color: var(--vscode-input-foreground);
+      border: 1px solid var(--vscode-input-border, var(--vscode-panel-border));
+      border-radius: 3px;
+      font-size: 13px;
+      font-family: var(--vscode-font-family);
+    }
+    textarea { max-width: 480px; resize: vertical; font-family: monospace; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 6px 14px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: var(--vscode-font-family);
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--vscode-button-hoverBackground); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--vscode-button-secondaryBackground);
+      color: var(--vscode-button-secondaryForeground);
+    }
+    .btn-secondary:hover { background: var(--vscode-button-secondaryHoverBackground); }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+    /* ── Status bar ── */
+    .status-bar {
+      padding: 5px 16px;
+      font-size: 11px;
+      font-family: monospace;
+      min-height: 24px;
+      background: var(--vscode-statusBar-background, var(--vscode-input-background));
+      color: var(--vscode-statusBar-foreground, var(--vscode-foreground));
+      border-top: 1px solid var(--vscode-panel-border);
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .status-bar.error { color: var(--vscode-errorForeground); }
+
+    /* ── Misc ── */
+    .hint { font-size: 11px; opacity: 0.65; margin-bottom: 10px; }
+    .sep { height: 1px; background: var(--vscode-panel-border); margin: 14px 0; }
+    .ok  { color: var(--vscode-testing-iconPassed); }
+    .err { color: var(--vscode-errorForeground); }
+    .params-list { margin-bottom: 8px; }
+    .params-list .row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 6px; flex-wrap: wrap; }
+    .create-form .field { margin-bottom: 12px; }
+
+    /* ── Object picker ── */
+    .obj-picker-toggle { display:flex; align-items:center; gap:8px; margin-top:8px; }
+    .obj-picker-toggle label { font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px; }
+    .obj-picker-body { margin-top:10px; padding:10px; background:var(--vscode-editor-inactiveSelectionBackground); border-radius:4px; border:1px solid var(--vscode-widget-border); }
+    .obj-group { margin-bottom:10px; }
+    .obj-group:last-child { margin-bottom:0; }
+    .obj-group-hdr { display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:12px; font-weight:bold; }
+    .obj-group-hdr .obj-group-btns { margin-left:auto; display:flex; gap:4px; }
+    .btn-xs { background:var(--vscode-button-secondaryBackground); color:var(--vscode-button-secondaryForeground); border:none; padding:1px 7px; font-size:10px; border-radius:2px; cursor:pointer; }
+    .btn-xs:hover { background:var(--vscode-button-secondaryHoverBackground); }
+    .obj-checks { display:flex; flex-wrap:wrap; gap:5px; min-height:22px; margin-bottom:5px; }
+    .obj-chip { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:10px; font-size:11px; cursor:pointer; user-select:none; background:var(--vscode-badge-background); color:var(--vscode-badge-foreground); border:1px solid transparent; }
+    .obj-chip input[type=checkbox] { margin:0; cursor:pointer; }
+    .obj-chip:has(input:checked) { background:var(--vscode-button-background); color:var(--vscode-button-foreground); }
+    .obj-text-input { width:100%; background:var(--vscode-input-background); color:var(--vscode-input-foreground); border:1px solid var(--vscode-input-border); padding:4px 8px; font-size:11px; border-radius:2px; font-family:var(--vscode-editor-font-family, monospace); }
+    .obj-count-badge { font-size:10px; opacity:0.6; font-weight:normal; }
+    .obj-load-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .obj-load-status { font-size:11px; opacity:0.65; }
+
+    .warn-box {
+      padding: 8px 10px;
+      background: var(--vscode-inputValidation-warningBackground);
+      border: 1px solid var(--vscode-inputValidation-warningBorder);
+      border-radius: 3px;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+    code { font-family: monospace; font-size: 0.92em; }
+
+    /* ── Output panel ── */
+    .output-panel {
+      display: none;
+      flex-direction: column;
+      flex-shrink: 0;
+      border-top: 2px solid var(--vscode-focusBorder, var(--vscode-panel-border));
+      background: var(--vscode-terminal-background, var(--vscode-editor-background));
+      overflow: hidden;
+    }
+    .output-panel.visible { display: flex; }
+    .output-resize-handle {
+      height: 5px;
+      cursor: ns-resize;
+      background: var(--vscode-panel-border);
+      flex-shrink: 0;
+    }
+    .output-resize-handle:hover { background: var(--vscode-focusBorder); }
+    .output-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 10px;
+      background: var(--vscode-tab-inactiveBackground, var(--vscode-editorGroupHeader-tabsBackground));
+      border-bottom: 1px solid var(--vscode-panel-border);
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+    .output-label { font-weight: 600; flex: 1; color: var(--vscode-foreground); }
+    .output-spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--vscode-focusBorder);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: wxo-spin 0.7s linear infinite;
+      visibility: hidden;
+    }
+    .output-spinner.running { visibility: visible; }
+    @keyframes wxo-spin { to { transform: rotate(360deg); } }
+    .output-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 12px;
+      font-family: var(--vscode-editor-font-family, 'Courier New', monospace);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .output-line {
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: var(--vscode-terminal-foreground, var(--vscode-foreground));
+    }
+    .output-line.ok  { color: var(--vscode-testing-iconPassed, #4ec94e); }
+    .output-line.err { color: var(--vscode-errorForeground, #f44336); }
+    .output-line.sep { opacity: 0.45; }
+    .output-line.hdr { font-weight: 600; }
+    .output-exit-ok  { color: var(--vscode-testing-iconPassed, #4ec94e); font-weight: 600; margin-top: 4px; }
+    .output-exit-err { color: var(--vscode-errorForeground, #f44336); font-weight: 600; margin-top: 4px; }
+    .output-report-link { margin-top: 6px; }
+    .output-report-link a { color: var(--vscode-textLink-foreground); text-decoration: none; }
+    .output-report-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- App header -->
+  <div class="app-header">
+    <span class="app-header-icon">↔</span>
+    <span class="app-header-title">WxO ToolBox</span>
+    <span class="app-header-version">v1.0.0</span>
+    <span class="app-header-spacer"></span>
+    <a class="ext-link" id="btnExtLink" title="Open extension in VS Code Marketplace">⚡ Extension</a>
+  </div>
+
+  <!-- Tab bar -->
+    <div class="tab-bar">
+    <button class="tab-btn active" data-tab="export">↑ Export</button>
+    <button class="tab-btn" data-tab="import">↓ Import</button>
+    <button class="tab-btn" data-tab="compare">⇄ Compare</button>
+    <button class="tab-btn" data-tab="replicate">⇉ Replicate</button>
+    <button class="tab-btn" data-tab="systems">⊕ Systems</button>
+    <button class="tab-btn" data-tab="observability">📊 Observability</button>
+    <button class="tab-btn" data-tab="secrets">🔑 Secrets</button>
+    <button class="tab-btn" data-tab="deps">⚙ Deps</button>
+    <button class="tab-btn" data-tab="help">📖 Help</button>
+  </div>
+
+  <!-- Tab content -->
+  <div class="tab-body">
+
+    
+
+    <!-- Export -->
+    <div id="pane-export" class="tab-pane active">
+      <p class="hint">Pull agents, tools, flows, or connections from Watson Orchestrate to local storage.</p>
+      <p id="envLoadingHint" style="font-size:11px;opacity:0.7;margin:0 0 8px 0;display:none;">⏳ Please wait — gathering environments…</p>
+      <div class="row">
+        <div class="field">
+          <label>Environment</label>
+          <select id="exportEnv" style="max-width:160px;"><option value="">⏳ Loading…</option></select>
+        </div>
+        <div class="field" id="exportWhatField">
+          <label>What to export</label>
+          <select id="exportWhat">
+            <option value="all">All (agents + tools + flows)</option>
+            <option value="agents">Agents only</option>
+            <option value="tools">Tools only</option>
+            <option value="flows">Flows only</option>
+            <option value="plugins">Plugins only</option>
+            <option value="connections">Connections only (live)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="obj-picker-toggle">
+        <label>
+          <input type="checkbox" id="exportUseSpecific">
+          &nbsp;Pick specific objects by name
+        </label>
+      </div>
+      <div id="exportPickerBody" class="obj-picker-body" style="display:none;">
+        <div class="obj-load-row">
+          <button class="btn btn-secondary" id="btnExportLoadList" style="padding:3px 10px;font-size:11px;">📋 Export from env</button>
+          <span id="exportLoadStatus" class="obj-load-status"></span>
+        </div>
+        <!-- Agents -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="exportAgentsAll" title="Select all agents">
+            <span>Agents <span id="exportAgentCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="exportAgentBtnAll">All</button>
+              <button class="btn-xs" id="exportAgentBtnNone">None</button>
+            </div>
+          </div>
+          <div id="exportAgentChecks" class="obj-checks"></div>
+          <input type="text" id="exportAgentNames" class="obj-text-input" placeholder="Or type agent names: agent1, agent2, …" />
+        </div>
+        <!-- Tools & Flows -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="exportToolsAll" title="Select all tools">
+            <span>Tools &amp; Flows <span id="exportToolCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="exportToolBtnAll">All</button>
+              <button class="btn-xs" id="exportToolBtnNone">None</button>
+            </div>
+          </div>
+          <div id="exportToolChecks" class="obj-checks"></div>
+          <input type="text" id="exportToolNames" class="obj-text-input" placeholder="Or type tool names: tool1, tool2, …" />
+        </div>
+        <!-- Connections (incl. replicate: uses source env's secret mapping for target) -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="exportConnsAll" title="Select all connections">
+            <span>Connections <span id="exportConnCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="exportConnBtnAll">All</button>
+              <button class="btn-xs" id="exportConnBtnNone">None</button>
+            </div>
+          </div>
+          <div id="exportConnChecks" class="obj-checks"></div>
+          <input type="text" id="exportConnNames" class="obj-text-input" placeholder="Or type connection app_ids: conn1, conn2, …" />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnExport" >▶ Run Export</button>
+        <button class="btn btn-secondary" id="btnInteractive" >⚡ Open full interactive menu</button>
+      </div>
+      <div class="report-section" style="margin-top:12px;padding:8px;background:var(--vscode-input-background, #222);border-radius:4px;">
+        <span class="hint">Latest export report: </span>
+        <span id="exportReportLink">—</span>
+        <button class="btn btn-secondary" id="btnRefreshExportReport" style="margin-left:8px;padding:2px 8px;font-size:11px;">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Import -->
+    <div id="pane-import" class="tab-pane">
+      <p class="hint">Push agents, tools, flows, or connections from a local export folder into Watson Orchestrate.</p>
+      <div class="row">
+        <div class="field" style="flex:1;min-width:200px;">
+          <label>Export folder</label>
+          <input type="text" id="importFolder" placeholder="Click Pick to browse…" style="max-width:400px;" />
+        </div>
+        <div class="field">
+          <button class="btn btn-secondary" id="btnPickFolder" style="margin-top:18px;">📂 Pick folder</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Target environment</label>
+          <select id="importEnv" style="max-width:160px;"><option value="">⏳ Loading…</option></select>
+        </div>
+        <div class="field">
+          <label>Import what</label>
+          <select id="importWhat" style="max-width:200px;">
+            <option value="all">All (agents + tools + flows + connections)</option>
+            <option value="agents">Agents only</option>
+            <option value="tools">Tools only</option>
+            <option value="flows">Flows only</option>
+            <option value="plugins">Plugins only</option>
+            <option value="connections">Connections only</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>If exists</label>
+          <select id="importIfExists" style="max-width:160px;">
+            <option value="override">Override</option>
+            <option value="skip">Skip</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Connection credential source</label>
+          <select id="importConnSource" style="max-width:180px;" title="Which env's .env_connection to use for CONN_* when importing connections. Auto = from export path (e.g. Exports/TZ1/... → TZ1).">
+            <option value="">auto (from path)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="obj-picker-toggle">
+        <label>
+          <input type="checkbox" id="importUseSpecific">
+          &nbsp;Pick specific objects by name
+        </label>
+      </div>
+      <div id="importPickerBody" class="obj-picker-body" style="display:none;">
+        <div class="obj-load-row">
+          <button class="btn btn-secondary" id="btnImportLoadList" style="padding:3px 10px;font-size:11px;">📋 Load from export folder</button>
+          <span id="importLoadStatus" class="obj-load-status"></span>
+        </div>
+        <!-- Agents -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="importAgentsAll" title="Select all agents">
+            <span>Agents <span id="importAgentCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="importAgentBtnAll">All</button>
+              <button class="btn-xs" id="importAgentBtnNone">None</button>
+            </div>
+          </div>
+          <div id="importAgentChecks" class="obj-checks"></div>
+          <input type="text" id="importAgentNames" class="obj-text-input" placeholder="Or type agent names: agent1, agent2, …" />
+        </div>
+        <!-- Tools & Flows -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="importToolsAll" title="Select all tools">
+            <span>Tools &amp; Flows <span id="importToolCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="importToolBtnAll">All</button>
+              <button class="btn-xs" id="importToolBtnNone">None</button>
+            </div>
+          </div>
+          <div id="importToolChecks" class="obj-checks"></div>
+          <input type="text" id="importToolNames" class="obj-text-input" placeholder="Or type tool names: tool1, tool2, …" />
+        </div>
+        <!-- Connections (incl. replicate: uses source env's secret mapping for target) -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="importConnsAll" title="Select all connections">
+            <span>Connections <span id="importConnCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="importConnBtnAll">All</button>
+              <button class="btn-xs" id="importConnBtnNone">None</button>
+            </div>
+          </div>
+          <div id="importConnChecks" class="obj-checks"></div>
+          <input type="text" id="importConnNames" class="obj-text-input" placeholder="Or type connection app_ids: conn1, conn2, …" />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnImport" >▶ Run Import</button>
+      </div>
+      <div class="report-section" style="margin-top:12px;padding:8px;background:var(--vscode-input-background, #222);border-radius:4px;">
+        <span class="hint">Latest import report: </span>
+        <span id="importReportLink">—</span>
+        <button class="btn btn-secondary" id="btnRefreshImportReport" style="margin-left:8px;padding:2px 8px;font-size:11px;">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Compare -->
+    <div id="pane-compare" class="tab-pane">
+      <p class="hint">Compare agents, tools, flows, connections, or plugins between two environments. Report saved to <code>WxO/Compare/</code>.</p>
+      <div class="row">
+        <div class="field">
+          <label>Source environment</label>
+          <select id="compareEnv1" style="max-width:160px;"><option value="">⏳ Loading…</option></select>
+        </div>
+        <div class="field">
+          <label>Target environment</label>
+          <select id="compareEnv2" style="max-width:160px;"><option value="">⏳ Loading…</option></select>
+        </div>
+        <div class="field">
+          <label>What to compare</label>
+          <select id="compareWhat" style="max-width:200px;">
+            <option value="all">All (agents, tools, flows, connections, plugins)</option>
+            <option value="agents">Agents only</option>
+            <option value="tools">Tools only</option>
+            <option value="flows">Flows only</option>
+            <option value="plugins">Plugins only</option>
+            <option value="connections">Connections only</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="obj-picker-toggle">
+        <label>
+          <input type="checkbox" id="compareUseSpecific">
+          &nbsp;Pick specific objects by name
+        </label>
+      </div>
+      <div id="comparePickerBody" class="obj-picker-body" style="display:none;">
+        <div class="obj-load-row">
+          <button class="btn btn-secondary" id="btnCompareLoadList" style="padding:3px 10px;font-size:11px;">📋 Load from source env</button>
+          <span id="compareLoadStatus" class="obj-load-status"></span>
+        </div>
+        <!-- Agents -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="compareAgentsAll" title="Select all agents">
+            <span>Agents <span id="compareAgentCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="compareAgentBtnAll">All</button>
+              <button class="btn-xs" id="compareAgentBtnNone">None</button>
+            </div>
+          </div>
+          <div id="compareAgentChecks" class="obj-checks"></div>
+          <input type="text" id="compareAgentNames" class="obj-text-input" placeholder="Or type agent names: agent1, agent2, …" />
+        </div>
+        <!-- Tools & Flows -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="compareToolsAll" title="Select all tools">
+            <span>Tools &amp; Flows <span id="compareToolCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="compareToolBtnAll">All</button>
+              <button class="btn-xs" id="compareToolBtnNone">None</button>
+            </div>
+          </div>
+          <div id="compareToolChecks" class="obj-checks"></div>
+          <input type="text" id="compareToolNames" class="obj-text-input" placeholder="Or type tool names: tool1, tool2, …" />
+        </div>
+        <!-- Connections (incl. replicate: uses source env's secret mapping for target) -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="compareConnsAll" title="Select all connections">
+            <span>Connections <span id="compareConnCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="compareConnBtnAll">All</button>
+              <button class="btn-xs" id="compareConnBtnNone">None</button>
+            </div>
+          </div>
+          <div id="compareConnChecks" class="obj-checks"></div>
+          <input type="text" id="compareConnNames" class="obj-text-input" placeholder="Or type connection app_ids: conn1, conn2, …" />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnCompare" >▶ Run Compare</button>
+      </div>
+      <div class="report-section" style="margin-top:12px;padding:8px;background:var(--vscode-input-background, #222);border-radius:4px;">
+        <span class="hint">Latest compare report: </span>
+        <span id="compareReportLink">—</span>
+        <button class="btn btn-secondary" id="btnRefreshCompareReport" style="margin-left:8px;padding:2px 8px;font-size:11px;">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Replicate -->
+    <div id="pane-replicate" class="tab-pane">
+      <p class="hint">Copy resources from source → Replicate folder → target environment. <strong>Connections</strong>: uses source system's secret mapping (<code>.env_connection_&lt;source&gt;</code>) for credentials in target.</p>
+      <div class="row">
+        <div class="field">
+          <label>Source environment</label>
+          <select id="repSource" style="max-width:160px;"><option value="">⏳ Loading…</option></select>
+        </div>
+        <div class="field">
+          <label>Target environment</label>
+          <select id="repTarget" style="max-width:160px;"><option value="">⏳ Loading…</option></select>
+        </div>
+        <div class="field">
+          <label>Connection credential source</label>
+          <select id="repConnSource" style="max-width:180px;" title="Which env's .env_connection to use for CONN_* when replicating connections. Default = source.">
+            <option value="">same as source</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>What to replicate</label>
+          <select id="repWhat">
+            <option value="all">All (agents + tools + flows)</option>
+            <option value="agents">Agents only</option>
+            <option value="tools">Tools only</option>
+            <option value="flows">Flows only</option>
+            <option value="plugins">Plugins only</option>
+            <option value="connections">Connections only (uses source secret mapping)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>If exists</label>
+          <select id="repIfExists" style="max-width:160px;">
+            <option value="override">Override</option>
+            <option value="skip">Skip</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="obj-picker-toggle">
+        <label>
+          <input type="checkbox" id="repUseSpecific">
+          &nbsp;Pick specific objects by name
+        </label>
+      </div>
+      <div id="repPickerBody" class="obj-picker-body" style="display:none;">
+        <div class="obj-load-row">
+          <button class="btn btn-secondary" id="btnRepLoadList" style="padding:3px 10px;font-size:11px;">📋 Load from source env</button>
+          <span id="repLoadStatus" class="obj-load-status"></span>
+        </div>
+        <!-- Agents -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="repAgentsAll" title="Select all agents">
+            <span>Agents <span id="repAgentCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="repAgentBtnAll">All</button>
+              <button class="btn-xs" id="repAgentBtnNone">None</button>
+            </div>
+          </div>
+          <div id="repAgentChecks" class="obj-checks"></div>
+          <input type="text" id="repAgentNames" class="obj-text-input" placeholder="Or type agent names: agent1, agent2, …" />
+        </div>
+        <!-- Tools & Flows -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="repToolsAll" title="Select all tools">
+            <span>Tools &amp; Flows <span id="repToolCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="repToolBtnAll">All</button>
+              <button class="btn-xs" id="repToolBtnNone">None</button>
+            </div>
+          </div>
+          <div id="repToolChecks" class="obj-checks"></div>
+          <input type="text" id="repToolNames" class="obj-text-input" placeholder="Or type tool names: tool1, tool2, …" />
+        </div>
+        <!-- Connections (incl. replicate: uses source env's secret mapping for target) -->
+        <div class="obj-group">
+          <div class="obj-group-hdr">
+            <input type="checkbox" id="repConnsAll" title="Select all connections">
+            <span>Connections <span id="repConnCount" class="obj-count-badge"></span></span>
+            <div class="obj-group-btns">
+              <button class="btn-xs" id="repConnBtnAll">All</button>
+              <button class="btn-xs" id="repConnBtnNone">None</button>
+            </div>
+          </div>
+          <div id="repConnChecks" class="obj-checks"></div>
+          <input type="text" id="repConnNames" class="obj-text-input" placeholder="Or type connection app_ids: conn1, conn2, …" />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnReplicate" >▶ Run Replicate</button>
+      </div>
+      <div class="report-section" style="margin-top:12px;padding:8px;background:var(--vscode-input-background, #222);border-radius:4px;">
+        <span class="hint">Latest replicate report: </span>
+        <span id="replicateReportLink">—</span>
+        <button class="btn btn-secondary" id="btnRefreshReplicateReport" style="margin-left:8px;padding:2px 8px;font-size:11px;">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Systems -->
+    <div id="pane-systems" class="tab-pane">
+      <p class="hint">Extension is the source of truth. System config (name, URL, API key) stored in <code>WxO/Systems/systems.json</code>; API keys in SecretStorage. Synced to orchestrate CLI.</p>
+
+      <div id="systemsTable" style="margin-bottom:14px;">
+        <p class="hint" style="font-style:italic;">Loading environments…</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" id="btnAddSystem">+ Add System</button>
+        <button class="btn btn-secondary" id="btnRefreshSystems">↺ Refresh</button>
+        <button class="btn btn-secondary" id="btnCopyToEnv" title="Copy stored credentials to workspace .env">📋 Copy to .env</button>
+      </div>
+    </div>
+
+    <!-- Observability -->
+    <div id="pane-observability" class="tab-pane">
+      <p class="hint">Search and export traces from Watson Orchestrate. Requires watsonx Orchestrate SaaS or Developer Edition with <code>--with-ibm-telemetry</code>. <a href="#" id="linkObservabilityDocs">Docs</a></p>
+
+      <div class="row" style="margin-bottom:12px;">
+        <div class="field">
+          <label>Environment</label>
+          <select id="obsEnv" style="max-width:160px;"><option value="">⏳ Loading…</option></select>
+        </div>
+      </div>
+
+      <h4 style="font-size:13px;margin:16px 0 8px 0;">Search traces</h4>
+      <p class="hint" style="margin-bottom:8px;">Time range cannot exceed 30 days. Default: last 30 minutes.</p>
+      <div class="row" style="flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <div class="field">
+          <label>Start time</label>
+          <input type="datetime-local" id="obsStartTime" style="max-width:200px;font-family:monospace;font-size:12px;" />
+        </div>
+        <div class="field">
+          <label>End time</label>
+          <input type="datetime-local" id="obsEndTime" style="max-width:200px;font-family:monospace;font-size:12px;" />
+        </div>
+        <div class="field">
+          <label>Agent name</label>
+          <input type="text" id="obsAgentName" placeholder="optional" style="max-width:140px;" />
+        </div>
+        <div class="field">
+          <label>Limit (1–1000)</label>
+          <input type="number" id="obsLimit" value="50" min="1" max="1000" style="max-width:80px;" />
+        </div>
+      </div>
+      <div class="btn-row" style="margin-bottom:16px;">
+        <button class="btn" id="btnObsSearch">🔍 Search traces</button>
+        <button class="btn btn-secondary" id="btnObsResetTimes" title="Set start = now −30 min, end = now">↺ Last 30 min</button>
+      </div>
+
+      <div id="obsResultsSection" style="margin-top:16px;display:none;">
+        <h4 style="font-size:13px;margin:0 0 8px 0;">Search results</h4>
+        <p id="obsResultsSummary" class="hint" style="margin-bottom:8px;"></p>
+        <pre id="obsResultsRaw" style="display:none;font-size:11px;margin:8px 0;padding:8px;background:var(--vscode-input-background,#222);border-radius:4px;overflow-x:auto;white-space:pre-wrap;max-height:120px;"></pre>
+        <div id="obsResultsTableWrap" style="overflow-x:auto;margin-bottom:12px;">
+          <table id="obsResultsTable" style="width:100%;min-width:700px;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--vscode-panel-border);">Trace ID</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--vscode-panel-border);">Start</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--vscode-panel-border);">Duration</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--vscode-panel-border);">Spans</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--vscode-panel-border);">Agent</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--vscode-panel-border);">User</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--vscode-panel-border);width:80px;"></th>
+              </tr>
+            </thead>
+            <tbody id="obsResultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <h4 style="font-size:13px;margin:16px 0 8px 0;">Export trace</h4>
+      <p class="hint" style="margin-bottom:8px;">Export spans for a trace ID (32-char hex) as JSON. Paste a trace ID from search results or the UI.</p>
+      <div class="row" style="flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <div class="field" style="flex:1;min-width:200px;">
+          <label>Trace ID</label>
+          <input type="text" id="obsTraceId" placeholder="1234567890abcdef1234567890abcdef" style="font-family:monospace;font-size:12px;" />
+          <input type="hidden" id="obsAgentName" value="" />
+        </div>
+        <div class="field" style="flex:1;min-width:200px;">
+          <label>Output file (optional)</label>
+          <input type="text" id="obsOutputFile" placeholder="Leave empty for WxO/Observability/{env}/" style="font-family:monospace;font-size:12px;" />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnObsExport">📥 Export trace</button>
+      </div>
+      <div class="report-section" style="margin-top:12px;padding:8px;background:var(--vscode-input-background, #222);border-radius:4px;">
+        <span class="hint">Last export: </span>
+        <span id="obsExportLink">—</span>
+      </div>
+    </div>
+
+    <!-- Secrets -->
+    <div id="pane-secrets" class="tab-pane">
+      <p class="hint">Edit <strong>connection credentials</strong> (CONN_*) per system — for tools that use connections. Not system-level secrets (WXO_API_KEY, etc.). Stored in <code>WxO/Systems/{env}/Connections/.env_connection_{env}</code></p>
+
+      <div class="row" style="align-items:flex-end;gap:10px;margin-bottom:12px;">
+        <div class="field">
+          <label>Environment</label>
+          <select id="secretsEnvSelect" style="max-width:200px;">
+            <option value="">— select environment —</option>
+          </select>
+        </div>
+        <div class="field">
+          <button class="btn btn-secondary" id="btnReloadSecrets" style="margin-top:18px;">↺ Reload</button>
+        </div>
+      </div>
+
+      <p id="secretsFilePath" class="hint" style="font-family:monospace;opacity:0.6;margin-bottom:8px;"></p>
+
+      <div id="secretsTableWrap" style="display:none;">
+        <table id="secretsTable" style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px;">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:4px 6px;border-bottom:1px solid var(--vscode-panel-border);width:38%;">Key</th>
+              <th style="text-align:left;padding:4px 6px;border-bottom:1px solid var(--vscode-panel-border);">Value</th>
+              <th style="width:36px;border-bottom:1px solid var(--vscode-panel-border);"></th>
+            </tr>
+          </thead>
+          <tbody id="secretsRows"></tbody>
+        </table>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="btnAddSecret">+ Add entry</button>
+          <button class="btn" id="btnSaveSecrets">💾 Save to file</button>
+        </div>
+      </div>
+
+      <p id="secretsEmpty" class="hint" style="font-style:italic;display:none;">
+        No secrets file found for this environment — press <strong>Save</strong> to create it.
+      </p>
+    </div>
+
+    <!-- Help -->
+    <div id="pane-help" class="tab-pane">
+      <h3 style="margin-bottom:12px;">WxO ToolBox — User Guide</h3>
+      <p class="hint" style="margin-bottom:16px;">Export, import, compare, replicate, and manage IBM Watson Orchestrate resources from VS Code.</p>
+
+      <div style="margin-bottom:16px;">
+        <h4 style="font-size:13px;margin-bottom:8px;">Getting Started</h4>
+        <ul style="margin:0 0 12px 20px;line-height:1.7;font-size:12px;">
+          <li><strong>Select Environment</strong> — Choose a Watson Orchestrate instance in the Activity Bar</li>
+          <li><strong>Browse resources</strong> — Expand Agents, Tools, Flows, Connections in the tree</li>
+          <li><strong>Inline actions</strong> — View JSON, Export, Copy, Edit, Compare, Delete on each resource</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h4 style="font-size:13px;margin-bottom:8px;">Panel Tabs</h4>
+        <ul style="margin:0 0 12px 20px;line-height:1.7;font-size:12px;">
+          <li><strong>Export / Import / Compare / Replicate</strong> — Bulk operations via orchestrate CLI scripts</li>
+          <li><strong>Create Tool</strong> — Separate panel to create/edit Python or OpenAPI tools (Activity Bar → Create Tool)</li>
+          <li><strong>Systems</strong> — Add, activate, or remove orchestrate environments</li>
+          <li><strong>Observability</strong> — Search and export traces (ADK 2.5.0+; SaaS or Developer Edition with telemetry)</li>
+          <li><strong>Secrets</strong> — Edit connection credentials per environment (<code>.env_connection_*</code>)</li>
+          <li><strong>Dependencies</strong> — Check orchestrate, jq, unzip installation</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h4 style="font-size:13px;margin-bottom:8px;">Prerequisites</h4>
+        <p style="font-size:12px;margin:0 0 8px 0;">Requires <a href="#" id="linkInstall">orchestrate CLI</a>, jq, and unzip. Add environments in the Systems tab (API keys stored securely).</p>
+        <p style="font-size:12px;margin:8px 0 0 0;"><strong>Python venv?</strong> If orchestrate is installed in a virtual environment, set <code>WxO-ToolBox-vsc.orchestrateVenvPath</code> (Settings → search "venv") to your venv folder (e.g. <code>.venv</code>).</p>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px;">
+        <button class="btn" id="btnOpenUserGuide">📖 Open Full User Guide</button>
+        <button class="btn btn-secondary" id="btnOpenInstall">📖 Install orchestrate CLI</button>
+      </div>
+    </div>
+
+    <!-- Dependencies -->
+    <div id="pane-deps" class="tab-pane">
+      <p class="hint">Check that all required CLI tools are installed and in PATH.</p>
+      <p class="hint" style="margin-top:8px;">Using orchestrate in a Python venv? Set <code>WxO-ToolBox-vsc.orchestrateVenvPath</code> in Settings to your venv folder (e.g. <code>.venv</code>).</p>
+      <div class="btn-row" style="margin-bottom:12px;">
+        <button class="btn" id="btnCheckDeps">🔍 Check dependencies</button>
+        <button class="btn btn-secondary" id="btnOpenDocs">📖 Install docs</button>
+      </div>
+      <div id="depResults" style="font-size:12px;line-height:1.7;"></div>
+      <div class="sep"></div>
+      <p class="hint">Scripts path: <code>/Users/ivorrothwell/.bobide-insiders/extensions/markusvankempen.wxo-toolbox-vsc-2.1.0-universal/scripts</code></p>
+    </div>
+
+  </div><!-- /tab-body -->
+
+  <!-- Live output panel (shown when a script runs) -->
+  <div class="output-panel" id="outputPanel">
+    <div class="output-resize-handle" id="outputResizeHandle" title="Drag to resize"></div>
+    <div class="output-header">
+      <div class="output-spinner" id="outputSpinner"></div>
+      <span class="output-label" id="outputLabel">Output</span>
+      <button class="btn btn-secondary" id="btnClearOutput" style="padding:2px 8px;font-size:11px;">Clear</button>
+      <button class="btn btn-secondary" id="btnCloseOutput" style="padding:2px 8px;font-size:11px;">✕ Close</button>
+    </div>
+    <div class="output-body" id="outputBody"></div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar" id="statusBar"></div>
+
+  <script>
+    console.log('[WxO Panel] Script block started');
+    const vscode = acquireVsCodeApi();
+    var _debug = typeof vscode.postMessage === 'function';
+    console.log('[WxO Panel] vscode API acquired, _debug:', _debug);
+    function updateReportLink(elId, p) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      if (p) {
+        el.innerHTML = '<a href="#" style="color:var(--vscode-textLink-foreground);">📄 Open Report</a>';
+        el.querySelector('a').onclick = function(ev) {
+          ev.preventDefault();
+          vscode.postMessage({ command: 'openReport', path: p });
+        };
+      } else {
+        el.textContent = '—';
+      }
+    }
+    function updateExportReportLink(p) { updateReportLink('exportReportLink', p); }
+    function updateImportReportLink(p) { updateReportLink('importReportLink', p); }
+    function updateCompareReportLink(p) { updateReportLink('compareReportLink', p); }
+    function updateReplicateReportLink(p) { updateReportLink('replicateReportLink', p); }
+    function updateObsExportLink(p) {
+      var el = document.getElementById('obsExportLink');
+      if (!el) return;
+      if (p) {
+        el.innerHTML = '<a href="#" class="obs-export-open">📄 Open JSON</a> <a href="#" class="obs-export-parsed">📊 View parsed</a>';
+        el.querySelector('.obs-export-open').onclick = function(ev) { ev.preventDefault(); vscode.postMessage({ command: 'openReport', path: p }); };
+        el.querySelector('.obs-export-parsed').onclick = function(ev) { ev.preventDefault(); vscode.postMessage({ command: 'viewTraceDetail', path: p }); };
+      } else {
+        el.textContent = '—';
+      }
+    }
+    if (_debug) vscode.postMessage({ command: 'debugLog', message: '[Panel] Script loaded successfully' });
+    window.onerror = function(msg, url, line, col, err) {
+      console.error('[WxO Panel] Runtime error:', msg, 'at', line, ':', col);
+      if (_debug && vscode.postMessage) {
+        vscode.postMessage({ command: 'panelError', message: msg, url: url || '', line: line || 0, col: col || 0, stack: err && err.stack ? err.stack : '' });
+      }
+      return false;
+    };
+    console.log('[WxO Panel] Error handler registered');
+
+    // ── Tabs ──────────────────────────────────────────────────────────────────
+    console.log('[WxO Panel] Setting up tabs');
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.tab;
+        console.log('[WxO Panel] Tab clicked:', id);
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('pane-' + id).classList.add('active');
+      });
+    });
+    console.log('[WxO Panel] Tabs initialized');
+
+    // ── Status ────────────────────────────────────────────────────────────────
+    console.log('[WxO Panel] Setting up status');
+    function setStatus(msg, isError) {
+      const el = document.getElementById('statusBar');
+      el.textContent = msg;
+      el.className = 'status-bar' + (isError ? ' error' : '');
+      console.log('[WxO Panel] Status set:', msg, 'error:', isError);
+    }
+    console.log('[WxO Panel] Status function ready');
+
+    // ── Extension link ────────────────────────────────────────────────────────
+    console.log('[WxO Panel] Setting up extension link');
+    document.getElementById('btnExtLink').addEventListener('click', () => {
+      vscode.postMessage({ command: 'openExtension' });
+    });
+
+    // ── Object picker helpers ─────────────────────────────────────────────────
+    function onPickerToggle(prefix) {
+      var body = document.getElementById(prefix + 'PickerBody');
+      var cb   = document.getElementById(prefix + 'UseSpecific');
+      var wf   = document.getElementById(prefix + 'WhatField');
+      if (!body || !cb) return;
+      body.style.display = cb.checked ? '' : 'none';
+      if (wf) wf.style.opacity = cb.checked ? '0.4' : '1';
+    }
+
+    function selectGroupAll(prefix, resource, checked) {
+      var cssClass = prefix + '-' + resource + '-chk';
+      document.querySelectorAll('.' + cssClass).forEach(function(c) { c.checked = checked; });
+      var hdrCb = document.getElementById(prefix + capitalize2(resource === 'conn' ? 'Conns' : resource + 's') + 'All');
+      if (hdrCb) hdrCb.checked = checked;
+    }
+
+    function capitalize2(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+    function getCheckedNames(prefix, resource) {
+      var cssClass = prefix + '-' + resource + '-chk';
+      var checks = document.querySelectorAll('.' + cssClass + ':checked');
+      var fromChecks = Array.from(checks).map(function(c) { return c.value; });
+      var resKey = resource === 'conn' ? 'Conn' : capitalize2(resource);
+      var textEl = document.getElementById(prefix + resKey + 'Names');
+      var fromText = textEl ? textEl.value.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+      var combined = fromChecks.concat(fromText.filter(function(n) { return fromChecks.indexOf(n) < 0; }));
+      return combined.join(',');
+    }
+
+    function getPickerContent(prefix) {
+      if (!document.getElementById(prefix + 'UseSpecific').checked) return {};
+      return {
+        agents:      getCheckedNames(prefix, 'agent'),
+        tools:       getCheckedNames(prefix, 'tool'),
+        connections: getCheckedNames(prefix, 'conn'),
+      };
+    }
+
+    function renderChecks(containerId, cssClass, items) {
+      var el = document.getElementById(containerId);
+      if (!el) return;
+      var list = items || [];
+      el.innerHTML = list.map(function(item) {
+        var name, label;
+        if (typeof item === 'object' && item !== null && 'name' in item) {
+          name = item.name;
+          label = (item.label != null && item.label !== '') ? item.label : name;
+        } else {
+          name = String(item);
+          label = name;
+        }
+        var safeName = name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        var safeLabel = label.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        return '<label class="obj-chip" title="' + safeName + '"><input type="checkbox" class="' + cssClass + '" value="' + safeName + '" checked> ' + safeLabel + '</label>';
+      }).join('');
+    }
+
+    function wirePickerLoadBtn(prefix, getEnvFn) {
+      var btn = document.getElementById('btn' + capitalize2(prefix) + 'LoadList');
+      if (!btn) return;
+      btn.addEventListener('click', function() {
+        var statusEl = document.getElementById(prefix + 'LoadStatus');
+        if (statusEl) statusEl.textContent = 'Loading…';
+        vscode.postMessage({ command: 'loadObjectList', content: {
+          env: getEnvFn(),
+          tab: prefix,
+        }});
+      });
+    }
+
+    // Wire all picker checkboxes / All-None buttons for a given prefix
+    // (replaces inline onclick/onchange which are blocked by VS Code webview CSP)
+    function wirePicker(prefix) {
+      var useCb = document.getElementById(prefix + 'UseSpecific');
+      if (useCb) useCb.addEventListener('change', function() { onPickerToggle(prefix); });
+
+      var resources = ['agent', 'tool', 'conn'];
+      resources.forEach(function(res) {
+        var cap = res === 'conn' ? 'Conns' : capitalize2(res) + 's';
+        var hdrCb = document.getElementById(prefix + cap + 'All');
+        if (hdrCb) hdrCb.addEventListener('change', function() { selectGroupAll(prefix, res, this.checked); });
+        var btnAll  = document.getElementById(prefix + capitalize2(res) + 'BtnAll');
+        var btnNone = document.getElementById(prefix + capitalize2(res) + 'BtnNone');
+        if (btnAll)  btnAll.addEventListener('click',  function() { selectGroupAll(prefix, res, true); });
+        if (btnNone) btnNone.addEventListener('click', function() { selectGroupAll(prefix, res, false); });
+      });
+    }
+
+    wirePicker('export');
+    wirePicker('import');
+    wirePicker('rep');
+    wirePicker('compare');
+
+    wirePickerLoadBtn('export', function() { return document.getElementById('exportEnv').value; });
+    wirePickerLoadBtn('import', function() { return document.getElementById('importEnv').value; });
+    wirePickerLoadBtn('rep',    function() { return document.getElementById('repSource').value; });
+    wirePickerLoadBtn('compare', function() { return document.getElementById('compareEnv1').value; });
+
+    // ── Export ────────────────────────────────────────────────────────────────
+    document.getElementById('btnExport').addEventListener('click', function() {
+      vscode.postMessage({ command: 'runExport', content: Object.assign({
+        env:  document.getElementById('exportEnv').value,
+        what: document.getElementById('exportWhat').value,
+      }, getPickerContent('export'))});
+    });
+
+    var btnRefreshExport = document.getElementById('btnRefreshExportReport');
+    if (btnRefreshExport) btnRefreshExport.addEventListener('click', function() { vscode.postMessage({ command: 'getLatestExportReport' }); });
+    var btnRefreshImport = document.getElementById('btnRefreshImportReport');
+    if (btnRefreshImport) btnRefreshImport.addEventListener('click', function() { vscode.postMessage({ command: 'getLatestImportReport' }); });
+    var btnRefreshCompare = document.getElementById('btnRefreshCompareReport');
+    if (btnRefreshCompare) btnRefreshCompare.addEventListener('click', function() { vscode.postMessage({ command: 'getLatestCompareReport' }); });
+    var btnRefreshReplicate = document.getElementById('btnRefreshReplicateReport');
+    if (btnRefreshReplicate) btnRefreshReplicate.addEventListener('click', function() { vscode.postMessage({ command: 'getLatestReplicateReport' }); });
+
+    vscode.postMessage({ command: 'getLatestExportReport' });
+    vscode.postMessage({ command: 'getLatestImportReport' });
+    vscode.postMessage({ command: 'getLatestCompareReport' });
+    vscode.postMessage({ command: 'getLatestReplicateReport' });
+
+    document.getElementById('btnInteractive').addEventListener('click', () =>
+      vscode.postMessage({ command: 'runInteractive' }));
+
+    // ── Import ────────────────────────────────────────────────────────────────
+    document.getElementById('btnPickFolder').addEventListener('click', () =>
+      vscode.postMessage({ command: 'pickFolder' }));
+
+    document.getElementById('btnImport').addEventListener('click', function() {
+      vscode.postMessage({ command: 'runImport', content: Object.assign({
+        baseDir:   document.getElementById('importFolder').value.trim(),
+        env:       document.getElementById('importEnv').value,
+        what:      document.getElementById('importWhat').value,
+        ifExists:  document.getElementById('importIfExists').value,
+        connSource: (document.getElementById('importConnSource') || {}).value || '',
+      }, getPickerContent('import'))});
+    });
+
+    // ── Compare ───────────────────────────────────────────────────────────────
+    document.getElementById('btnCompare').addEventListener('click', function() {
+      vscode.postMessage({ command: 'runCompare', content: Object.assign({
+        env1: document.getElementById('compareEnv1').value,
+        env2: document.getElementById('compareEnv2').value,
+        what: document.getElementById('compareWhat').value,
+      }, getPickerContent('compare'))});
+    });
+
+    // ── Replicate ─────────────────────────────────────────────────────────────
+    document.getElementById('btnReplicate').addEventListener('click', function() {
+      vscode.postMessage({ command: 'runReplicate', content: Object.assign({
+        source: document.getElementById('repSource').value,
+        target: document.getElementById('repTarget').value,
+        what:   document.getElementById('repWhat').value,
+        ifExists: (document.getElementById('repIfExists') || {}).value || 'override',
+        connSource: (document.getElementById('repConnSource') || {}).value || '',
+      }, getPickerContent('rep'))});
+    });
+
+    // ── Observability ────────────────────────────────────────────────────────
+    function obsToISO(val) {
+      if (!val || !val.trim()) return '';
+      var d = new Date(val);
+      return isNaN(d.getTime()) ? '' : d.toISOString();
+    }
+    function obsSetDefaultTimes() {
+      var pad = function(n) { return String(n).padStart(2, '0'); };
+      var now = new Date();
+      var start = new Date(now.getTime() - 30 * 60 * 1000);
+      document.getElementById('obsStartTime').value =
+        start.getFullYear() + '-' + pad(start.getMonth() + 1) + '-' + pad(start.getDate()) +
+        'T' + pad(start.getHours()) + ':' + pad(start.getMinutes());
+      document.getElementById('obsEndTime').value =
+        now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) +
+        'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    }
+    obsSetDefaultTimes();
+    document.getElementById('btnObsSearch').addEventListener('click', function() {
+      vscode.postMessage({ command: 'tracesSearch', content: {
+        env:       document.getElementById('obsEnv').value.trim(),
+        startTime: obsToISO(document.getElementById('obsStartTime').value),
+        endTime:   obsToISO(document.getElementById('obsEndTime').value),
+        agentName: document.getElementById('obsAgentName').value.trim(),
+        limit:     parseInt(document.getElementById('obsLimit').value, 10) || 50,
+      }});
+    });
+    document.getElementById('btnObsResetTimes').addEventListener('click', obsSetDefaultTimes);
+    document.getElementById('btnObsExport').addEventListener('click', function() {
+      vscode.postMessage({ command: 'tracesExport', content: {
+        env:       document.getElementById('obsEnv').value.trim(),
+        traceId:   document.getElementById('obsTraceId').value.trim(),
+        outputFile: document.getElementById('obsOutputFile').value.trim(),
+        agentName: document.getElementById('obsAgentName').value.trim() || undefined,
+      }});
+    });
+    document.getElementById('linkObservabilityDocs').addEventListener('click', function(e) {
+      e.preventDefault();
+      vscode.postMessage({ command: 'openObservabilityDocs' });
+    });
+
+    // ── Dependencies ──────────────────────────────────────────────────────────
+    document.getElementById('btnCheckDeps').addEventListener('click', () =>
+      vscode.postMessage({ command: 'checkDeps' }));
+
+    document.getElementById('btnOpenDocs').addEventListener('click', () =>
+      vscode.postMessage({ command: 'openInstallDocs' }));
+
+    // ── Help tab ──────────────────────────────────────────────────────────────
+    document.getElementById('btnOpenUserGuide').addEventListener('click', () =>
+      vscode.postMessage({ command: 'openUserGuide' }));
+    document.getElementById('btnOpenInstall').addEventListener('click', () =>
+      vscode.postMessage({ command: 'openInstallDocs' }));
+    document.getElementById('linkInstall').addEventListener('click', function(e) {
+      e.preventDefault();
+      vscode.postMessage({ command: 'openInstallDocs' });
+    });
+
+    // ── Systems ───────────────────────────────────────────────────────────────
+    console.log('[WxO Panel] Defining renderSystemsTable');
+    function renderSystemsTable(envs, errorMsg, defaultConnSource) {
+      console.log('[WxO Panel] renderSystemsTable called, envs:', envs ? envs.length : 'null', 'error:', errorMsg);
+      var wrap = document.getElementById('systemsTable');
+      if (errorMsg) {
+        wrap.innerHTML = '<p class="err" style="font-size:12px;">' + esc(errorMsg) + '</p>';
+        return;
+      }
+      if (!envs || envs.length === 0) {
+        wrap.innerHTML = '<p class="hint" style="font-style:italic;">No systems found. Click <strong>Add System</strong> to add one.</p>';
+        return;
+      }
+      var rows = envs.map(function(e) {
+        var badge = e.active
+          ? '<span style="background:var(--vscode-testing-iconPassed);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;margin-left:6px;">active</span>'
+          : '';
+        return '<tr style="border-bottom:1px solid var(--vscode-panel-border);">' +
+          '<td style="padding:6px 8px;font-weight:600;white-space:nowrap;">' + esc(e.name) + badge + '</td>' +
+          '<td style="padding:6px 8px;font-family:monospace;font-size:11px;opacity:0.75;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + esc(e.url) + '">' + esc(e.url) + '</td>' +
+          '<td style="padding:6px 8px;white-space:nowrap;">' +
+            (e.active ? '' : '<button class="btn btn-secondary" style="padding:3px 10px;font-size:11px;" onclick="activateSystem(&#39;' + esc(e.name) + '&#39;)">Activate</button> ') +
+            '<button class="btn btn-secondary" style="padding:3px 10px;font-size:11px;" onclick="editSystem(&#39;' + esc(e.name) + '&#39;)" title="Edit system (name, URL, API key)">Edit</button> ' +
+            '<button class="btn btn-secondary" style="padding:3px 10px;font-size:11px;" onclick="editSystemCredentials(&#39;' + esc(e.name) + '&#39;)" title="Edit connection credentials (CONN_*)">Credentials</button> ' +
+            '<button class="btn" style="padding:3px 10px;font-size:11px;background:var(--vscode-errorForeground);color:#fff;" onclick="removeSystem(&#39;' + esc(e.name) + '&#39;)">Remove</button>' +
+          '</td></tr>';
+      }).join('');
+      wrap.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:12px;">' +
+        '<thead><tr>' +
+          '<th style="text-align:left;padding:4px 8px;border-bottom:1px solid var(--vscode-panel-border);">Name</th>' +
+          '<th style="text-align:left;padding:4px 8px;border-bottom:1px solid var(--vscode-panel-border);">URL</th>' +
+          '<th style="padding:4px 8px;border-bottom:1px solid var(--vscode-panel-border);"></th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table>';
+      // Helper to repopulate a <select> by id, preserving or defaulting the current value
+      function repopulateEnvSelect(id, placeholder, defaultVal) {
+        var el = document.getElementById(id);
+        if (!el) { return; }
+        var prev = el.value || defaultVal || '';
+        el.innerHTML = (placeholder ? '<option value="">' + esc(placeholder) + '</option>' : '') +
+          envs.map(function(e) {
+            return '<option value="' + esc(e.name) + '"' + (e.name === prev ? ' selected' : '') + '>' + esc(e.name) + '</option>';
+          }).join('');
+        // Re-apply selection after innerHTML reset
+        if (prev && el.querySelector('option[value="' + prev + '"]')) { el.value = prev; }
+        else if (!placeholder && envs.length > 0) { el.value = envs[0].name; }
+      }
+
+      // Populate all env dropdowns
+      var activeEnv = (envs.find(function(e){ return e.active; }) || envs[0] || { name: 'TZ1' }).name;
+      var secondEnv = (envs.filter(function(e){ return !e.active; })[0] || envs[1] || envs[0] || { name: 'TZ2' }).name;
+      repopulateEnvSelect('exportEnv',   null, activeEnv);
+      repopulateEnvSelect('importEnv',   null, secondEnv);
+      repopulateEnvSelect('compareEnv1', null, activeEnv);
+      repopulateEnvSelect('compareEnv2', null, secondEnv);
+      repopulateEnvSelect('repSource',   null, activeEnv);
+      repopulateEnvSelect('repTarget',   null, secondEnv);
+      repopulateEnvSelect('obsEnv',      null, activeEnv);
+      repopulateEnvSelect('secretsEnvSelect', '— select environment —', '');
+
+      // Populate Connection credential source selects (Import + Replicate)
+      var importConn = document.getElementById('importConnSource');
+      var repConn = document.getElementById('repConnSource');
+      var defaultConn = (defaultConnSource || '').trim();
+      if (importConn) {
+        var prevImp = importConn.value || defaultConn;
+        importConn.innerHTML = '<option value="">auto (from path)</option>' +
+          envs.map(function(e) {
+            return '<option value="' + esc(e.name) + '"' + (e.name === prevImp ? ' selected' : '') + '>' + esc(e.name) + '</option>';
+          }).join('');
+        if (!prevImp && defaultConn && envs.some(function(e){ return e.name === defaultConn; })) {
+          importConn.value = defaultConn;
+        }
+      }
+      if (repConn) {
+        var prevRep = repConn.value;
+        repConn.innerHTML = '<option value="">same as source</option>' +
+          envs.map(function(e) {
+            return '<option value="' + esc(e.name) + '"' + (e.name === prevRep ? ' selected' : '') + '>' + esc(e.name) + '</option>';
+          }).join('');
+      }
+    }
+
+    function activateSystem(name) {
+      vscode.postMessage({ command: 'activateSystem', content: { name: name } });
+    }
+    function editSystem(name) {
+      vscode.postMessage({ command: 'editSystem', content: { name: name } });
+    }
+    function editSystemCredentials(name) {
+      vscode.postMessage({ command: 'editSystemCredentials', content: { name: name } });
+    }
+    function removeSystem(name) {
+      vscode.postMessage({ command: 'removeSystem', content: { name: name } });
+    }
+
+    document.getElementById('btnAddSystem').addEventListener('click', function() {
+      vscode.postMessage({ command: 'openAddSystem' });
+    });
+
+    document.getElementById('btnRefreshSystems').addEventListener('click', function() {
+      vscode.postMessage({ command: 'loadSystems' });
+    });
+    document.getElementById('btnCopyToEnv').addEventListener('click', function() {
+      vscode.postMessage({ command: 'copyCredentialsToEnv' });
+    });
+
+    // ── Secrets ───────────────────────────────────────────────────────────────
+    console.log('[WxO Panel] Setting up secrets');
+    var _secretsEnvName = '';
+
+    function esc(s) {
+      console.log('[WxO Panel] esc() called with:', typeof s, s && s.length > 50 ? s.substring(0,50)+'...' : s);
+      var t = String(s || '');
+      return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function secretRow(key, value, isComment, commentText, idx) {
+      if (isComment) {
+        return '<tr data-idx="' + idx + '" data-comment="1">' +
+          '<td colspan="2" style="padding:3px 4px;">' +
+            '<input type="text" value="' + esc(commentText || '') + '" ' +
+              'style="width:100%;background:transparent;border:none;color:var(--vscode-descriptionForeground);font-family:monospace;font-size:11px;" ' +
+              'onchange="updateSecretRow(' + idx + ',this)" />' +
+          '</td>' +
+          '<td><button style="background:none;border:none;cursor:pointer;color:var(--vscode-errorForeground);font-size:14px;" onclick="removeSecretRow(' + idx + ')">×</button></td>' +
+          '</tr>';
+      }
+      return '<tr data-idx="' + idx + '">' +
+        '<td style="padding:3px 4px;">' +
+          '<input type="text" value="' + esc(key) + '" placeholder="KEY" ' +
+            'style="width:100%;padding:3px 5px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-input-border,var(--vscode-panel-border));border-radius:2px;font-family:monospace;font-size:12px;" ' +
+            'onchange="updateSecretKey(' + idx + ',this)" />' +
+        '</td>' +
+        '<td style="padding:3px 4px;">' +
+          '<input type="text" value="' + esc(value) + '" placeholder="value" ' +
+            'style="width:100%;padding:3px 5px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-input-border,var(--vscode-panel-border));border-radius:2px;font-family:monospace;font-size:12px;" ' +
+            'onchange="updateSecretValue(' + idx + ',this)" />' +
+        '</td>' +
+        '<td><button style="background:none;border:none;cursor:pointer;color:var(--vscode-errorForeground);font-size:14px;" onclick="removeSecretRow(' + idx + ')">×</button></td>' +
+        '</tr>';
+    }
+
+    var _secretEntries = [];
+
+    function renderSecrets() {
+      var tbody = document.getElementById('secretsRows');
+      tbody.innerHTML = _secretEntries.map(function(e, i) {
+        return secretRow(e.key, e.value, e.isComment, e.text, i);
+      }).join('');
+    }
+
+    function updateSecretKey(idx, input) {
+      if (_secretEntries[idx]) { _secretEntries[idx].key = input.value; }
+    }
+    function updateSecretValue(idx, input) {
+      if (_secretEntries[idx]) { _secretEntries[idx].value = input.value; }
+    }
+    function updateSecretRow(idx, input) {
+      if (_secretEntries[idx]) { _secretEntries[idx].text = input.value; }
+    }
+    function removeSecretRow(idx) {
+      _secretEntries.splice(idx, 1);
+      renderSecrets();
+    }
+
+    document.getElementById('secretsEnvSelect').addEventListener('change', function() {
+      _secretsEnvName = this.value;
+      if (_secretsEnvName) {
+        vscode.postMessage({ command: 'loadSecrets', content: { envName: _secretsEnvName } });
+      } else {
+        document.getElementById('secretsTableWrap').style.display = 'none';
+        document.getElementById('secretsEmpty').style.display = 'none';
+        document.getElementById('secretsFilePath').textContent = '';
+      }
+    });
+
+    document.getElementById('btnReloadSecrets').addEventListener('click', function() {
+      if (_secretsEnvName) {
+        vscode.postMessage({ command: 'loadSecrets', content: { envName: _secretsEnvName } });
+      }
+    });
+
+    document.getElementById('btnAddSecret').addEventListener('click', function() {
+      _secretEntries.push({ key: '', value: '', isComment: false });
+      renderSecrets();
+    });
+
+    document.getElementById('btnSaveSecrets').addEventListener('click', function() {
+      if (!_secretsEnvName) { setStatus('Select an environment first.', true); return; }
+      // Sync current input values before saving
+      var rows = document.querySelectorAll('#secretsRows tr');
+      rows.forEach(function(row) {
+        var idx = parseInt(row.dataset.idx);
+        var inputs = row.querySelectorAll('input');
+        if (!isNaN(idx) && _secretEntries[idx]) {
+          if (row.dataset.comment === '1') {
+            _secretEntries[idx].text = inputs[0] ? inputs[0].value : _secretEntries[idx].text;
+          } else {
+            if (inputs[0]) { _secretEntries[idx].key = inputs[0].value; }
+            if (inputs[1]) { _secretEntries[idx].value = inputs[1].value; }
+          }
+        }
+      });
+      vscode.postMessage({ command: 'saveSecrets', content: { envName: _secretsEnvName, entries: _secretEntries } });
+    });
+
+    // Auto-load systems on startup (populates all env dropdowns including Export) and on
+    // first visit to Systems / Import / Replicate in case the user navigates there later.
+    var _systemsLoaded = false;
+    function ensureSystemsLoaded() {
+      if (!_systemsLoaded) {
+        _systemsLoaded = true;
+        var hint = document.getElementById('envLoadingHint');
+        if (hint) hint.style.display = 'block';
+        vscode.postMessage({ command: 'loadSystems' });
+      }
+    }
+    // Load immediately so Export tab (default) has real env names
+    ensureSystemsLoaded();
+
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var t = btn.dataset.tab || '';
+        if (t === 'systems' || t === 'import' || t === 'replicate' || t === 'export' || t === 'compare' || t === 'observability') {
+          ensureSystemsLoaded();
+        }
+      });
+    });
+
+    // ── Output panel ──────────────────────────────────────────────────────────
+    (function() {
+      var panel  = document.getElementById('outputPanel');
+      var body   = document.getElementById('outputBody');
+      var label  = document.getElementById('outputLabel');
+      var spinner = document.getElementById('outputSpinner');
+
+      document.getElementById('btnClearOutput').addEventListener('click', function() {
+        body.innerHTML = '';
+      });
+      document.getElementById('btnCloseOutput').addEventListener('click', function() {
+        panel.classList.remove('visible');
+      });
+
+      // Drag-to-resize: drag the top handle up/down to change panel height
+      var resizeHandle = document.getElementById('outputResizeHandle');
+      var startY = 0, startH = 0;
+      resizeHandle.addEventListener('mousedown', function(e) {
+        startY = e.clientY;
+        startH = panel.offsetHeight;
+        var onMove = function(ev) {
+          var delta = startY - ev.clientY;  // drag up = bigger
+          var newH = Math.max(60, Math.min(startH + delta, window.innerHeight * 0.7));
+          panel.style.height = newH + 'px';
+        };
+        var onUp = function() {
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        e.preventDefault();
+      });
+
+      // Classify a line of text for styling
+      function classifyLine(text, isError) {
+        if (isError || /(error|err|fail|failed|fatal)/i.test(text)) return 'err';
+        if (/[✓✔]|(ok|done|success|passed|imported|exported)/i.test(text)) return 'ok';
+        if (/[═─]{3,}/.test(text)) return 'sep';
+        if (/^[A-Z ]{4,}$/.test(text.trim())) return 'hdr';
+        return '';
+      }
+
+      // Expose handler so the message listener below can call it
+      window._handleScriptOutput = function(m) {
+        if (m.clear) {
+          body.innerHTML = '';
+          label.textContent = m.label || 'Output';
+          spinner.classList.add('running');
+          panel.classList.add('visible');
+          if (!panel.style.height) panel.style.height = '220px';
+        }
+        if (m.line !== undefined) {
+          var div = document.createElement('div');
+          div.className = 'output-line ' + classifyLine(m.line, !!m.isError);
+          div.textContent = m.line;
+          body.appendChild(div);
+          body.scrollTop = body.scrollHeight;
+        }
+        if (m.done) {
+          spinner.classList.remove('running');
+          var exitDiv = document.createElement('div');
+          exitDiv.className = m.exitCode === 0 ? 'output-exit-ok' : 'output-exit-err';
+          exitDiv.textContent = m.exitCode === 0
+            ? '✓ Completed successfully (exit 0)'
+            : '✗ Finished with errors (exit ' + m.exitCode + ')';
+          body.appendChild(exitDiv);
+          if (m.reportPath) {
+            var linkDiv = document.createElement('div');
+            linkDiv.className = 'output-report-link';
+            var a = document.createElement('a');
+            a.href = '#';
+            a.textContent = '📄 Open Report';
+            a.onclick = function(ev) {
+              ev.preventDefault();
+              if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'openReport', path: m.reportPath });
+            };
+            linkDiv.appendChild(a);
+            body.appendChild(linkDiv);
+            if (m.operation === 'export') updateExportReportLink(m.reportPath);
+            else if (m.operation === 'import') updateImportReportLink(m.reportPath);
+            else if (m.operation === 'compare') updateCompareReportLink(m.reportPath);
+            else if (m.operation === 'replicate') updateReplicateReportLink(m.reportPath);
+            else if (m.operation === 'observability') updateObsExportLink(m.reportPath);
+          }
+          body.scrollTop = body.scrollHeight;
+        }
+      };
+    })();
+
+    // ── Messages from extension ───────────────────────────────────────────────
+    console.log('[WxO Panel] Registering message listener');
+    if (_debug) vscode.postMessage({ command: 'debugLog', message: '[Panel] Message listener registered' });
+    window.addEventListener('message', e => {
+      const m = e.data;
+      console.log('[WxO Panel] Message received:', m.command);
+      if (m.command === 'scriptOutput') {
+        if (typeof window._handleScriptOutput === 'function') window._handleScriptOutput(m);
+      } else if (m.command === 'operationStatus') {
+        setStatus(m.message || '', !!m.isError);
+      } else if (m.command === 'depCheckResult') {
+        document.getElementById('depResults').innerHTML =
+          (m.checks || []).map(c =>
+            '<div class="' + (c.ok ? 'ok' : 'err') + '">' +
+            (c.ok ? '✓' : '✗') + ' <strong>' + esc(c.name) + '</strong>: ' + esc(c.msg) +
+            '</div>'
+          ).join('');
+      } else if (m.command === 'latestExportReport') {
+        updateExportReportLink(m.path);
+      } else if (m.command === 'latestImportReport') {
+        updateImportReportLink(m.path);
+      } else if (m.command === 'latestCompareReport') {
+        updateCompareReportLink(m.path);
+      } else if (m.command === 'latestReplicateReport') {
+        updateReplicateReportLink(m.path);
+      } else if (m.command === 'folderPicked') {
+        var p = m.path || '';
+        document.getElementById('importFolder').value = p;
+        var importConnEl = document.getElementById('importConnSource');
+        if (importConnEl && p) {
+          var pathSep = '[\\/]';
+          var exMatch = p.match(new RegExp(pathSep + 'Exports' + pathSep + '([^\\/]+)(?:' + pathSep + '|$)'));
+          var repMatch = p.match(new RegExp(pathSep + 'Replicate' + pathSep + '([^\\/]+)_to_[^\\/]+(?:' + pathSep + '|$)'));
+          var sys = (exMatch && exMatch[1]) || (repMatch && repMatch[1]) || null;
+          if (sys && Array.from(importConnEl.options).some(function(o){ return o.value === sys; })) {
+            importConnEl.value = sys;
+          }
+        }
+      } else if (m.command === 'systemsLoaded') {
+        _systemsLoaded = true;
+        var hint2 = document.getElementById('envLoadingHint');
+        if (hint2) hint2.style.display = 'none';
+        renderSystemsTable(m.envs, m.error, m.defaultConnSource);
+      } else if (m.command === 'objectListLoading') {
+        var st = document.getElementById(m.tab + 'LoadStatus');
+        if (st) st.textContent = 'Loading…';
+      } else if (m.command === 'objectListError') {
+        var st2 = document.getElementById(m.tab + 'LoadStatus');
+        if (st2) st2.textContent = '⚠ ' + (m.message || 'Error loading objects');
+      } else if (m.command === 'objectListLoaded') {
+        var p2 = m.tab;
+        var agents2  = m.agents  || [];
+        var tools2   = m.tools   || [];
+        var conns2   = m.connections || [];
+        // Render chips
+        renderChecks(p2 + 'AgentChecks', p2 + '-agent-chk', agents2);
+        renderChecks(p2 + 'ToolChecks',  p2 + '-tool-chk',  tools2);
+        renderChecks(p2 + 'ConnChecks',  p2 + '-conn-chk',  conns2);
+        // Update count badges
+        var ac = document.getElementById(p2 + 'AgentCount'); if (ac) ac.textContent = agents2.length ? '(' + agents2.length + ')' : '';
+        var tc = document.getElementById(p2 + 'ToolCount');  if (tc) tc.textContent = tools2.length  ? '(' + tools2.length  + ')' : '';
+        var cc = document.getElementById(p2 + 'ConnCount');  if (cc) cc.textContent = conns2.length  ? '(' + conns2.length  + ')' : '';
+        // Status
+        var st3 = document.getElementById(p2 + 'LoadStatus');
+        var total = agents2.length + tools2.length + conns2.length;
+        if (st3) st3.textContent = total ? '✓ Loaded ' + total + ' objects' : 'No objects found';
+      } else if (m.command === 'traceSearchResults') {
+        var section = document.getElementById('obsResultsSection');
+        var summary = document.getElementById('obsResultsSummary');
+        var body = document.getElementById('obsResultsBody');
+        var rawEl = document.getElementById('obsResultsRaw');
+        var tableWrap = document.getElementById('obsResultsTableWrap');
+        var obsSearchEnv = m.env || 'TZ1';
+        if (section && summary && body) {
+          section.style.display = '';
+          summary.textContent = m.summary || '';
+          var traces = m.traces || [];
+          if (rawEl) {
+            rawEl.style.display = (traces.length === 0 && m.raw) ? '' : 'none';
+            rawEl.textContent = m.raw || '';
+          }
+          if (tableWrap) tableWrap.style.display = traces.length > 0 ? '' : 'none';
+          body.innerHTML = traces.map(function(t) {
+            var tid = t.traceId || '';
+            var tidEsc = tid.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+            var start = esc(t.startTime || '—');
+            var dur = esc(t.duration || '—');
+            var spans = esc(t.spans || '—');
+            var agent = esc(t.agentName || '—');
+            var user = esc(t.userId || '—');
+            return '<tr style="border-bottom:1px solid var(--vscode-panel-border);">' +
+              '<td style="padding:6px 8px;font-family:monospace;font-size:11px;">' +
+              '<a href="#" class="trace-id-link" data-trace-id="' + tidEsc + '" data-env="' + esc(obsSearchEnv) + '" data-agent="' + esc(t.agentName || '') + '" title="Download trace">' + tidEsc + '</a>' +
+              '</td>' +
+              '<td style="padding:6px 8px;">' + start + '</td>' +
+              '<td style="padding:6px 8px;">' + dur + '</td>' +
+              '<td style="padding:6px 8px;">' + spans + '</td>' +
+              '<td style="padding:6px 8px;">' + agent + '</td>' +
+              '<td style="padding:6px 8px;max-width:120px;overflow:hidden;text-overflow:ellipsis;" title="' + esc(t.userId || '') + '">' + user + '</td>' +
+              '<td style="padding:6px 8px;"><button class="btn btn-secondary" style="padding:2px 8px;font-size:11px;" data-trace-id="' + tidEsc + '">Export</button></td>' +
+              '</tr>';
+          }).join('');
+          body.querySelectorAll('button[data-trace-id]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var row = this.closest('tr');
+              var id = btn.getAttribute('data-trace-id');
+              var agentCell = row ? row.cells[4] : null;
+              var agent = (agentCell ? agentCell.textContent || '' : '').trim();
+              if (agent === '—') agent = '';
+              if (id) {
+                document.getElementById('obsTraceId').value = id;
+                document.getElementById('obsAgentName').value = agent;
+                document.getElementById('obsTraceId').focus();
+              }
+            });
+          });
+          body.querySelectorAll('a.trace-id-link').forEach(function(a) {
+            a.addEventListener('click', function(ev) {
+              ev.preventDefault();
+              var id = this.getAttribute('data-trace-id');
+              var env = this.getAttribute('data-env');
+              var agent = this.getAttribute('data-agent') || '';
+              if (id && env && typeof vscode !== 'undefined') {
+                vscode.postMessage({ command: 'exportTraceById', content: { traceId: id, env: env, agentName: agent } });
+              }
+            });
+          });
+        }
+      } else if (m.command === 'secretsLoaded') {
+        _secretsEnvName = m.envName || '';
+        _secretEntries = (m.entries || []).map(function(e) {
+          return { key: e.key || '', value: e.value || '', isComment: !!e.isComment, text: e.text || '' };
+        });
+        var pathEl = document.getElementById('secretsFilePath');
+        pathEl.textContent = m.filePath ? m.filePath : '';
+        var wrap = document.getElementById('secretsTableWrap');
+        var empty = document.getElementById('secretsEmpty');
+        if (_secretEntries.length > 0) {
+          wrap.style.display = '';
+          empty.style.display = 'none';
+        } else {
+          wrap.style.display = '';
+          empty.style.display = '';
+        }
+        renderSecrets();
+      }
+    });
+    console.log('[WxO Panel] All event listeners registered. Script complete.');
+  </script>
+</body>
+</html>

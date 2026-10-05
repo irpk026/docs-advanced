@@ -1,0 +1,53 @@
+# Exercise 4 — route inventory questions to the lab agent as a collaborator.
+#
+# The agent you built in Section 4 is designed to be called by a machine: it
+# takes a structured alert and returns strict JSON. This orchestrator puts a
+# conversational front door on it, so a buyer can ask in plain language and the
+# routing happens behind the scenes.
+#
+# Import it with:
+#   orchestrate agents import -f inventory_orchestrator.yaml
+#
+# Then open the wxO chat UI, pick Inventory Desk, and try:
+#   "A winter jacket at the Manhattan store is selling 12x faster than normal
+#    and we have 75 units left. What should we do?"
+
+spec_version: v1
+kind: native
+style: react_core
+name: inventory_orchestrator
+display_name: Inventory Desk
+llm: groq/openai/gpt-oss-120b
+
+description: |
+  Conversational front door for retail inventory questions. Routes velocity
+  spike and stockout analysis to the Fashion Inventory Alert Processor, and
+  answers general questions directly.
+
+instructions: |
+  You are the Inventory Desk. You help buyers and store managers reason about
+  stock levels.
+
+  Routing:
+  - When the question concerns a specific product selling abnormally fast, a
+    possible stockout, a reorder decision, or a pricing response to demand,
+    delegate to the Fashion_Inventory_Alert_Processor collaborator.
+  - Before delegating, make sure you have: storeId, sku (or enough detail to
+    identify the product), current stock, and some sense of how fast it is
+    selling. Ask for whatever is missing — do not invent values.
+  - Answer general questions about inventory concepts directly, without
+    delegating.
+
+  Presenting results:
+  - The collaborator returns a structured JSON decision. Do not show the raw
+    JSON. Summarise it for a human: the urgency level, what you recommend, how
+    many units to reorder, and the one or two reasons that drove the call.
+  - If it recommends a price change, say so explicitly and give the percentage.
+  - Always name the store and product you analysed, so there is no ambiguity
+    about what the recommendation applies to.
+
+# Must match the agent name from Section 4.5 exactly (case-sensitive).
+collaborators:
+  - Fashion_Inventory_Alert_Processor
+
+tools: []

@@ -22,15 +22,39 @@ mkdocs.yml                      # Site configuration and navigation
 docs/
 ├── index.md                    # Workshop landing page
 ├── assets/                     # Shared images
-├── setup/                      # Part 0 — accounts, Bob IDE, ADK setup
+├── setup/                      # Accounts, Bob IDE, workspace, ADK
 └── lab/                        # The lab: event-driven AI agents
-    ├── index.md                # Lab guide
+    ├── index.md                # Lab guide (Sections 0–7)
     ├── exercises.md            # Stretch exercises
-    ├── import-all.sh           # wxO setup verification script (downloadable)
+    ├── exercises/              # Starter assets for the stretch exercises
+    ├── check-lab.sh            # Full preflight check (downloadable)
+    ├── import-all.sh           # wxO-only verification (downloadable)
     └── bobchestrate-confluent.zip   # The single workspace attendees download
+INSTRUCTOR.md                   # Run-day notes — NOT published
 src/advanced-bob-config/        # Source of the .bob/ workspace configuration
 archive/                        # Superseded workspace bundles, kept for reference
 ```
+
+## Checking an environment
+
+`docs/lab/check-lab.sh` verifies tooling, workspace files, `.env` credentials,
+Confluent topics and schemas, and the watsonx Orchestrate artifacts — each failure
+naming the lab section that fixes it. Run it from an extracted
+`bobchestrate-confluent/` workspace:
+
+```bash
+bash check-lab.sh          # read-only checks
+bash check-lab.sh --e2e    # plus a real end-to-end pipeline test
+```
+
+It exits non-zero on failure, so it also works in CI.
+
+## Publication boundary
+
+MkDocs publishes `docs/` only. Anything placed there is public once the site is
+live — including files MkDocs doesn't render, like the `.sh` and `.py` assets,
+which are served verbatim. HTML comments in `.md` files survive into the page
+source, so instructor notes belong in `INSTRUCTOR.md`, not in `<!-- ... -->`.
 
 The attendee workspace is distributed as `docs/lab/bobchestrate-confluent.zip`.
 It contains both the `.bob/` Bob IDE configuration and the pre-built

@@ -1,7 +1,11 @@
+<p class="os-lockup" markdown>
+![OpenSlava 2026 — The future is agentic. The source is human.](assets/openslava-2026.png)
+</p>
+
 # Event-Driven AI Agents with watsonx Orchestrate
 
 <p align="center">
-  <img src="assets/BWS_Advanced.png" alt="Advanced watsonx Orchestrate workshop" width="640">
+  <img src="assets/BWS_Advanced.png" alt="Advanced watsonx Orchestrate workshop" width="560">
 </p>
 
 !!! quote "Openslava 2026 — hands-on lab"
@@ -41,15 +45,15 @@ end to end.
 
 ## Agenda
 
-| | Section | Time | Difficulty |
-| --- | --- | --- | --- |
-| **0** | [Setup & Environment](setup/index.md) — accounts, Bob IDE, workspace, ADK | 30 min | ⭐ |
-| **1** | [Event-Driven AI Agents](lab/index.md) — Confluent + Flink SQL + wxO agent | 85–95 min | ⭐⭐⭐⭐ |
-| | [Stretch exercises](lab/exercises.md) — optional, go deeper | 20 min | ⭐⭐⭐ |
+| Section | Time | Difficulty |
+| --- | --- | --- |
+| [**Setup & Environment**](setup/index.md) — accounts, Bob IDE, workspace, ADK | 30 min | ⭐ |
+| [**The Lab**](lab/index.md) — Confluent + Flink SQL + watsonx Orchestrate agent | 85–95 min | ⭐⭐⭐⭐ |
+| [**Stretch exercises**](lab/exercises.md) — optional, go deeper | 20 min | ⭐⭐⭐ |
 
 ## Before you start
 
-You need the following. Part 0 walks you through every one of them — don't install
+You need the following. The setup guide walks you through every one of them — don't install
 anything ahead of the session unless you want to save time.
 
 - [ ] Python **3.11–3.13**
@@ -97,5 +101,5 @@ Keep one Bob session per topic. Start a new task when you switch to something un
 
 ---
 
-[Start with Part 0 — Setup →](setup/index.md){ .md-button .md-button--primary }
+[Start with Setup →](setup/index.md){ .md-button .md-button--primary }
 [Jump to the lab](lab/index.md){ .md-button }

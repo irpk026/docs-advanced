@@ -10,14 +10,14 @@
 
 ## Before you start
 
-This lab assumes you completed [Part 0 — Setup & Environment](../setup/index.md).
+This lab assumes you completed [Setup & Environment](../setup/index.md).
 You should already have the `bobchestrate-confluent/` workspace open in Bob IDE, a
 Python virtual environment, the ADK installed, and `orchestrate agents list` working.
 
-You also need a **Confluent Cloud** account. Don't sign up yet — the account step is
-[Section 2.1](#21-create-your-account-and-redeem-the-workshop-promo-code), and it matters
-that you redeem the workshop promo code at the right moment so you're never asked for a
-credit card. Your instructor will give you the code.
+You also need a **Confluent Cloud** account. Don't create it yet — that's
+[Section 2.1](#21-create-your-account-and-redeem-the-workshop-promo-code), and the order
+matters: a promo code has to go in at the right moment so you're never asked for a credit
+card. The codes are in that section.
 
 ### Install the lab dependencies
 
@@ -33,10 +33,19 @@ and the rest, at the exact versions pinned in `uv.lock`.
 
 ### Create your `.env` file
 
-```bash
-cd fashion-inventory-consumer
-cp .env.example .env
-```
+=== "Mac / Linux"
+
+    ```bash
+    cd fashion-inventory-consumer
+    cp .env.example .env
+    ```
+
+=== "Windows"
+
+    ```powershell
+    cd fashion-inventory-consumer
+    Copy-Item .env.example .env
+    ```
 
 Leave the values as placeholders for now — you'll fill in the Confluent credentials in
 [Section 2](#section-2-confluent-cloud-setup-20-min) and the watsonx Orchestrate
@@ -47,7 +56,7 @@ credentials in [Section 5](#section-5-configure-the-python-consumer-5-min).
     - [ ] `uv sync --locked` completed without errors
     - [ ] `.env` exists in `fashion-inventory-consumer/`
     - [ ] `orchestrate agents list` returns without error
-    - [ ] You can log in to Confluent Cloud
+    - [ ] You have the promo code to hand (see [Section 2.1](#21-create-your-account-and-redeem-the-workshop-promo-code))
 
 ---
 
@@ -88,8 +97,8 @@ Bob (in **WXO Agent Architect mode**) handles the watsonx Orchestrate side — c
 | ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | **Section 4.1 — Store Location Tool**   | Copy-paste the prompt block provided in the section                                          |
 | **Section 4.2 — Weather Forecast Tool** | Copy-paste the prompt block provided in the section                                          |
-| **Section 4.3 — Knowledge Base**        | Copy-paste the prompt block provided in the section                                          |
-| **Section 4.4 — Agent**                 | Copy-paste the prompt block provided in the section                                          |
+| **Section 4.4 — Knowledge Base**        | Copy-paste the prompt block provided in the section                                          |
+| **Section 4.5 — Agent**                 | Copy-paste the prompt block provided in the section                                          |
 | **Section 5 — Consumer config**         | `"Show me which environment variables the orchestrate_client.py needs"`                    |
 | **Debugging auth errors**                | `"My WXO_API_KEY is correct but I get 401 — what could cause this?"`                      |
 | **Debugging schema validation**          | `"The agent response is failing validation on reasoning — what does the schema require?"` |
@@ -215,8 +224,6 @@ and a Flink compute pool.
     confirm your topics and Flink query are running.
 
 ### 2.1 Create your account and redeem the workshop promo code
-
-<!-- INSTRUCTOR: if you have an event-specific promo code, add it to the table below. -->
 
 !!! danger "Promo codes — enter these instead of a credit card"
     | Code | What it does | When to enter it |
@@ -936,21 +943,47 @@ The most common causes:
 
 ---
 
-## Verify your watsonx Orchestrate setup
+## Check your setup
 
-After completing Section 4, run the verification script to confirm the tools, knowledge
-base and agent all exist:
+Two scripts verify your environment. Download either into your `bobchestrate-confluent/`
+folder and run it from there.
 
-1. Download [:material-download: **`import-all.sh`**](import-all.sh) into your
-   `bobchestrate-confluent/` folder
-2. Run it with your wxO environment active:
+!!! info "Windows users"
+    Both are bash scripts. Run them from **Git Bash** (installed with
+    [Git for Windows](https://git-scm.com/download/win)) or **WSL** — not PowerShell.
+    In Bob IDE you can open a Git Bash terminal from the dropdown next to the **+** in
+    the terminal panel. Everything else in this lab runs fine in PowerShell.
+
+### Full preflight check
+
+[:material-download: **`check-lab.sh`**](check-lab.sh) checks everything the lab needs, in
+the order the lab needs it — tooling, workspace files, `.env` credentials, Confluent
+topics and schemas, and the watsonx Orchestrate tools, knowledge base and agent. Each
+failure names the section that fixes it.
+
+```bash
+bash check-lab.sh
+```
+
+It is read-only and safe to run at any point — including before you've configured
+anything, to see what's still outstanding. Add `--e2e` once Section 4 is done to run a
+real end-to-end test: it produces events, waits for the agent decision, and confirms the
+result was published.
+
+```bash
+bash check-lab.sh --e2e
+```
+
+The script exits non-zero if any check fails, so it also works in CI.
+
+### watsonx Orchestrate only
+
+[:material-download: **`import-all.sh`**](import-all.sh) is the narrower check — just the
+tools, knowledge base and agent from Section 4:
 
 ```bash
 bash import-all.sh
 ```
-
-Every line should show ✅. Anything showing ❌ points you back to the section that
-creates it.
 
 ---
 

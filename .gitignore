@@ -1,4 +1,22 @@
+# Build output
 site/
+
+# Python
 .venv/
 __pycache__/
+*.pyc
+
+# OS
 .DS_Store
+
+# Credentials — never commit these
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Extracted attendee workspace (shipped as a zip in docs/lab/)
+bobchestrate-confluent/
+bobchestrate-advanced/
+retail-inventory-optimization/

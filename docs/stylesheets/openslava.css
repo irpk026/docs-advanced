@@ -1,0 +1,268 @@
+/* ============================================================
+   OpenSlava 2026 theme for MkDocs Material
+   Palette sampled from openslava.sk/2026 (Accenture purple family)
+   ============================================================ */
+
+:root {
+  --os-purple:       #a100ff;  /* Accenture purple — nav hover / active */
+  --os-purple-deep:  #7500c0;  /* buttons, icons, CTA text */
+  --os-purple-dark:  #420b93;  /* dark button fill */
+  --os-orchid:       #dd81ff;  /* workshop track, gradient start */
+  --os-blue:         #1238ff;  /* workshop track, gradient end */
+  --os-ink:          #0a0a0a;  /* page black */
+  --os-logo-ink:     #460073;  /* OPENSLAVA`26 wordmark purple */
+  --os-paper:        #f3f3f1;  /* logo lockup background */
+
+  /* The site's workshop-track gradient — this lab is a Day 1 workshop */
+  --os-gradient: linear-gradient(90deg, var(--os-orchid) 0%, var(--os-blue) 100%);
+
+  /* Material reads these. Defined unconditionally so the header always
+     has a background and readable text, whatever the colour scheme. */
+  --md-primary-fg-color:        var(--os-purple-deep);
+  --md-primary-fg-color--light: var(--os-purple);
+  --md-primary-fg-color--dark:  var(--os-purple-dark);
+  --md-primary-bg-color:        #ffffff;
+  --md-primary-bg-color--light: #ffffffb3;
+
+  --md-accent-fg-color:             var(--os-purple);
+  --md-accent-fg-color--transparent: #a100ff14;
+}
+
+/* ── Light scheme ─────────────────────────────────────────── */
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: var(--os-purple-deep);
+}
+
+/* ── Dark scheme — mirrors the conference site's near-black ── */
+[data-md-color-scheme="slate"] {
+  --md-hue: 265;
+
+  --md-primary-fg-color:        var(--os-ink);
+  --md-primary-fg-color--light: var(--os-purple);
+  --md-primary-fg-color--dark:  #000000;
+  --md-primary-bg-color:        #ffffff;
+
+  --md-accent-fg-color:              var(--os-orchid);
+  --md-accent-fg-color--transparent: #dd81ff1f;
+
+  --md-default-bg-color: var(--os-ink);
+  --md-typeset-a-color:  var(--os-orchid);
+}
+
+/* Header and tabs: keep Material's own colours, just guarantee contrast. */
+.md-header,
+.md-tabs {
+  color: var(--md-primary-bg-color);
+}
+
+/* ── Gradient rule under the header, as on the site ───────── */
+.md-header {
+  box-shadow: none;
+  border-bottom: 3px solid transparent;
+  border-image-source: var(--os-gradient);
+  border-image-slice: 1;
+}
+
+/* ── Buttons pick up the brand purple ─────────────────────── */
+.md-typeset .md-button--primary {
+  background: var(--os-purple-deep);
+  border-color: var(--os-purple-deep);
+  color: #fff;
+}
+
+.md-typeset .md-button--primary:hover,
+.md-typeset .md-button--primary:focus {
+  background: var(--os-purple);
+  border-color: var(--os-purple);
+  color: #fff;
+}
+
+.md-typeset .md-button:not(.md-button--primary):hover,
+.md-typeset .md-button:not(.md-button--primary):focus {
+  background: var(--os-purple);
+  border-color: var(--os-purple);
+  color: #fff;
+}
+
+/* ── Headings keep their normal colour; the gradient is a bar ─ */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset h1 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.md-typeset h2 {
+  position: relative;
+  padding-bottom: .3rem;
+}
+
+.md-typeset h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3.5rem;
+  height: 2px;
+  background: var(--os-gradient);
+  border-radius: 2px;
+}
+
+/* ── Hero images sit on a subtle brand-tinted panel ───────── */
+.md-typeset p[align="center"] {
+  padding: 1.25rem 0;
+  border-radius: .4rem;
+  background: radial-gradient(ellipse at center, #a100ff14, transparent 70%);
+}
+
+/* ── Official event lockup: a complete, self-contained box ── */
+/* The supplied PNG has an opaque #f3f3f1 ground, so the box uses the same
+   colour and the mark sits inside it at natural size — no stretching, and no
+   hard edge where the artwork stops. Identical in light and dark themes,
+   because the mark's #460073 ink needs a light ground to stay legible. */
+.md-typeset p.os-lockup {
+  margin: 0 0 1.75rem;
+  padding: 2rem 1.5rem;
+  background: var(--os-paper);
+  border: 1px solid #0000000f;
+  border-radius: .5rem;
+  text-align: center;
+  line-height: 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 1px 3px #0000000f;
+}
+
+/* Workshop-track gradient closes the bottom of the box. */
+.md-typeset p.os-lockup::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: var(--os-gradient);
+}
+
+.md-typeset p.os-lockup img {
+  width: 100%;
+  max-width: 620px;
+  height: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@media screen and (max-width: 44.98em) {
+  .md-typeset p.os-lockup { padding: 1.25rem .75rem; }
+}
+
+/* ── Tables: branded header row ───────────────────────────── */
+.md-typeset table:not([class]) th {
+  background: var(--os-purple-deep);
+  color: #fff;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background: var(--os-purple-dark);
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.md-footer-meta {
+  background: var(--os-ink);
+}
+
+
+/* ── Tickable progress checkboxes ─────────────────────────── */
+.md-typeset .progress-bar-row {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: .4rem 0 .3rem;
+  font-size: .72rem;
+}
+
+.md-typeset .progress-count {
+  font-weight: 700;
+  color: var(--os-purple-deep);
+  letter-spacing: .02em;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .progress-count {
+  color: var(--os-orchid);
+}
+
+.md-typeset .progress-bar-row.is-complete .progress-count::after {
+  content: " ✓";
+}
+
+.md-typeset .progress-reset {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  background: transparent;
+  color: var(--md-default-fg-color--light);
+  border-radius: .8rem;
+  padding: .05rem .5rem;
+  font-size: .64rem;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.md-typeset .progress-reset:hover {
+  border-color: var(--os-purple);
+  color: var(--os-purple);
+}
+
+
+
+/* ── Make the custom checkboxes visible AND clickable ─────── */
+/* Material hides the real input (opacity:0; z-index:-1) and paints the box as
+   a masked icon in --md-default-fg-color--lightest, which is near-invisible.
+   Give the box real contrast, and lift the input above the page so it can
+   actually be clicked. */
+
+.md-typeset .task-list-indicator::before {
+  background-color: var(--os-purple-deep);
+  opacity: .45;
+  transition: opacity .15s ease, background-color .15s ease;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .task-list-indicator::before {
+  background-color: var(--os-orchid);
+  opacity: .55;
+}
+
+/* Ticked */
+.md-typeset [type="checkbox"]:checked + .task-list-indicator::before {
+  background-color: var(--os-purple);
+  opacity: 1;
+}
+
+[data-md-color-scheme="slate"] .md-typeset [type="checkbox"]:checked + .task-list-indicator::before {
+  background-color: var(--os-orchid);
+  opacity: 1;
+}
+
+/* Lift the input so clicks land on it, sized over the drawn box. */
+.md-typeset .task-list-item.is-tickable [type="checkbox"] {
+  z-index: 2;
+  opacity: 0;
+  cursor: pointer;
+  width: 1.4em;
+  height: 1.4em;
+  top: .3em;
+}
+
+[dir="ltr"] .md-typeset .task-list-item.is-tickable [type="checkbox"] { left: -1.6em; }
+[dir="rtl"] .md-typeset .task-list-item.is-tickable [type="checkbox"] { right: -1.6em; }
+
+.md-typeset .task-list-item.is-tickable:hover .task-list-indicator::before {
+  opacity: .8;
+}
+
+/* Ticked rows fade, but stay readable. */
+.md-typeset .task-list-item.is-done {
+  opacity: .6;
+}
