@@ -44,7 +44,7 @@ end to end.
 | | Section | Time | Difficulty |
 | --- | --- | --- | --- |
 | **0** | [Setup & Environment](setup/index.md) — accounts, Bob IDE, workspace, ADK | 30 min | ⭐ |
-| **1** | [Event-Driven AI Agents](lab/index.md) — Confluent + Flink SQL + wxO agent | 75–90 min | ⭐⭐⭐⭐ |
+| **1** | [Event-Driven AI Agents](lab/index.md) — Confluent + Flink SQL + wxO agent | 85–95 min | ⭐⭐⭐⭐ |
 | | [Stretch exercises](lab/exercises.md) — optional, go deeper | 20 min | ⭐⭐⭐ |
 
 ## Before you start
@@ -56,7 +56,7 @@ anything ahead of the session unless you want to save time.
 - [ ] [`uv`](https://docs.astral.sh/uv/) package manager
 - [ ] **IBM Bob IDE** + a Bob trial account
 - [ ] A **watsonx Orchestrate** instance (free trial, or one provided by your instructor)
-- [ ] A **Confluent Cloud** account (free trial is fine)
+- [ ] A **Confluent Cloud** account — created during the lab with an instructor-supplied promo code, so **no credit card is needed**
 
 !!! tip "Region matters"
     If you create your own watsonx Orchestrate trial, use **Frankfurt (eu-de)** so the

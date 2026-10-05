@@ -4,7 +4,7 @@
   <img src="images/bobchestrate-confluent.png" alt="Event-driven AI agents lab" width="640">
 </p>
 
-**Duration:** 75–90 minutes · **Difficulty:** ⭐⭐⭐⭐
+**Duration:** 85–95 minutes · **Difficulty:** ⭐⭐⭐⭐
 
 ---
 
@@ -14,8 +14,10 @@ This lab assumes you completed [Part 0 — Setup & Environment](../setup/index.m
 You should already have the `bobchestrate-confluent/` workspace open in Bob IDE, a
 Python virtual environment, the ADK installed, and `orchestrate agents list` working.
 
-You also need a **Confluent Cloud** account — the free trial is enough.
-Sign up at [confluent.cloud](https://confluent.cloud) if you don't have one.
+You also need a **Confluent Cloud** account. Don't sign up yet — the account step is
+[Section 2.1](#21-create-your-account-and-redeem-the-workshop-promo-code), and it matters
+that you redeem the workshop promo code at the right moment so you're never asked for a
+credit card. Your instructor will give you the code.
 
 ### Install the lab dependencies
 
@@ -37,7 +39,7 @@ cp .env.example .env
 ```
 
 Leave the values as placeholders for now — you'll fill in the Confluent credentials in
-[Section 2](#section-2-confluent-cloud-setup-15-min) and the watsonx Orchestrate
+[Section 2](#section-2-confluent-cloud-setup-20-min) and the watsonx Orchestrate
 credentials in [Section 5](#section-5-configure-the-python-consumer-5-min).
 
 !!! success "Ready to start when"
@@ -203,20 +205,122 @@ retail-inventory-optimization/
 
 ---
 
-## Section 2 — Confluent Cloud Setup (15 min)
+## Section 2 — Confluent Cloud Setup (20 min)
 
-You need a Confluent Cloud environment with three topics, a Schema Registry, and a Flink compute pool.
+You need a Confluent Cloud account, an environment with three topics, a Schema Registry,
+and a Flink compute pool.
 
-> **Already done this?** If you completed the original Confluent setup lab, you can skip to Section 3 — just confirm your topics and Flink query are running.
+!!! info "Already have a Confluent Cloud account with the lab topics?"
+    Skip to [Section 3](#section-3-test-the-velocity-detection-pipeline-10-min) — just
+    confirm your topics and Flink query are running.
 
-### 2.1 Create your environment and cluster
+### 2.1 Create your account and redeem the workshop promo code
+
+<!-- INSTRUCTOR: if you have an event-specific promo code, add it to the table below. -->
+
+!!! danger "Promo codes — enter these instead of a credit card"
+    | Code | What it does | When to enter it |
+    | --- | --- | --- |
+    | `CONFLUENTDEV1` | Skips payment entirely for **30 days** | At the payment screen, **step 4** below |
+    | `KAFKA101` | Adds **$25** of free usage | After your cluster exists — see [Redeeming the code later](#redeeming-the-code-later) |
+
+    Both codes are published by Confluent for people working through their tutorials —
+    see [Get Started with Apache Kafka on Confluent Cloud](https://developer.confluent.io/courses/apache-kafka/get-started-hands-on/),
+    which also walks the sign-up screens one by one if anything below looks different.
+
+!!! warning "`CONFLUENTDEV1` only works on a brand-new account"
+    It's restricted to **first-time** Confluent accounts. If you've signed up before, it
+    will be rejected and you'll be asked for a payment method — ask your instructor for
+    the event code instead. `KAFKA101` works either way.
+
+Confluent Cloud requires a payment method before you can create a cluster — *unless* you
+redeem a promo code first. So the order of these steps matters.
+
+1. Go to the [Confluent Cloud signup page](https://www.confluent.io/confluent-cloud/tryfree/)
+   and click **Start Free**. Signing up itself asks for no card.
+2. Confirm your email address via the link Confluent sends you, then work through the
+   onboarding screens.
+3. Confluent offers to set up a first cluster. Keep the default choice, or pick your
+   preferred cloud provider, region and availability — it doesn't matter for this lab.
+   If you're asked **"Do you need a private network?"**, answer **No**.
+4. **You now reach the payment screen.** Do **not** enter card details. At the bottom,
+   find **"Have a promo code?"** and click **Click Here** — then enter **`CONFLUENTDEV1`**.
+5. When asked how you want to start, choose **Stream your own data**.
+
+!!! note "No verification email? (step 2)"
+    Check your email address for a verification link — it is **sent to new users only**.
+    If you already have an account and cannot sign in, reset your password or contact
+    Confluent support for assistance.
+
+!!! warning "The promo code link is easy to miss"
+    On the payment screen the code goes behind a small **"Have a promo code?" → Click
+    Here** link at the **bottom** of the form — not in the card fields. If you don't spot
+    it, you'll start filling in card details instead. Scroll down and look for it.
+
+!!! warning "Redeem the code before you create a cluster"
+    If you click past the payment screen without entering the code, Confluent will block
+    cluster creation until a payment method exists. You can still fix it — see
+    [Redeeming the code later](#redeeming-the-code-later) — just do it before Section 2.2.
+
+!!! note "Onboarding may create a cluster for you"
+    That's fine. In [Section 2.2](#22-create-your-environment-and-cluster) you create the
+    environment and cluster this lab uses by name — you can leave the onboarding cluster
+    alone, or delete it afterwards to save credit.
+
+#### Redeeming the code later
+
+Use this to add **`KAFKA101`** for the extra $25, or to recover if you clicked past the
+payment screen without entering `CONFLUENTDEV1`:
+
+=== "From the billing page"
+
+    1. In the Confluent Cloud console, open the **Settings** menu (upper-right corner)
+    2. Choose **Billing & payment**
+    3. Select the **Payment details & contacts** tab
+    4. Click **+ Promo code** and enter the code
+    5. Your promotional balance appears on the same page
+
+=== "While creating the cluster"
+
+    On the **New cluster** screen, after you click **Continue**, enter the promo code
+    before you click **Launch**.
+
+=== "From the Confluent CLI"
+
+    ```bash
+    confluent login
+    confluent billing promo add KAFKA101
+
+    # Check what's applied
+    confluent billing promo list
+    ```
+
+!!! tip "What you get"
+    New accounts also receive **$400 of free credit**, valid for 30 days or until the
+    credit runs out — whichever comes first. The workshop uses a tiny fraction of that.
+    Note that **prepaid cards are not supported** by Confluent billing, which is another
+    reason to use the promo code.
+
+!!! success "Checkpoint"
+    **Settings** → **Billing & payment** → **Payment details & contacts** shows a
+    promotional balance, and no credit card is on file. You're ready to create resources.
+
+### 2.2 Create your environment and cluster
 
 1. Log in to [confluent.cloud](https://confluent.cloud)
 2. Click **Add environment** → name it `retail-inventory-bootcamp`
-3. Inside the environment, click **Add cluster** → choose **Basic** → select a cloud/region → name it `retail-inventory-cluster`
-4. Note the **Bootstrap server URL** — you'll need it for `.env`
+3. Inside the environment, click **Add cluster** → choose **Basic**
+4. When asked **"Do you need a private network?"** — answer **No**
+5. Select a cloud provider and region, then name the cluster `retail-inventory-cluster`
+6. Note the **Bootstrap server URL** — you'll need it for `.env`
 
-### 2.2 Create three Kafka topics
+!!! warning "Answer No to the private networking question"
+    This lab connects from your laptop over the public internet. Choosing private
+    networking (VPC peering, PrivateLink, Transit Gateway) puts the cluster behind a
+    network you don't have access to from the workshop Wi-Fi, and the Python producer and
+    consumer will fail to connect.
+
+### 2.3 Create three Kafka topics
 
 In your cluster, navigate to **Topics** → **Add topic**. Create all three:
 
@@ -226,7 +330,7 @@ In your cluster, navigate to **Topics** → **Add topic**. Create all three:
 | `fashion.velocity.anomalies` | 3          |
 | `fashion.agent.responses`    | 3          |
 
-### 2.3 Register JSON Schemas
+### 2.4 Register JSON Schemas
 
 For each topic, attach the corresponding schema from `retail-inventory-optimization/fashion-inventory-setup/schemas/`:
 
@@ -238,13 +342,13 @@ For each topic, attach the corresponding schema from `retail-inventory-optimizat
 
 **Steps for each topic:** click the topic → **Schema** tab → **Add schema** → paste the JSON content.
 
-### 2.4 Create a Flink compute pool
+### 2.5 Create a Flink compute pool
 
 1. In your environment, click **Stream Processing** (left sidebar)
 2. Click **Create compute pool** → choose a region → name it `retail-inventory-flink` → **Continue**
 3. Once the pool is ready, click **Open SQL workspace**
 
-### 2.5 Deploy the velocity spike detector
+### 2.6 Deploy the velocity spike detector
 
 In the Flink SQL workspace, paste and run the query from `retail-inventory-optimization/fashion-inventory-setup/sql/velocity_anomaly_detection.sql`.
 
@@ -269,7 +373,7 @@ WHERE eventType = 'SALE'
 
 > **⚠️ Demo simplification — hardcoded baseline:** The query uses a fixed baseline velocity of `2.0 units/hour`. In production you would compute a rolling 7-day average per SKU using Flink's windowing functions (`TUMBLE`, `HOP`, or `CUMULATE` windows with `ORDER BY eventTime`). The fixed value makes the demo deterministic and removes the warm-up period that a real rolling window requires. The pipeline logic and alert schema are production-grade; only the baseline calculation is simplified.
 
-### 2.6 Generate API keys
+### 2.7 Generate API keys
 
 You need **two sets** of API keys:
 
@@ -287,6 +391,7 @@ Also note your **Schema Registry URL** from the Schema Registry panel — this i
 
 ### What you learned
 
+- A promo code redeemed *before* cluster creation removes the payment-method requirement
 - Confluent Cloud organises resources into environments → clusters → topics
 - Schema Registry enforces data contracts at the topic level
 - Flink SQL runs continuously as a deployed job — it's not a one-shot query
@@ -301,7 +406,7 @@ Before adding the AI layer, verify that Flink SQL correctly detects velocity spi
 ### 3.1 Fill in your Confluent credentials
 
 Edit `retail-inventory-optimization/fashion-inventory-consumer/.env` and fill in the
-Confluent section with the values from [Section 2.6](#26-generate-api-keys). Leave the
+Confluent section with the values from [Section 2.7](#27-generate-api-keys). Leave the
 `WXO_*` lines as placeholders for now:
 
 ```bash
@@ -880,6 +985,8 @@ orchestrate knowledge-bases list
 ## Reference Links
 
 - [Confluent Cloud Documentation](https://docs.confluent.io/cloud/current/overview.html)
+- [Get Started with Apache Kafka on Confluent Cloud](https://developer.confluent.io/courses/apache-kafka/get-started-hands-on/) — Confluent's sign-up walkthrough and the source of the `CONFLUENTDEV1` / `KAFKA101` promo codes
+- [Manage Billing in Confluent Cloud](https://docs.confluent.io/cloud/current/billing/overview.html) — promo code redemption and billing reference
 - [Flink SQL Reference — Confluent Cloud](https://docs.confluent.io/cloud/current/flink/reference/overview.html)
 - [Open-Meteo API](https://open-meteo.com/en/docs) — free weather API used by the tool
 - [watsonx Orchestrate ADK Documentation](https://developer.watson-orchestrate.ibm.com/)
