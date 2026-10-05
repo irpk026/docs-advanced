@@ -1,6 +1,6 @@
-# Event-Driven AI Agents with watsonx Orchestrate
+# Agentic AI, Live: Orchestrating Agents with Real-Time Data
 
-MkDocs source for the **Openslava 2026** hands-on lab: Confluent Cloud + Flink SQL +
+MkDocs source for the **OpenSlava 2026** hands-on lab (Day 1, 14 October, 15:00–17:30, Room 2): Confluent Cloud + Flink SQL +
 IBM watsonx Orchestrate, built with IBM Bob.
 
 ## Run the site locally

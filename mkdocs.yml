@@ -1,8 +1,9 @@
-site_name: Event-Driven AI Agents with watsonx Orchestrate
+site_name: Agentic AI, Live
 site_description: >-
-  Openslava 2026 hands-on lab — build a real-time, event-driven AI pipeline with
-  Confluent Cloud, Flink SQL and IBM watsonx Orchestrate, using IBM Bob as your pair programmer.
-site_author: IBM / Accenture Workshop Team
+  OpenSlava 2026 hands-on lab — Agentic AI, Live: Orchestrating Agents with Real-Time
+  Data. Build an event-driven AI pipeline with Confluent Cloud, Flink SQL and IBM
+  watsonx Orchestrate, using IBM Bob as your pair programmer.
+site_author: Ivor Rothwell, IBM
 site_url: https://irpk026.github.io/docs-advanced/
 docs_dir: docs
 site_dir: site
