@@ -21,7 +21,7 @@
 
     [View in the OpenSlava programme ↗](https://www.openslava.sk/2026/#/program/05da314c-f645-4755-84bd-0fc42b8cb028)
 
-!!! quote "Openslava 2026 — hands-on lab"
+!!! quote "The short version"
     Build a production-shaped, **event-driven AI pipeline**: Kafka events are detected by
     Flink SQL, handed to a watsonx Orchestrate agent for reasoning, and the agent's
     schema-validated decision is published back onto a stream — all built with
