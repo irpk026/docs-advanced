@@ -1598,14 +1598,40 @@ actually use them.</p>
 <hr />
 <h2 id="step-12-connect-the-adk-to-your-watsonx-orchestrate-environment">Step 12: Connect the ADK to your watsonx Orchestrate environment<a class="headerlink" href="#step-12-connect-the-adk-to-your-watsonx-orchestrate-environment" title="Permanent link">&para;</a></h2>
 <h3 id="121-get-your-credentials">12.1 Get your credentials<a class="headerlink" href="#121-get-your-credentials" title="Permanent link">&para;</a></h3>
-<p><strong>API key:</strong></p>
+<h4 id="instance-url">Instance URL<a class="headerlink" href="#instance-url" title="Permanent link">&para;</a></h4>
 <ol>
-<li>In the wxO console, click your <strong>profile icon</strong> (top-right)</li>
-<li>Select <strong>Settings</strong> → <strong>API details</strong></li>
-<li>Click <strong>Generate API key</strong>, then <strong>Copy</strong> immediately</li>
-<li>Store it securely — it is shown only once</li>
+<li>In the wxO console, click your <strong>profile icon</strong> (top-right) and select <strong>Settings</strong></li>
+<li>Click the <strong>API details</strong> tab</li>
+<li>Copy the <strong>Service instance URL</strong> — you will need it in <a href="#122-add-and-activate-the-environment">12.2</a></li>
 </ol>
-<p><strong>Instance URL:</strong> copy the <strong>Service instance URL</strong> from the same API details page.</p>
+<h4 id="api-key">API key<a class="headerlink" href="#api-key" title="Permanent link">&para;</a></h4>
+<p>The <strong>Generate API key</strong> button in wxO redirects you to the IBM Cloud Identity and
+Access Management (IAM) centre, where you create a named IBM Cloud API key.</p>
+<ol>
+<li>
+<p>On the <strong>API details</strong> tab, click <strong>Generate API key</strong></p>
+<div class="admonition warning">
+<p class="admonition-title">Do not use the IBM Cloud resources page</p>
+<p>The button takes you to the correct IAM page. Do not copy credentials
+directly from the IBM Cloud resources page — they will not work with the ADK.</p>
+</div>
+</li>
+<li>
+<p>The IBM Cloud IAM centre opens. Click <strong>Create</strong></p>
+</li>
+<li>Enter a descriptive <strong>Name</strong> for the key (for example <code>openslava-lab-adk</code>) and
+   an optional description, then click <strong>Create</strong></li>
+<li>Click <strong>Copy</strong> or <strong>Download</strong> immediately — the key value is <strong>shown only once</strong>
+   and cannot be retrieved afterwards</li>
+<li>Store it somewhere safe (a password manager, or a local text file you will
+   delete after the lab)</li>
+</ol>
+<div class="admonition danger">
+<p class="admonition-title">API keys cannot be recovered</p>
+<p>If you close the dialog without copying the key, you must delete it in
+<a href="https://cloud.ibm.com/iam/apikeys">IBM Cloud IAM</a> and generate a new one.
+You are limited to 20 API keys per IBM Cloud account.</p>
+</div>
 <h3 id="122-add-and-activate-the-environment">12.2 Add and activate the environment<a class="headerlink" href="#122-add-and-activate-the-environment" title="Permanent link">&para;</a></h3>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="using-the-adk-cli" name="__tabbed_4" type="radio" /><input id="using-bob" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="using-the-adk-cli">Using the ADK CLI</label><label for="using-bob">Using Bob</label></div>
 <div class="tabbed-content">
