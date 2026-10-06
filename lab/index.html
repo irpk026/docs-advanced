@@ -2425,18 +2425,63 @@ stage. Start it now, before anything is built, to see the finished pipeline runn
 </div>
 <p>Or <a href="pipeline_dashboard.py"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> download <code>pipeline_dashboard.py</code></a> and move
 it into <code>fashion-inventory-consumer/</code> yourself — it must sit next to <code>.env</code>.</p>
-<p><strong>2. Start it in demo mode.</strong> Nothing exists in Confluent or wxO yet, so <code>--demo</code> simulates
-the pipeline you're about to build:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pipeline_dashboard.py<span class="w"> </span>--demo
+<p><strong>2. Start it in replay mode.</strong> Nothing exists in Confluent or wxO yet, so <code>--replay</code> runs
+the pipeline you're about to build on your laptop, using the lab's own files:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pipeline_dashboard.py<span class="w"> </span>--replay
 </span></code></pre></div>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Pipeline dashboard on http://localhost:8050  (Ctrl+C to stop)
 </span></code></pre></div>
+<p>Nothing in the replay is made up. It reads the same files the real pipeline uses:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Replay uses</th>
+<th>Real pipeline uses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sales</td>
+<td><code>test_winter_jacket_spike.csv</code></td>
+<td>The same CSV, sent by the producer</td>
+</tr>
+<tr>
+<td>Alerts</td>
+<td>The rule from <code>velocity_anomaly_detection.sql</code></td>
+<td>That query, running in Flink</td>
+</tr>
+<tr>
+<td>Store</td>
+<td><code>store_locations.csv</code></td>
+<td>The <code>get_store_location</code> tool, reading that CSV</td>
+</tr>
+<tr>
+<td>Weather</td>
+<td>Today's Open-Meteo forecast</td>
+<td>The <code>get_weather_forecast</code> tool, calling Open-Meteo</td>
+</tr>
+<tr>
+<td>History</td>
+<td><code>product-history-baselines.csv</code></td>
+<td>The knowledge base</td>
+</tr>
+<tr>
+<td>Decision</td>
+<td>The rules in <code>decision-rules.pdf</code>, applied exactly</td>
+<td><strong>The LLM agent</strong>, reading those rules</td>
+</tr>
+</tbody>
+</table>
+<p>Only the last row differs. Replay mode shows what the rulebook decides; in Section 6 you'll
+see what the agent decides, and compare the two.</p>
 <p><strong>3. Open <a href="http://localhost:8050">http://localhost:8050</a> in your browser.</strong> Within about
 30 seconds the run completes and looks like this:</p>
 <figure>
-<p><img alt="Pipeline dashboard in demo mode: 25 sales, 18 Flink alerts all rated MEDIUM, and 18 agent decisions rising from MEDIUM to CRITICAL as stock runs out" src="images/pipeline-dashboard.png" />
+<p><img alt="Pipeline dashboard in replay mode: 25 sales, 18 Flink alerts all rated MEDIUM, and 18 rulebook decisions rated MEDIUM or HIGH" src="images/pipeline-dashboard.png" />
   </p>
-<figcaption>Demo mode, after the run completes. Newest messages are at the top of each column.</figcaption>
+<figcaption>Replay mode, after the run completes. Newest messages are at the top of each
+  column. The decisions depend on today's weather, so yours may differ.</figcaption>
 </figure>
 <p>Read it left to right:</p>
 <ul>
@@ -2444,23 +2489,23 @@ the pipeline you're about to build:</p>
   them through without an alert.</li>
 <li><strong>Velocity alerts</strong> appear in the middle for every 5-unit sale. Flink rates them all
   <code>MEDIUM</code> — it only looks at the size of the sale.</li>
-<li><strong>Agent decisions</strong> arrive a few seconds later on the right. Each alert card then shows
-  <strong>Flink → agent</strong> side by side, and the agent's rating climbs as stock runs out.</li>
+<li><strong>Decisions</strong> arrive a few seconds later on the right. Each alert card then shows
+  <strong>Flink → decision</strong> side by side. Flink never changes its mind; the rulebook does,
+  because it also weighs stock, stock value, season and weather.</li>
 <li><strong>Hover</strong> over any card to light up the same sale in all three columns.</li>
 </ul>
-<p>That's the whole lab on one screen. <strong>4. Stop it</strong> with <code>Ctrl+C</code> in the terminal. From
+<p><strong>4. Click any decision</strong> to see how it was reached. It shows what was looked
+up — store, weather, product history — and the score each rule added. Notice that the
+rating doesn't simply climb as stock runs down: rule 1.3 adds a point while the remaining
+stock is worth over $5,000 and takes it away once it isn't. Rules are precise, and
+sometimes awkward. You'll see whether the agent follows them to the letter.</p>
+<p>That's the whole lab on one screen. <strong>5. Stop it</strong> with <code>Ctrl+C</code> in the terminal. From
 <a href="#32-start-the-live-dashboard">Section 3.2</a> onwards you'll run it against your real topics
 and watch each column fill as you build that stage.</p>
 <div class="admonition tip">
 <p class="admonition-title">Port 8050 already in use?</p>
-<p>Run <code>uv run pipeline_dashboard.py --demo --port 8051</code> and open
+<p>Run <code>uv run pipeline_dashboard.py --replay --port 8051</code> and open
 <code>http://localhost:8051</code> instead.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Demo decisions are scripted</p>
-<p>In demo mode the "agent" is a simple rule based on hours to stockout, so you can see
-the shape of the flow. The real agent from Section 4 reasons over weather, product
-history and decision rules — its answers will differ, and that's the point.</p>
 </div>
 <h3 id="key-files-in-retail-inventory-optimization">Key files in <code>retail-inventory-optimization/</code><a class="headerlink" href="#key-files-in-retail-inventory-optimization" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>retail-inventory-optimization/
@@ -2807,7 +2852,7 @@ Confluent section with the values from <a href="#28-generate-api-keys">Section 2
 </tr>
 </tbody>
 </table>
-<p>In <strong>terminal 1</strong>, start the dashboard — this time without <code>--demo</code>, so it reads your real
+<p>In <strong>terminal 1</strong>, start the dashboard — this time without <code>--replay</code>, so it reads your real
 topics using the Confluent credentials in <code>.env</code>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
 </span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>uv<span class="w"> </span>run<span class="w"> </span>pipeline_dashboard.py
@@ -2815,11 +2860,11 @@ topics using the Confluent credentials in <code>.env</code>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>Pipeline dashboard on http://localhost:8050  (Ctrl+C to stop)
 </span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>Reading fashion.inventory.events, fashion.velocity.anomalies, fashion.agent.responses
 </span></code></pre></div>
-<p>Open (or refresh) <a href="http://localhost:8050">http://localhost:8050</a>. There's no <strong>DEMO</strong> badge
+<p>Open (or refresh) <a href="http://localhost:8050">http://localhost:8050</a>. There's no <strong>REPLAY</strong> badge
 this time, and all three columns are empty — each one says what it's waiting for. They
 fill in as you go: columns 1 and 2 in Section 3, column 3 in Section 6. When the lab is
-done it looks like the demo screenshot in <a href="#see-the-flow-before-you-build-it">Section 1</a>,
-with your agent's real decisions in the third column.</p>
+done it looks like the replay screenshot in <a href="#see-the-flow-before-you-build-it">Section 1</a>,
+with your agent's decisions in the third column instead of the rulebook's.</p>
 <div class="admonition warning">
 <p class="admonition-title"><code>Missing KAFKA_BOOTSTRAP_SERVERS…</code>?</p>
 <p>The dashboard reads the <code>.env</code> next to the script. Make sure <code>pipeline_dashboard.py</code> is
@@ -3154,14 +3199,15 @@ agent yet. Hover over an alert to see which sale triggered it.</p>
 </span><span id="__span-27-89"><a id="__codelineno-27-89" name="__codelineno-27-89" href="#__codelineno-27-89"></a>- agentDecision.urgencyLevel MUST be exactly one of: CRITICAL, HIGH, MEDIUM, LOW
 </span><span id="__span-27-90"><a id="__codelineno-27-90" name="__codelineno-27-90" href="#__codelineno-27-90"></a>- agentDecision.recommendedActions MUST be an array of valid action strings
 </span><span id="__span-27-91"><a id="__codelineno-27-91" name="__codelineno-27-91" href="#__codelineno-27-91"></a>- productHistorySummary, if included, MUST be an object, not a string
-</span><span id="__span-27-92"><a id="__codelineno-27-92" name="__codelineno-27-92" href="#__codelineno-27-92"></a>- Do not include fields outside the schema
-</span><span id="__span-27-93"><a id="__codelineno-27-93" name="__codelineno-27-93" href="#__codelineno-27-93"></a>- Do not publish partial payloads
-</span><span id="__span-27-94"><a id="__codelineno-27-94" name="__codelineno-27-94" href="#__codelineno-27-94"></a>
-</span><span id="__span-27-95"><a id="__codelineno-27-95" name="__codelineno-27-95" href="#__codelineno-27-95"></a>Restrictions:
-</span><span id="__span-27-96"><a id="__codelineno-27-96" name="__codelineno-27-96" href="#__codelineno-27-96"></a>- Do not fabricate product or sales history facts
-</span><span id="__span-27-97"><a id="__codelineno-27-97" name="__codelineno-27-97" href="#__codelineno-27-97"></a>- Do not use placeholder strings where structured objects are required
-</span><span id="__span-27-98"><a id="__codelineno-27-98" name="__codelineno-27-98" href="#__codelineno-27-98"></a>- Do not make actual purchase orders or financial commitments
-</span><span id="__span-27-99"><a id="__codelineno-27-99" name="__codelineno-27-99" href="#__codelineno-27-99"></a>- Keep reasoning concise, operational, and demo-friendly
+</span><span id="__span-27-92"><a id="__codelineno-27-92" name="__codelineno-27-92" href="#__codelineno-27-92"></a>- Start every agentDecision.reasoning entry with the source of that fact in square brackets: [store], [weather], [history], [rules] or [stock]. Example: "[weather] Snow and lows near 28°F forecast for the next 3 days"
+</span><span id="__span-27-93"><a id="__codelineno-27-93" name="__codelineno-27-93" href="#__codelineno-27-93"></a>- Do not include fields outside the schema
+</span><span id="__span-27-94"><a id="__codelineno-27-94" name="__codelineno-27-94" href="#__codelineno-27-94"></a>- Do not publish partial payloads
+</span><span id="__span-27-95"><a id="__codelineno-27-95" name="__codelineno-27-95" href="#__codelineno-27-95"></a>
+</span><span id="__span-27-96"><a id="__codelineno-27-96" name="__codelineno-27-96" href="#__codelineno-27-96"></a>Restrictions:
+</span><span id="__span-27-97"><a id="__codelineno-27-97" name="__codelineno-27-97" href="#__codelineno-27-97"></a>- Do not fabricate product or sales history facts
+</span><span id="__span-27-98"><a id="__codelineno-27-98" name="__codelineno-27-98" href="#__codelineno-27-98"></a>- Do not use placeholder strings where structured objects are required
+</span><span id="__span-27-99"><a id="__codelineno-27-99" name="__codelineno-27-99" href="#__codelineno-27-99"></a>- Do not make actual purchase orders or financial commitments
+</span><span id="__span-27-100"><a id="__codelineno-27-100" name="__codelineno-27-100" href="#__codelineno-27-100"></a>- Keep reasoning concise, operational, and demo-friendly
 </span></code></pre></div>
 <blockquote>
 <p>Bob will create the agent with all tools and the knowledge base attached. Wait for confirmation before proceeding.</p>
@@ -3355,54 +3401,57 @@ trace.</p>
 <hr />
 <h2 id="section-6-run-the-end-to-end-pipeline-10-min">Section 6 — Run the End-to-End Pipeline (10 min)<a class="headerlink" href="#section-6-run-the-end-to-end-pipeline-10-min" title="Permanent link">&para;</a></h2>
 <h3 id="61-start-the-agent-enabled-consumer">6.1 Start the agent-enabled consumer<a class="headerlink" href="#61-start-the-agent-enabled-consumer" title="Permanent link">&para;</a></h3>
-<p>Check the dashboard from <a href="#32-start-the-live-dashboard">Section 3.2</a> is still running in
-terminal 1 — if you closed it, start it again; it replays everything so far. Then, in
-<strong>terminal 2</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
-</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts_with_agent.py
+<p><strong>Restart the dashboard</strong> in terminal 1 (<code>Ctrl+C</code>, then <code>uv run pipeline_dashboard.py</code>
+again). It reads <code>.env</code> only at start-up, and it needs the <code>WXO_*</code> settings you added in
+Section 5 to run alerts through the agent. On start-up it should print:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>Agent execution: enabled
+</span></code></pre></div>
+<p>It replays everything so far, so you lose nothing. Then, in <strong>terminal 2</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts_with_agent.py
 </span></code></pre></div>
 <h3 id="62-in-terminal-3-run-the-test-producer">6.2 In terminal 3, run the test producer<a class="headerlink" href="#62-in-terminal-3-run-the-test-producer" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
-</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>uv<span class="w"> </span>run<span class="w"> </span>produce_inventory_events.py<span class="w"> </span>--csv-file<span class="w"> </span>../fashion-inventory-setup/data/test_winter_jacket_spike.csv
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>uv<span class="w"> </span>run<span class="w"> </span>produce_inventory_events.py<span class="w"> </span>--csv-file<span class="w"> </span>../fashion-inventory-setup/data/test_winter_jacket_spike.csv
 </span></code></pre></div>
 <h3 id="63-expected-log-output">6.3 Expected log output<a class="headerlink" href="#63-expected-log-output" title="Permanent link">&para;</a></h3>
 <p>The consumer works through the same 18 alerts you saw in Section 3, one at a time. Each
 one goes through four stages:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>==================== VELOCITY ALERT AGENT CONSUMER =====================
-</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>Input topic : fashion.velocity.anomalies
-</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>Output topic: fashion.agent.responses
-</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>========================================================================
-</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>
-</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>--------------------- 1. VELOCITY ALERT RECEIVED -----------------------
-</span><span id="__span-34-7"><a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a>Alert         : VELOCITY_SPIKE
-</span><span id="__span-34-8"><a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a>Product       : JACKET-001-M-BLACK
-</span><span id="__span-34-9"><a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a>Store         : STORE-NYC-001
-</span><span id="__span-34-10"><a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a>Severity      : MEDIUM
-</span><span id="__span-34-11"><a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a>Velocity      : 2.5x baseline
-</span><span id="__span-34-12"><a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a>Stock         : 88 units (17.0 hours to stockout)
-</span><span id="__span-34-13"><a id="__codelineno-34-13" name="__codelineno-34-13" href="#__codelineno-34-13"></a>Kafka         : partition=1 offset=0
-</span><span id="__span-34-14"><a id="__codelineno-34-14" name="__codelineno-34-14" href="#__codelineno-34-14"></a>------------------------------------------------------------------------
-</span><span id="__span-34-15"><a id="__codelineno-34-15" name="__codelineno-34-15" href="#__codelineno-34-15"></a>
-</span><span id="__span-34-16"><a id="__codelineno-34-16" name="__codelineno-34-16" href="#__codelineno-34-16"></a>---------------------- 2. AGENT REVIEWING CASE -------------------------
-</span><span id="__span-34-17"><a id="__codelineno-34-17" name="__codelineno-34-17" href="#__codelineno-34-17"></a>Agent         : Fashion_Inventory_Alert_Processor
-</span><span id="__span-34-18"><a id="__codelineno-34-18" name="__codelineno-34-18" href="#__codelineno-34-18"></a>Status        : Invoking watsonx Orchestrate and waiting for response
-</span><span id="__span-34-19"><a id="__codelineno-34-19" name="__codelineno-34-19" href="#__codelineno-34-19"></a>------------------------------------------------------------------------
-</span><span id="__span-34-20"><a id="__codelineno-34-20" name="__codelineno-34-20" href="#__codelineno-34-20"></a>
-</span><span id="__span-34-21"><a id="__codelineno-34-21" name="__codelineno-34-21" href="#__codelineno-34-21"></a>---------------------- 3. AGENT DECISION READY -------------------------
-</span><span id="__span-34-22"><a id="__codelineno-34-22" name="__codelineno-34-22" href="#__codelineno-34-22"></a>Status        : Agent response received and schema validated
-</span><span id="__span-34-23"><a id="__codelineno-34-23" name="__codelineno-34-23" href="#__codelineno-34-23"></a>------------------------------------------------------------------------
-</span><span id="__span-34-24"><a id="__codelineno-34-24" name="__codelineno-34-24" href="#__codelineno-34-24"></a>Decision       : MEDIUM
-</span><span id="__span-34-25"><a id="__codelineno-34-25" name="__codelineno-34-25" href="#__codelineno-34-25"></a>Urgency        : MEDIUM (score: 5)
-</span><span id="__span-34-26"><a id="__codelineno-34-26" name="__codelineno-34-26" href="#__codelineno-34-26"></a>Actions        : STANDARD_REORDER, MONITOR
-</span><span id="__span-34-27"><a id="__codelineno-34-27" name="__codelineno-34-27" href="#__codelineno-34-27"></a>Reorder        : 60 units (STANDARD priority)
-</span><span id="__span-34-28"><a id="__codelineno-34-28" name="__codelineno-34-28" href="#__codelineno-34-28"></a>Pricing        : 0% adjustment
-</span><span id="__span-34-29"><a id="__codelineno-34-29" name="__codelineno-34-29" href="#__codelineno-34-29"></a>Summary        : Parka selling 2.5x baseline in cold weather; 17 hours of stock left ...
-</span><span id="__span-34-30"><a id="__codelineno-34-30" name="__codelineno-34-30" href="#__codelineno-34-30"></a>
-</span><span id="__span-34-31"><a id="__codelineno-34-31" name="__codelineno-34-31" href="#__codelineno-34-31"></a>------------------------ 4. RESULT PUBLISHED ---------------------------
-</span><span id="__span-34-32"><a id="__codelineno-34-32" name="__codelineno-34-32" href="#__codelineno-34-32"></a>Product       : JACKET-001-M-BLACK
-</span><span id="__span-34-33"><a id="__codelineno-34-33" name="__codelineno-34-33" href="#__codelineno-34-33"></a>Output topic  : fashion.agent.responses
-</span><span id="__span-34-34"><a id="__codelineno-34-34" name="__codelineno-34-34" href="#__codelineno-34-34"></a>Status        : Published successfully
-</span><span id="__span-34-35"><a id="__codelineno-34-35" name="__codelineno-34-35" href="#__codelineno-34-35"></a>------------------------------------------------------------------------
+<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>==================== VELOCITY ALERT AGENT CONSUMER =====================
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>Input topic : fashion.velocity.anomalies
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>Output topic: fashion.agent.responses
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>========================================================================
+</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>
+</span><span id="__span-35-6"><a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>--------------------- 1. VELOCITY ALERT RECEIVED -----------------------
+</span><span id="__span-35-7"><a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>Alert         : VELOCITY_SPIKE
+</span><span id="__span-35-8"><a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a>Product       : JACKET-001-M-BLACK
+</span><span id="__span-35-9"><a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a>Store         : STORE-NYC-001
+</span><span id="__span-35-10"><a id="__codelineno-35-10" name="__codelineno-35-10" href="#__codelineno-35-10"></a>Severity      : MEDIUM
+</span><span id="__span-35-11"><a id="__codelineno-35-11" name="__codelineno-35-11" href="#__codelineno-35-11"></a>Velocity      : 2.5x baseline
+</span><span id="__span-35-12"><a id="__codelineno-35-12" name="__codelineno-35-12" href="#__codelineno-35-12"></a>Stock         : 88 units (17.0 hours to stockout)
+</span><span id="__span-35-13"><a id="__codelineno-35-13" name="__codelineno-35-13" href="#__codelineno-35-13"></a>Kafka         : partition=1 offset=0
+</span><span id="__span-35-14"><a id="__codelineno-35-14" name="__codelineno-35-14" href="#__codelineno-35-14"></a>------------------------------------------------------------------------
+</span><span id="__span-35-15"><a id="__codelineno-35-15" name="__codelineno-35-15" href="#__codelineno-35-15"></a>
+</span><span id="__span-35-16"><a id="__codelineno-35-16" name="__codelineno-35-16" href="#__codelineno-35-16"></a>---------------------- 2. AGENT REVIEWING CASE -------------------------
+</span><span id="__span-35-17"><a id="__codelineno-35-17" name="__codelineno-35-17" href="#__codelineno-35-17"></a>Agent         : Fashion_Inventory_Alert_Processor
+</span><span id="__span-35-18"><a id="__codelineno-35-18" name="__codelineno-35-18" href="#__codelineno-35-18"></a>Status        : Invoking watsonx Orchestrate and waiting for response
+</span><span id="__span-35-19"><a id="__codelineno-35-19" name="__codelineno-35-19" href="#__codelineno-35-19"></a>------------------------------------------------------------------------
+</span><span id="__span-35-20"><a id="__codelineno-35-20" name="__codelineno-35-20" href="#__codelineno-35-20"></a>
+</span><span id="__span-35-21"><a id="__codelineno-35-21" name="__codelineno-35-21" href="#__codelineno-35-21"></a>---------------------- 3. AGENT DECISION READY -------------------------
+</span><span id="__span-35-22"><a id="__codelineno-35-22" name="__codelineno-35-22" href="#__codelineno-35-22"></a>Status        : Agent response received and schema validated
+</span><span id="__span-35-23"><a id="__codelineno-35-23" name="__codelineno-35-23" href="#__codelineno-35-23"></a>------------------------------------------------------------------------
+</span><span id="__span-35-24"><a id="__codelineno-35-24" name="__codelineno-35-24" href="#__codelineno-35-24"></a>Decision       : MEDIUM
+</span><span id="__span-35-25"><a id="__codelineno-35-25" name="__codelineno-35-25" href="#__codelineno-35-25"></a>Urgency        : MEDIUM (score: 5)
+</span><span id="__span-35-26"><a id="__codelineno-35-26" name="__codelineno-35-26" href="#__codelineno-35-26"></a>Actions        : STANDARD_REORDER, MONITOR
+</span><span id="__span-35-27"><a id="__codelineno-35-27" name="__codelineno-35-27" href="#__codelineno-35-27"></a>Reorder        : 60 units (STANDARD priority)
+</span><span id="__span-35-28"><a id="__codelineno-35-28" name="__codelineno-35-28" href="#__codelineno-35-28"></a>Pricing        : 0% adjustment
+</span><span id="__span-35-29"><a id="__codelineno-35-29" name="__codelineno-35-29" href="#__codelineno-35-29"></a>Summary        : Parka selling 2.5x baseline in cold weather; 17 hours of stock left ...
+</span><span id="__span-35-30"><a id="__codelineno-35-30" name="__codelineno-35-30" href="#__codelineno-35-30"></a>
+</span><span id="__span-35-31"><a id="__codelineno-35-31" name="__codelineno-35-31" href="#__codelineno-35-31"></a>------------------------ 4. RESULT PUBLISHED ---------------------------
+</span><span id="__span-35-32"><a id="__codelineno-35-32" name="__codelineno-35-32" href="#__codelineno-35-32"></a>Product       : JACKET-001-M-BLACK
+</span><span id="__span-35-33"><a id="__codelineno-35-33" name="__codelineno-35-33" href="#__codelineno-35-33"></a>Output topic  : fashion.agent.responses
+</span><span id="__span-35-34"><a id="__codelineno-35-34" name="__codelineno-35-34" href="#__codelineno-35-34"></a>Status        : Published successfully
+</span><span id="__span-35-35"><a id="__codelineno-35-35" name="__codelineno-35-35" href="#__codelineno-35-35"></a>------------------------------------------------------------------------
 </span></code></pre></div>
 <p>Stage 1 is fully predictable — those values come straight from Flink. Stage 3 is not:
 the urgency, actions, reorder quantity and summary are the agent's judgement, informed
@@ -3454,12 +3503,113 @@ consumer had never read the topic, so it starts from the beginning. That's Kafka
 keeping the backlog until a consumer is ready for it.</p>
 <p>What to look for:</p>
 <ul>
-<li><strong>Flink → agent</strong> on each alert card. Flink's <code>MEDIUM</code> never changes; the agent's
-  rating should rise as stock runs down. That gap is what the agent adds.</li>
-<li><strong>Why?</strong> on a decision card expands the agent's <code>reasoning</code> array — the same
-  reasons you saw it build in the <a href="#47-watch-the-agent-work">Section 4.7</a> trace.</li>
+<li><strong>Flink → agent</strong> on each alert card. Flink's <code>MEDIUM</code> never changes; the agent weighs
+  stock, value, season and weather on top. That gap is what the agent adds.</li>
 <li><strong>Hover</strong> over a decision to light up the alert and the sale behind it.</li>
 </ul>
+<h4 id="watch-the-agent-execute-an-alert">Watch the agent execute an alert<a class="headerlink" href="#watch-the-agent-execute-an-alert" title="Permanent link">&para;</a></h4>
+<p>This is the heart of the lab: <strong>what does the agent actually do with the Flink alert?</strong>
+Click any <strong>alert</strong> card, then <strong>▶ Run this alert through the agent</strong>.</p>
+<p>The dashboard sends the agent exactly the request the consumer sends, and after 10–30
+seconds shows every step it took. The shape looks like this — your values and steps will vary:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>● Received the Flink alert
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>● Called get_store_location           storeId  STORE-NYC-001     [from Flink alert · storeId]
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>● get_store_location returned          { "city": "New York", "latitude": 40.758, ... }
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>● Called get_weather_forecast         latitude 40.758            [from get_store_location's result]
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>                                       longitude -73.9855         [from get_store_location's result]
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>                                       days      5                [agent's choice]
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>● get_weather_forecast returned        { "forecast": [ ... ], "summary": "..." }
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>● Called &lt;knowledge base search&gt;       query    "..."             [agent's choice]
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a>● ... returned                         passages from the knowledge base documents
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>● Answered                             &lt;urgency&gt; · score &lt;0–10&gt; · &lt;actions&gt;
+</span></code></pre></div>
+<p>Read the labels on each argument. They show the agent turning the Flink alert into a plan:</p>
+<ul>
+<li><strong>from Flink alert</strong> — a value it lifted straight out of the alert. Only <code>storeId</code> is
+  needed to start.</li>
+<li><strong>from … 's result</strong> — a value it took from an earlier tool's answer. That's the agent
+  <em>chaining</em> tools: the coordinates it passes to the weather tool came from the store
+  tool, not from Flink.</li>
+<li><strong>agent's choice</strong> — a value it came up with: how many days of forecast to ask for, what
+  to search the knowledge base for. This is where the LLM's judgement shows up.</li>
+</ul>
+<p>Expand any <strong>returned</strong> line to see exactly what the tool gave back, and <strong>raw answer</strong> for
+the agent's full reply. Then click <strong>Run it again</strong> a few times. The steps and even the
+urgency can change between runs of the <em>same</em> alert — the dashboard tells you when the
+answer differs from the decision the pipeline published.</p>
+<div class="admonition info">
+<p class="admonition-title">Why the dashboard can see the steps and the consumer can't</p>
+<p>The consumer calls the agent's <code>chat/completions</code> endpoint, which returns only the
+final answer. The dashboard uses the <strong>runs</strong> API instead — <code>POST /v1/orchestrate/runs</code>,
+then <code>GET /v1/orchestrate/threads/{thread_id}/messages</code> — which keeps the
+<code>step_history</code>: every tool call and tool response. Same agent, same request; one API
+just tells you more. In production you'd log that step history next to every decision
+as an audit trail.</p>
+</div>
+<h4 id="read-the-decision">Read the decision<a class="headerlink" href="#read-the-decision" title="Permanent link">&para;</a></h4>
+<p>Click any <strong>decision</strong> card for the whole picture of that alert:</p>
+<figure>
+<p><img alt="The panel for one alert: what Flink sent, the button to watch the agent execute, the evidence grouped by tool and knowledge base, the fields filled in, the decision, and a rule-by-rule check against decision-rules.pdf" src="images/pipeline-dashboard-panel.png" width="560" />
+  </p>
+<figcaption>The panel in replay mode, before the WXO settings are added. Live, it shows your agent's own output and the Run button.</figcaption>
+</figure>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>What it shows</th>
+<th>Where it comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 · What Flink sent</strong></td>
+<td>The alert the agent received</td>
+<td>The Flink alert</td>
+</tr>
+<tr>
+<td><strong>2 · Watch the agent execute</strong></td>
+<td>Every tool call, its arguments and where they came from, every tool result, and the answer</td>
+<td>A fresh run through the wxO runs API</td>
+</tr>
+<tr>
+<td><strong>3 · What the agent reported using</strong></td>
+<td>The published decision's <code>reasoning</code>, sorted by source</td>
+<td>The <code>[store]</code>, <code>[weather]</code>… tags from the Section 4.5 instructions</td>
+</tr>
+<tr>
+<td><strong>4 · What it filled in</strong></td>
+<td>Each field the consumer sent as a placeholder, next to what the agent returned</td>
+<td><code>agent_payload_builder.py</code> vs the published decision</td>
+</tr>
+<tr>
+<td><strong>5 · What it decided</strong></td>
+<td>Urgency, actions, reorder, pricing, escalation, and the agent's rationale</td>
+<td>The published decision</td>
+</tr>
+<tr>
+<td><strong>Check against the rulebook</strong></td>
+<td>The dashboard's own lookups, the points each rule in <code>decision-rules.pdf</code> adds, and the rulebook's answer next to the agent's</td>
+<td>Computed by the dashboard, not the agent</td>
+</tr>
+</tbody>
+</table>
+<p>Compare section 2 with section 3: what the agent <em>did</em>, and what it <em>says</em> it did. And
+compare both with the rulebook: the agent was given these exact rules. Where it agrees, it
+followed them. Where it doesn't, the execution trace shows you why — a search that
+found the wrong product, a forecast it weighed heavily, a step it skipped. Telling useful
+judgement from a mistake is the core skill in building trustworthy agents.</p>
+<div class="admonition note">
+<p class="admonition-title">Two things to look for in the trace</p>
+<ul>
+<li><strong>Did it find the product history?</strong> The test data uses SKU <code>JACKET-001-M-BLACK</code>;
+  the knowledge base has <code>WJ-2024-BLK-M</code>. Look at what the agent searched for and what
+  came back. The rulebook check matches them by brand, category, colour and size.</li>
+<li><strong>Did it notice this isn't an anomaly?</strong> Against the knowledge base's own baseline of
+  1.8 units/hour, 5 units/hour is under rule 4.1's 3× threshold. Flink's fixed
+  baseline of 2.0 made it look like one.</li>
+</ul>
+</div>
 <h3 id="65-verify-in-confluent-cloud">6.5 Verify in Confluent Cloud<a class="headerlink" href="#65-verify-in-confluent-cloud" title="Permanent link">&para;</a></h3>
 <p>In the Confluent Cloud console, click <code>fashion.agent.responses</code> → <strong>Messages</strong>. You should see structured JSON messages appearing with the full agent decision payload.</p>
 <h3 id="what-you-learned_5">What you learned<a class="headerlink" href="#what-you-learned_5" title="Permanent link">&para;</a></h3>
@@ -3487,7 +3637,7 @@ keeping the backlog until a consumer is ready for it.</p>
 <p>This is intentional: a schema violation means the agent produced an unreliable decision. It's safer to retry than to publish bad data downstream.</p>
 <h3 id="74-manual-offset-commit-pattern">7.4 Manual offset commit pattern<a class="headerlink" href="#74-manual-offset-commit-pattern" title="Permanent link">&para;</a></h3>
 <p><code>consume_velocity_alerts_with_agent.py</code> sets <code>"enable.auto.commit": False</code>. Offsets are committed explicitly only after all four steps succeed:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>read alert → call agent → validate response → publish to Kafka → commit offset
+<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>read alert → call agent → validate response → publish to Kafka → commit offset
 </span></code></pre></div>
 <p>If any step throws, the offset is not committed, and the message is reprocessed. This gives the pipeline <strong>at-least-once delivery semantics</strong> — the same alert may be processed twice on retry, but no alert is silently dropped.</p>
 <blockquote>
@@ -3574,46 +3724,46 @@ the terminal panel. Everything else in this lab runs fine in PowerShell.</p>
 the order the lab needs it — tooling, workspace files, <code>.env</code> credentials, Confluent
 topics and schemas, and the watsonx Orchestrate tools, knowledge base and agent. Each
 failure names the section that fixes it.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>bash<span class="w"> </span>check-lab.sh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>bash<span class="w"> </span>check-lab.sh
 </span></code></pre></div>
 <p>It is read-only and safe to run at any point — including before you've configured
 anything, to see what's still outstanding. Add <code>--e2e</code> once Section 4 is done to run a
 real end-to-end test: it produces events, waits for the agent decision, and confirms the
 result was published.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>bash<span class="w"> </span>check-lab.sh<span class="w"> </span>--e2e
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>bash<span class="w"> </span>check-lab.sh<span class="w"> </span>--e2e
 </span></code></pre></div>
 <p>The script exits non-zero if any check fails, so it also works in CI.</p>
 <h3 id="watsonx-orchestrate-only">watsonx Orchestrate only<a class="headerlink" href="#watsonx-orchestrate-only" title="Permanent link">&para;</a></h3>
 <p><a href="import-all.sh"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> <strong><code>import-all.sh</code></strong></a> is the narrower check — just the
 tools, knowledge base and agent from Section 4:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>bash<span class="w"> </span>import-all.sh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>bash<span class="w"> </span>import-all.sh
 </span></code></pre></div>
 <hr />
 <h2 id="key-commands-reference">Key Commands Reference<a class="headerlink" href="#key-commands-reference" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="c1"># Install dependencies</span>
-</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>uv<span class="w"> </span>sync<span class="w"> </span>--locked
-</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a>
-</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a><span class="c1"># Run test producer</span>
-</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a><span class="nb">cd</span><span class="w"> </span>fashion-inventory-consumer
-</span><span id="__span-39-6"><a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a>uv<span class="w"> </span>run<span class="w"> </span>produce_inventory_events.py<span class="w"> </span>--csv-file<span class="w"> </span>../fashion-inventory-setup/data/test_winter_jacket_spike.csv
-</span><span id="__span-39-7"><a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a>
-</span><span id="__span-39-8"><a id="__codelineno-39-8" name="__codelineno-39-8" href="#__codelineno-39-8"></a><span class="c1"># Run basic consumer (verify Flink detection, no agent)</span>
-</span><span id="__span-39-9"><a id="__codelineno-39-9" name="__codelineno-39-9" href="#__codelineno-39-9"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts.py
-</span><span id="__span-39-10"><a id="__codelineno-39-10" name="__codelineno-39-10" href="#__codelineno-39-10"></a>
-</span><span id="__span-39-11"><a id="__codelineno-39-11" name="__codelineno-39-11" href="#__codelineno-39-11"></a><span class="c1"># Run agent-enabled consumer (full pipeline)</span>
-</span><span id="__span-39-12"><a id="__codelineno-39-12" name="__codelineno-39-12" href="#__codelineno-39-12"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts_with_agent.py
-</span><span id="__span-39-13"><a id="__codelineno-39-13" name="__codelineno-39-13" href="#__codelineno-39-13"></a>
-</span><span id="__span-39-14"><a id="__codelineno-39-14" name="__codelineno-39-14" href="#__codelineno-39-14"></a><span class="c1"># Live pipeline dashboard on http://localhost:8050 (--demo for simulated data)</span>
-</span><span id="__span-39-15"><a id="__codelineno-39-15" name="__codelineno-39-15" href="#__codelineno-39-15"></a>uv<span class="w"> </span>run<span class="w"> </span>pipeline_dashboard.py
-</span><span id="__span-39-16"><a id="__codelineno-39-16" name="__codelineno-39-16" href="#__codelineno-39-16"></a>
-</span><span id="__span-39-17"><a id="__codelineno-39-17" name="__codelineno-39-17" href="#__codelineno-39-17"></a><span class="c1"># Verify wxO agent exists</span>
-</span><span id="__span-39-18"><a id="__codelineno-39-18" name="__codelineno-39-18" href="#__codelineno-39-18"></a>orchestrate<span class="w"> </span>agents<span class="w"> </span>list
-</span><span id="__span-39-19"><a id="__codelineno-39-19" name="__codelineno-39-19" href="#__codelineno-39-19"></a>
-</span><span id="__span-39-20"><a id="__codelineno-39-20" name="__codelineno-39-20" href="#__codelineno-39-20"></a><span class="c1"># Verify tools are imported</span>
-</span><span id="__span-39-21"><a id="__codelineno-39-21" name="__codelineno-39-21" href="#__codelineno-39-21"></a>orchestrate<span class="w"> </span>tools<span class="w"> </span>list
-</span><span id="__span-39-22"><a id="__codelineno-39-22" name="__codelineno-39-22" href="#__codelineno-39-22"></a>
-</span><span id="__span-39-23"><a id="__codelineno-39-23" name="__codelineno-39-23" href="#__codelineno-39-23"></a><span class="c1"># Verify knowledge base is ready</span>
-</span><span id="__span-39-24"><a id="__codelineno-39-24" name="__codelineno-39-24" href="#__codelineno-39-24"></a>orchestrate<span class="w"> </span>knowledge-bases<span class="w"> </span>list
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="c1"># Install dependencies</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>uv<span class="w"> </span>sync<span class="w"> </span>--locked
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a><span class="c1"># Run test producer</span>
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a><span class="nb">cd</span><span class="w"> </span>fashion-inventory-consumer
+</span><span id="__span-41-6"><a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>uv<span class="w"> </span>run<span class="w"> </span>produce_inventory_events.py<span class="w"> </span>--csv-file<span class="w"> </span>../fashion-inventory-setup/data/test_winter_jacket_spike.csv
+</span><span id="__span-41-7"><a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a>
+</span><span id="__span-41-8"><a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a><span class="c1"># Run basic consumer (verify Flink detection, no agent)</span>
+</span><span id="__span-41-9"><a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts.py
+</span><span id="__span-41-10"><a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a>
+</span><span id="__span-41-11"><a id="__codelineno-41-11" name="__codelineno-41-11" href="#__codelineno-41-11"></a><span class="c1"># Run agent-enabled consumer (full pipeline)</span>
+</span><span id="__span-41-12"><a id="__codelineno-41-12" name="__codelineno-41-12" href="#__codelineno-41-12"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts_with_agent.py
+</span><span id="__span-41-13"><a id="__codelineno-41-13" name="__codelineno-41-13" href="#__codelineno-41-13"></a>
+</span><span id="__span-41-14"><a id="__codelineno-41-14" name="__codelineno-41-14" href="#__codelineno-41-14"></a><span class="c1"># Live pipeline dashboard on http://localhost:8050 (--replay: no Kafka, rulebook decisions)</span>
+</span><span id="__span-41-15"><a id="__codelineno-41-15" name="__codelineno-41-15" href="#__codelineno-41-15"></a>uv<span class="w"> </span>run<span class="w"> </span>pipeline_dashboard.py
+</span><span id="__span-41-16"><a id="__codelineno-41-16" name="__codelineno-41-16" href="#__codelineno-41-16"></a>
+</span><span id="__span-41-17"><a id="__codelineno-41-17" name="__codelineno-41-17" href="#__codelineno-41-17"></a><span class="c1"># Verify wxO agent exists</span>
+</span><span id="__span-41-18"><a id="__codelineno-41-18" name="__codelineno-41-18" href="#__codelineno-41-18"></a>orchestrate<span class="w"> </span>agents<span class="w"> </span>list
+</span><span id="__span-41-19"><a id="__codelineno-41-19" name="__codelineno-41-19" href="#__codelineno-41-19"></a>
+</span><span id="__span-41-20"><a id="__codelineno-41-20" name="__codelineno-41-20" href="#__codelineno-41-20"></a><span class="c1"># Verify tools are imported</span>
+</span><span id="__span-41-21"><a id="__codelineno-41-21" name="__codelineno-41-21" href="#__codelineno-41-21"></a>orchestrate<span class="w"> </span>tools<span class="w"> </span>list
+</span><span id="__span-41-22"><a id="__codelineno-41-22" name="__codelineno-41-22" href="#__codelineno-41-22"></a>
+</span><span id="__span-41-23"><a id="__codelineno-41-23" name="__codelineno-41-23" href="#__codelineno-41-23"></a><span class="c1"># Verify knowledge base is ready</span>
+</span><span id="__span-41-24"><a id="__codelineno-41-24" name="__codelineno-41-24" href="#__codelineno-41-24"></a>orchestrate<span class="w"> </span>knowledge-bases<span class="w"> </span>list
 </span></code></pre></div>
 <hr />
 <h2 id="reference-links">Reference Links<a class="headerlink" href="#reference-links" title="Permanent link">&para;</a></h2>
