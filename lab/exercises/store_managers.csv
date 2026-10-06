@@ -1,0 +1,11 @@
+storeId,managerName,managerEmail,managerPhone,escalationTier
+STORE-NYC-001,Dana Whitfield,dana.whitfield@example.com,+1-212-555-0142,1
+STORE-LA-001,Mateo Rivas,mateo.rivas@example.com,+1-310-555-0188,1
+STORE-CHI-001,Priya Raghunathan,priya.raghunathan@example.com,+1-312-555-0133,2
+STORE-MIA-001,Tomas Lindqvist,tomas.lindqvist@example.com,+1-305-555-0176,2
+STORE-SF-001,Aiko Tanaka,aiko.tanaka@example.com,+1-415-555-0159,1
+STORE-BOS-001,Rowan Mbeki,rowan.mbeki@example.com,+1-617-555-0121,2
+STORE-SEA-001,Sofia Kowalczyk,sofia.kowalczyk@example.com,+1-206-555-0194,2
+STORE-ATL-001,Jordan Ellis,jordan.ellis@example.com,+1-404-555-0167,3
+STORE-DEN-001,Noor Haddad,noor.haddad@example.com,+1-303-555-0115,3
+STORE-PHX-001,Chen Wei,chen.wei@example.com,+1-602-555-0183,3
