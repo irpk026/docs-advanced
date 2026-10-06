@@ -2534,20 +2534,23 @@ consumer will fail to connect.</p>
 <div class="admonition warning">
 <p class="admonition-title">Required before running any query</p>
 <p>The Flink SQL workspace starts with no database selected. Every query will fail with
-<code>Table 'fashion.inventory.events' does not exist</code> until you run these two statements.</p>
+<code>Table 'fashion.inventory.events' does not exist</code> until you set the catalog and database.</p>
 </div>
-<p><strong>First, find your exact names.</strong> Run these in the SQL workspace:</p>
+<p><strong>Step 1 — find your catalog name:</strong></p>
 <div class="language-sql highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">CATALOGS</span><span class="p">;</span>
 </span></code></pre></div>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">DATABASES</span><span class="p">;</span>
+<p>Your Confluent Cloud environment name appears in the results (e.g. <code>retail-inventory-bootcamp</code>).</p>
+<p><strong>Step 2 — set the catalog</strong> (use the name from step 1):</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">USE</span><span class="w"> </span><span class="k">CATALOG</span><span class="w"> </span><span class="o">`</span><span class="n">retail</span><span class="o">-</span><span class="n">inventory</span><span class="o">-</span><span class="n">bootcamp</span><span class="o">`</span><span class="p">;</span>
 </span></code></pre></div>
-<p>The catalog name is your <strong>Confluent Cloud environment name</strong> and the database name is your <strong>Kafka cluster name</strong>. Note them exactly as shown — names are case-sensitive.</p>
-<p><strong>Then set the context</strong> (substitute your actual names if different):</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">USE</span><span class="w"> </span><span class="k">CATALOG</span><span class="w"> </span><span class="o">`</span><span class="n">retail</span><span class="o">-</span><span class="n">inventory</span><span class="o">-</span><span class="n">bootcamp</span><span class="o">`</span><span class="p">;</span>
+<p><strong>Step 3 — find your database name:</strong></p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">DATABASES</span><span class="p">;</span>
 </span></code></pre></div>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">USE</span><span class="w"> </span><span class="o">`</span><span class="n">retail</span><span class="o">-</span><span class="n">inventory</span><span class="o">-</span><span class="k">cluster</span><span class="o">`</span><span class="p">;</span>
+<p>The result is your <strong>Kafka cluster ID</strong> — it looks like <code>lkc-abc123</code>, not the human-readable cluster name. Use exactly what is shown. <code>SHOW DATABASES</code> only returns results after the catalog is set — this is why the order matters.</p>
+<p><strong>Step 4 — set the database</strong> (use the cluster ID from step 3):</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">USE</span><span class="w"> </span><span class="o">`</span><span class="n">lkc</span><span class="o">-</span><span class="n">abc123</span><span class="o">`</span><span class="p">;</span>
 </span></code></pre></div>
-<p><strong>Verify</strong> — your topics should now be visible:</p>
+<p><strong>Step 5 — verify:</strong></p>
 <div class="language-sql highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="p">;</span>
 </span></code></pre></div>
 <div class="admonition success">
@@ -2575,6 +2578,20 @@ consumer will fail to connect.</p>
 <blockquote>
 <p><strong>⚠️ Demo simplification — hardcoded baseline:</strong> The query uses a fixed baseline velocity of <code>2.0 units/hour</code>. In production you would compute a rolling 7-day average per SKU using Flink's windowing functions (<code>TUMBLE</code>, <code>HOP</code>, or <code>CUMULATE</code> windows with <code>ORDER BY eventTime</code>). The fixed value makes the demo deterministic and removes the warm-up period that a real rolling window requires. The pipeline logic and alert schema are production-grade; only the baseline calculation is simplified.</p>
 </blockquote>
+<ol>
+<li>
+<p><strong>Run the query</strong></p>
+<p>Click <strong>Run</strong> (or press the run shortcut). Flink will start a continuous streaming job.</p>
+</li>
+<li>
+<p><strong>Verify the job is running</strong></p>
+<p>After submission, Flink returns a job ID. Confirm the job status shows <strong>Running</strong> in the Flink Jobs panel.</p>
+</li>
+<li>
+<p><strong>Confirm alerts are flowing to the output topic</strong></p>
+<p>Open the <code>fashion.velocity.anomalies</code> topic in the Confluent Cloud topic viewer (or run <code>SELECT * FROM \</code>fashion.velocity.anomalies`<code>in Flink SQL) and verify anomaly records appear whenever</code>SALE<code>events with</code>|quantityChange| &gt;= 5<code>arrive from</code>fashion.inventory.events`.</p>
+</li>
+</ol>
 <h3 id="28-generate-api-keys">2.8 Generate API keys<a class="headerlink" href="#28-generate-api-keys" title="Permanent link">&para;</a></h3>
 <p>You need <strong>two sets</strong> of API keys:</p>
 <p><strong>Kafka API key:</strong></p>
