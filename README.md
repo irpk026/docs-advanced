@@ -15,6 +15,68 @@ Then open <http://127.0.0.1:8000>.
 
 Build a static site into `site/` with `mkdocs build`.
 
+## Deployment Options
+
+### Option 1: GitHub Pages
+
+The repository is configured for GitHub Pages (`https://irpk026.github.io/docs-advanced/`). Deploy with:
+
+```bash
+source .venv/bin/activate
+mkdocs gh-deploy
+```
+
+### Option 2: IBM Cloud Code Engine (Serverless Container)
+
+Deploy as a lightweight containerized Nginx application using the included `Dockerfile` and `nginx.conf`:
+
+1. Target your IBM Cloud resource group and region:
+   ```bash
+   ibmcloud target -g <resource-group> -r <region>
+   ibmcloud ce project select --name <project-name>
+   ```
+
+2. Build and deploy directly from local source (uses `.ceignore` to filter build artifacts):
+   ```bash
+   ibmcloud ce app create \
+     --name agentic-ai-live \
+     --build-source . \
+     --port 8080 \
+     --min-scale 0 \
+     --max-scale 2 \
+     --cpu 0.25 \
+     --memory 0.5G
+   ```
+
+3. Update an existing deployment after local edits:
+   ```bash
+   ibmcloud ce app update \
+     --name agentic-ai-live \
+     --build-source .
+   ```
+
+### Option 3: Code Engine Custom Domain Mapping
+
+To use a custom domain (e.g. `docs.yourdomain.com`) instead of the default `*.codeengine.appdomain.cloud` URL:
+
+1. Create a TLS certificate secret in Code Engine:
+   ```bash
+   ibmcloud ce secret create --name my-cert-secret \
+     --format tls \
+     --cert-chain-file cert.pem \
+     --private-key-file key.pem
+   ```
+
+2. Map your custom domain to the application:
+   ```bash
+   ibmcloud ce domainmapping create \
+     --name docs.yourdomain.com \
+     --component agentic-ai-live \
+     --tls-secret my-cert-secret
+   ```
+
+3. Add a `CNAME` record in your DNS provider pointing `docs.yourdomain.com` to `custom.<region>.codeengine.appdomain.cloud`.
+
 ## Layout
 
 ```text

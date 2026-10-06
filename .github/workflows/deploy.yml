@@ -1,8 +1,7 @@
 name: Docs
 
-# Every push verifies the site still builds.
-# Publishing to GitHub Pages happens only when you trigger it by hand
-# (Actions tab -> Docs -> Run workflow), so nothing goes live by accident.
+# Pushes to main automatically build and publish to GitHub Pages.
+# Pull requests verify that the site builds without errors.
 on:
   push:
     branches: [main]
@@ -43,7 +42,7 @@ jobs:
         run: mkdocs build --strict
 
       - name: Upload Pages artifact
-        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && inputs.publish)
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
@@ -51,7 +50,7 @@ jobs:
   deploy:
     name: Publish to GitHub Pages
     needs: build
-    if: github.event_name == 'workflow_dispatch' && inputs.publish
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && inputs.publish)
     runs-on: ubuntu-latest
     environment:
       name: github-pages

@@ -1,0 +1,9 @@
+.venv/
+.git/
+.github/
+.vscode/
+site/
+archive/
+__pycache__/
+*.pyc
+*.log
