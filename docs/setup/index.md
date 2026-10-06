@@ -343,14 +343,35 @@ actually use them.
 
 ### 12.1 Get your credentials
 
-**API key:**
+#### Instance URL
 
-1. In the wxO console, click your **profile icon** (top-right)
-2. Select **Settings** → **API details**
-3. Click **Generate API key**, then **Copy** immediately
-4. Store it securely — it is shown only once
+1. In the wxO console, click your **profile icon** (top-right) and select **Settings**
+2. Click the **API details** tab
+3. Copy the **Service instance URL** — you will need it in [12.2](#122-add-and-activate-the-environment)
 
-**Instance URL:** copy the **Service instance URL** from the same API details page.
+#### API key
+
+The **Generate API key** button in wxO redirects you to the IBM Cloud Identity and
+Access Management (IAM) centre, where you create a named IBM Cloud API key.
+
+1. On the **API details** tab, click **Generate API key**
+
+    !!! warning "Do not use the IBM Cloud resources page"
+        The button takes you to the correct IAM page. Do not copy credentials
+        directly from the IBM Cloud resources page — they will not work with the ADK.
+
+2. The IBM Cloud IAM centre opens. Click **Create**
+3. Enter a descriptive **Name** for the key (for example `openslava-lab-adk`) and
+   an optional description, then click **Create**
+4. Click **Copy** or **Download** immediately — the key value is **shown only once**
+   and cannot be retrieved afterwards
+5. Store it somewhere safe (a password manager, or a local text file you will
+   delete after the lab)
+
+!!! danger "API keys cannot be recovered"
+    If you close the dialog without copying the key, you must delete it in
+    [IBM Cloud IAM](https://cloud.ibm.com/iam/apikeys) and generate a new one.
+    You are limited to 20 API keys per IBM Cloud account.
 
 ### 12.2 Add and activate the environment
 
