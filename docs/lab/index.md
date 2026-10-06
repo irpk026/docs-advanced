@@ -56,7 +56,6 @@ credentials in [Section 5](#section-5-configure-the-python-consumer-5-min).
     - [ ] `uv sync --locked` completed without errors
     - [ ] `.env` exists in `fashion-inventory-consumer/`
     - [ ] `orchestrate agents list` returns without error
-    - [ ] You have the promo code to hand (see [Section 2.1](#21-create-your-account-and-redeem-the-workshop-promo-code))
 
 ---
 
@@ -308,13 +307,13 @@ payment screen without entering `CONFLUENTDEV1`:
     **Settings** → **Billing & payment** → **Payment details & contacts** shows a
     promotional balance, and no credit card is on file. You're ready to create resources.
 
-### 2.2 Create your environment and cluster
+### 2.2 Create your Cloud Environment and cluster
 
 1. Log in to [confluent.cloud](https://confluent.cloud)
-2. Click **Add environment** → name it `retail-inventory-bootcamp`
-3. Inside the environment, click **Add cluster** → choose **Basic**
+2. Click **Add cloud environment** → name it `retail-inventory-bootcamp`
+3. Inside the Cloud Environment, click **Add cluster** → choose **Basic**
 4. When asked **"Do you need a private network?"** — answer **No**
-5. Select a cloud provider and region, then name the cluster `retail-inventory-cluster`
+5. Select a cloud provider and region — select **`Europe (Frankfurt)`**, then name the cluster `retail-inventory-cluster`
 6. Note the **Bootstrap server URL** — you'll need it for `.env`
 
 !!! warning "Answer No to the private networking question"
@@ -348,10 +347,44 @@ For each topic, attach the corresponding schema from `retail-inventory-optimizat
 ### 2.5 Create a Flink compute pool
 
 1. In your environment, click **Stream Processing** (left sidebar)
-2. Click **Create compute pool** → choose a region → name it `retail-inventory-flink` → **Continue**
+2. Click **Create compute pool** → choose region **`Europe (Frankfurt)`** (must match your Kafka cluster region) → name it `retail-inventory-flink` → **Continue**
 3. Once the pool is ready, click **Open SQL workspace**
 
-### 2.6 Deploy the velocity spike detector
+### 2.6 Set catalog and database
+
+!!! warning "Required before running any query"
+    The Flink SQL workspace starts with no database selected. Every query will fail with
+    `Table 'fashion.inventory.events' does not exist` until you run these two statements.
+
+Run these **one at a time** in the SQL workspace:
+
+```sql
+USE CATALOG `retail-inventory-bootcamp`;
+```
+
+Then:
+
+```sql
+USE `retail-inventory-cluster`;
+```
+
+Verify:
+
+```sql
+SELECT CURRENT_CATALOG, CURRENT_DATABASE;
+```
+
+Expected output:
+
+```
+CURRENT_CATALOG           CURRENT_DATABASE
+retail-inventory-bootcamp  retail-inventory-cluster
+```
+
+!!! success "Checkpoint"
+    Both values appear correctly before proceeding to the next step.
+
+### 2.7 Deploy the velocity spike detector
 
 In the Flink SQL workspace, paste and run the query from `retail-inventory-optimization/fashion-inventory-setup/sql/velocity_anomaly_detection.sql`.
 
@@ -376,7 +409,7 @@ WHERE eventType = 'SALE'
 
 > **⚠️ Demo simplification — hardcoded baseline:** The query uses a fixed baseline velocity of `2.0 units/hour`. In production you would compute a rolling 7-day average per SKU using Flink's windowing functions (`TUMBLE`, `HOP`, or `CUMULATE` windows with `ORDER BY eventTime`). The fixed value makes the demo deterministic and removes the warm-up period that a real rolling window requires. The pipeline logic and alert schema are production-grade; only the baseline calculation is simplified.
 
-### 2.7 Generate API keys
+### 2.8 Generate API keys
 
 You need **two sets** of API keys:
 
@@ -397,6 +430,7 @@ Also note your **Schema Registry URL** from the Schema Registry panel — this i
 - A promo code redeemed *before* cluster creation removes the payment-method requirement
 - Confluent Cloud organises resources into environments → clusters → topics
 - Schema Registry enforces data contracts at the topic level
+- Flink SQL workspace starts with no catalog/database selected — `USE CATALOG` and `USE` must be run before any table query
 - Flink SQL runs continuously as a deployed job — it's not a one-shot query
 - A fixed baseline is a valid demo simplification; production requires windowed aggregation
 
@@ -409,7 +443,7 @@ Before adding the AI layer, verify that Flink SQL correctly detects velocity spi
 ### 3.1 Fill in your Confluent credentials
 
 Edit `retail-inventory-optimization/fashion-inventory-consumer/.env` and fill in the
-Confluent section with the values from [Section 2.7](#27-generate-api-keys). Leave the
+Confluent section with the values from [Section 2.8](#28-generate-api-keys). Leave the
 `WXO_*` lines as placeholders for now:
 
 ```bash
