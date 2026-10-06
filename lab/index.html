@@ -592,10 +592,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#three-kafka-topics" class="md-nav__link">
+  <a href="#kafka-topics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Three Kafka topics
+        Kafka topics
       
     </span>
   </a>
@@ -664,10 +664,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#23-create-three-kafka-topics" class="md-nav__link">
+  <a href="#23-create-the-kafka-topics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.3 Create three Kafka topics
+        2.3 Create the Kafka topics
       
     </span>
   </a>
@@ -818,15 +818,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-4-create-the-ai-agent-using-bob-30-min" class="md-nav__link">
+  <a href="#section-4-create-the-ai-agent-using-bob-40-min" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Section 4 — Create the AI Agent Using Bob (30 min)
+        Section 4 — Create the AI Agent Using Bob (40 min)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Section 4 — Create the AI Agent Using Bob (30 min)">
+    <nav class="md-nav" aria-label="Section 4 — Create the AI Agent Using Bob (40 min)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -896,10 +896,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#47-watch-the-agent-work" class="md-nav__link">
+  <a href="#47-give-the-agent-hands-action-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.7 Watch the agent work
+        4.7 Give the agent hands: action tools
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#48-watch-the-agent-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.8 Watch the agent work
       
     </span>
   </a>
@@ -1473,10 +1484,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#three-kafka-topics" class="md-nav__link">
+  <a href="#kafka-topics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Three Kafka topics
+        Kafka topics
       
     </span>
   </a>
@@ -1545,10 +1556,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#23-create-three-kafka-topics" class="md-nav__link">
+  <a href="#23-create-the-kafka-topics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.3 Create three Kafka topics
+        2.3 Create the Kafka topics
       
     </span>
   </a>
@@ -1699,15 +1710,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-4-create-the-ai-agent-using-bob-30-min" class="md-nav__link">
+  <a href="#section-4-create-the-ai-agent-using-bob-40-min" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Section 4 — Create the AI Agent Using Bob (30 min)
+        Section 4 — Create the AI Agent Using Bob (40 min)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Section 4 — Create the AI Agent Using Bob (30 min)">
+    <nav class="md-nav" aria-label="Section 4 — Create the AI Agent Using Bob (40 min)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1777,10 +1788,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#47-watch-the-agent-work" class="md-nav__link">
+  <a href="#47-give-the-agent-hands-action-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.7 Watch the agent work
+        4.7 Give the agent hands: action tools
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#48-watch-the-agent-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.8 Watch the agent work
       
     </span>
   </a>
@@ -2163,7 +2185,7 @@
   <img src="images/bobchestrate-confluent.png" alt="Event-driven AI agents lab" width="640">
 </p>
 
-<p><strong>Duration:</strong> 95–105 minutes · <strong>Difficulty:</strong> ⭐⭐⭐⭐</p>
+<p><strong>Duration:</strong> 105–115 minutes · <strong>Difficulty:</strong> ⭐⭐⭐⭐</p>
 <hr />
 <h2 id="before-you-start">Before you start<a class="headerlink" href="#before-you-start" title="Permanent link">&para;</a></h2>
 <p>This lab assumes you completed <a href="../setup/">Setup &amp; Environment</a>.
@@ -2210,7 +2232,7 @@ credentials in <a href="#section-5-configure-the-python-consumer-5-min">Section 
 <hr />
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>This lab teaches you to build an <strong>event-driven AI pipeline</strong> — a pattern where real-time streaming events automatically trigger AI agent analysis. You'll combine two cloud platforms: <strong>Confluent Cloud</strong> for stream processing and <strong>IBM watsonx Orchestrate</strong> for AI-powered decision-making.</p>
-<p>The business scenario: a fashion retailer needs to detect when a product is selling abnormally fast and immediately get an AI-driven inventory decision — reorder, surge price, or monitor — before stock runs out.</p>
+<p>The business scenario: a fashion retailer needs to detect when a product is selling abnormally fast and immediately get an AI-driven inventory decision — reorder, surge price, or monitor — and then <strong>act on it</strong>: place the restock order with logistics and open a ServiceNow ticket for the store team, before stock runs out.</p>
 <h3 id="what-youll-build">What You'll Build<a class="headerlink" href="#what-youll-build" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2245,6 +2267,11 @@ credentials in <a href="#section-5-configure-the-python-consumer-5-min">Section 
 <td><strong>Knowledge base</strong></td>
 <td>wxO KB</td>
 <td>Gives the agent decision rules, product history, and guardrails</td>
+</tr>
+<tr>
+<td><strong>Action tools</strong></td>
+<td>wxO Python tools</td>
+<td>Let the agent place restock orders and open ServiceNow tickets</td>
 </tr>
 </tbody>
 </table>
@@ -2301,6 +2328,10 @@ credentials in <a href="#section-5-configure-the-python-consumer-5-min">Section 
 </tr>
 <tr>
 <td><strong>Section 4.5 — Agent</strong></td>
+<td>Copy-paste the prompt block provided in the section</td>
+</tr>
+<tr>
+<td><strong>Section 4.7 — Action tools</strong></td>
 <td>Copy-paste the prompt block provided in the section</td>
 </tr>
 <tr>
@@ -2374,7 +2405,7 @@ credentials in <a href="#section-5-configure-the-python-consumer-5-min">Section 
 </span><span id="__span-4-35"><a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a>                              │  ▶  fashion.agent.responses (Kafka)   │
 </span><span id="__span-4-36"><a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a>                              └───────────────────────────────────────┘
 </span></code></pre></div>
-<h3 id="three-kafka-topics">Three Kafka topics<a class="headerlink" href="#three-kafka-topics" title="Permanent link">&para;</a></h3>
+<h3 id="kafka-topics">Kafka topics<a class="headerlink" href="#kafka-topics" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2403,10 +2434,22 @@ credentials in <a href="#section-5-configure-the-python-consumer-5-min">Section 
 <td>Downstream systems</td>
 <td>AI-enriched decisions</td>
 </tr>
+<tr>
+<td><code>fashion.logistics.orders</code></td>
+<td>Agent's <code>create_restock_order</code> tool</td>
+<td>Logistics</td>
+<td>Restock orders</td>
+</tr>
+<tr>
+<td><code>servicenow.incidents</code></td>
+<td>Agent's <code>open_servicenow_ticket</code> tool</td>
+<td>Store Operations</td>
+<td>ServiceNow-style incidents</td>
+</tr>
 </tbody>
 </table>
 <h3 id="see-the-flow-before-you-build-it">See the flow before you build it<a class="headerlink" href="#see-the-flow-before-you-build-it" title="Permanent link">&para;</a></h3>
-<p>The lab includes a dashboard that shows all three topics side by side, one column per
+<p>The lab includes a dashboard that shows every topic side by side, one column per
 stage. Start it now, before anything is built, to see the finished pipeline running.</p>
 <p><strong>1. Get the dashboard script.</strong> In a Bob IDE terminal:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="mac--linux_1" name="__tabbed_2" type="radio" /><input id="windows_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="mac--linux_1">Mac / Linux</label><label for="windows_1">Windows</label></div>
@@ -2471,9 +2514,14 @@ the pipeline you're about to build on your laptop, using the lab's own files:</p
 <td>The rules in <code>decision-rules.pdf</code>, applied exactly</td>
 <td><strong>The LLM agent</strong>, reading those rules</td>
 </tr>
+<tr>
+<td>Actions</td>
+<td>An order and a ticket, as the action tools would write them</td>
+<td><strong>The agent</strong>, calling its action tools</td>
+</tr>
 </tbody>
 </table>
-<p>Only the last row differs. Replay mode shows what the rulebook decides; in Section 6 you'll
+<p>Only the last two rows differ. Replay mode shows what the rulebook decides; in Section 6 you'll
 see what the agent decides, and compare the two.</p>
 <p><strong>3. Open <a href="http://localhost:8050">http://localhost:8050</a> in your browser.</strong> Within about
 30 seconds the run completes and looks like this:</p>
@@ -2535,7 +2583,7 @@ and watch each column fill as you build that stage.</p>
 </span></code></pre></div>
 <hr />
 <h2 id="section-2-confluent-cloud-setup-20-min">Section 2 — Confluent Cloud Setup (20 min)<a class="headerlink" href="#section-2-confluent-cloud-setup-20-min" title="Permanent link">&para;</a></h2>
-<p>You need a Confluent Cloud account, an environment with three topics, a Schema Registry,
+<p>You need a Confluent Cloud account, an environment with five topics, a Schema Registry,
 and a Flink compute pool.</p>
 <h3 id="21-create-your-account-and-redeem-the-workshop-promo-code">2.1 Create your account and redeem the workshop promo code<a class="headerlink" href="#21-create-your-account-and-redeem-the-workshop-promo-code" title="Permanent link">&para;</a></h3>
 <div class="admonition danger">
@@ -2665,30 +2713,45 @@ networking (VPC peering, PrivateLink, Transit Gateway) puts the cluster behind a
 network you don't have access to from the workshop Wi-Fi, and the Python producer and
 consumer will fail to connect.</p>
 </div>
-<h3 id="23-create-three-kafka-topics">2.3 Create three Kafka topics<a class="headerlink" href="#23-create-three-kafka-topics" title="Permanent link">&para;</a></h3>
-<p>In your cluster, navigate to <strong>Topics</strong> → <strong>Add topic</strong>. Create all three:</p>
+<h3 id="23-create-the-kafka-topics">2.3 Create the Kafka topics<a class="headerlink" href="#23-create-the-kafka-topics" title="Permanent link">&para;</a></h3>
+<p>In your cluster, navigate to <strong>Topics</strong> → <strong>Add topic</strong>. Create all five:</p>
 <table>
 <thead>
 <tr>
 <th>Topic name</th>
 <th>Partitions</th>
+<th>Used for</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>fashion.inventory.events</code></td>
 <td>3</td>
+<td>Sales</td>
 </tr>
 <tr>
 <td><code>fashion.velocity.anomalies</code></td>
 <td>3</td>
+<td>Flink alerts</td>
 </tr>
 <tr>
 <td><code>fashion.agent.responses</code></td>
 <td>3</td>
+<td>Agent decisions</td>
+</tr>
+<tr>
+<td><code>fashion.logistics.orders</code></td>
+<td>3</td>
+<td>Restock orders the agent places (Section 4.7)</td>
+</tr>
+<tr>
+<td><code>servicenow.incidents</code></td>
+<td>3</td>
+<td>Tickets the agent opens (Section 4.7)</td>
 </tr>
 </tbody>
 </table>
+<p>The last two don't get a schema in Section 2.4 — the agent's tools write plain JSON to them.</p>
 <h3 id="24-register-json-schemas">2.4 Register JSON Schemas<a class="headerlink" href="#24-register-json-schemas" title="Permanent link">&para;</a></h3>
 <p>For each topic, attach the corresponding schema from <code>retail-inventory-optimization/fashion-inventory-setup/schemas/</code>:</p>
 <table>
@@ -2799,6 +2862,12 @@ consumer will fail to connect.</p>
 <li>Save the <strong>Key</strong> and <strong>Secret</strong> — these are <code>SCHEMA_REGISTRY_API_KEY</code> / <code>SCHEMA_REGISTRY_API_SECRET</code></li>
 </ol>
 <p>Also note your <strong>Schema Registry URL</strong> from the Schema Registry panel — this is <code>SCHEMA_REGISTRY_URL</code>.</p>
+<p><strong>For the agent's action tools (Section 4.7)</strong>, also note two values from your cluster's
+<strong>Cluster settings</strong> page:</p>
+<ul>
+<li><strong>REST endpoint</strong> under <strong>Endpoints</strong> — looks like <code>https://pkc-xxxxx.eu-central-1.aws.confluent.cloud:443</code></li>
+<li><strong>Cluster ID</strong> — the <code>lkc-…</code> value you used in Section 2.6</li>
+</ul>
 <h3 id="what-you-learned_1">What you learned<a class="headerlink" href="#what-you-learned_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>A promo code redeemed <em>before</em> cluster creation removes the payment-method requirement</li>
@@ -2960,7 +3029,7 @@ agent yet. Hover over an alert to see which sale triggered it.</p>
 <li>Separating "does Flink work?" from "does the agent work?" makes debugging much easier</li>
 </ul>
 <hr />
-<h2 id="section-4-create-the-ai-agent-using-bob-30-min">Section 4 — Create the AI Agent Using Bob (30 min)<a class="headerlink" href="#section-4-create-the-ai-agent-using-bob-30-min" title="Permanent link">&para;</a></h2>
+<h2 id="section-4-create-the-ai-agent-using-bob-40-min">Section 4 — Create the AI Agent Using Bob (40 min)<a class="headerlink" href="#section-4-create-the-ai-agent-using-bob-40-min" title="Permanent link">&para;</a></h2>
 <p>This is the Bob-driven section. You'll create two tools, a knowledge base, and the agent — all by pasting prompts into Bob.</p>
 <p><strong>Switch to WXO Agent Architect mode before starting:</strong></p>
 <ol>
@@ -3206,7 +3275,7 @@ agent yet. Hover over an alert to see which sale triggered it.</p>
 </span><span id="__span-27-96"><a id="__codelineno-27-96" name="__codelineno-27-96" href="#__codelineno-27-96"></a>Restrictions:
 </span><span id="__span-27-97"><a id="__codelineno-27-97" name="__codelineno-27-97" href="#__codelineno-27-97"></a>- Do not fabricate product or sales history facts
 </span><span id="__span-27-98"><a id="__codelineno-27-98" name="__codelineno-27-98" href="#__codelineno-27-98"></a>- Do not use placeholder strings where structured objects are required
-</span><span id="__span-27-99"><a id="__codelineno-27-99" name="__codelineno-27-99" href="#__codelineno-27-99"></a>- Do not make actual purchase orders or financial commitments
+</span><span id="__span-27-99"><a id="__codelineno-27-99" name="__codelineno-27-99" href="#__codelineno-27-99"></a>- Only place orders or open tickets through the action tools you are given, and never invent order or incident numbers
 </span><span id="__span-27-100"><a id="__codelineno-27-100" name="__codelineno-27-100" href="#__codelineno-27-100"></a>- Keep reasoning concise, operational, and demo-friendly
 </span></code></pre></div>
 <blockquote>
@@ -3217,27 +3286,146 @@ agent yet. Hover over an alert to see which sale triggered it.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>Get the agent ID for the "Fashion Inventory Alert Processor" agent. I need this ID to configure my Python consumer application.
 </span></code></pre></div>
 <p>Copy the returned agent ID — this is your <code>WXO_AGENT_ID_OR_NAME</code> value for the next section.</p>
-<h3 id="47-watch-the-agent-work">4.7 Watch the agent work<a class="headerlink" href="#47-watch-the-agent-work" title="Permanent link">&para;</a></h3>
+<h3 id="47-give-the-agent-hands-action-tools">4.7 Give the agent hands: action tools<a class="headerlink" href="#47-give-the-agent-hands-action-tools" title="Permanent link">&para;</a></h3>
+<p>So far the agent only <em>recommends</em>. Now let it <em>act</em>: place the restock order with
+logistics and open a ServiceNow ticket for the store team — in the same run, straight from
+the Flink alert.</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+<th>Writes to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>create_restock_order</code></td>
+<td>Places a restock order for the SKU and store</td>
+<td><code>fashion.logistics.orders</code></td>
+</tr>
+<tr>
+<td><code>open_servicenow_ticket</code></td>
+<td>Opens an incident for Store Operations</td>
+<td><code>servicenow.incidents</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">Why the tools write to Kafka</p>
+<p>The tools run inside watsonx Orchestrate, in the cloud, so they can't reach anything
+on your laptop. They write through Confluent Cloud's REST API instead — plain HTTPS,
+no extra packages. A logistics system would consume <code>fashion.logistics.orders</code>.
+<code>servicenow.incidents</code> is a stand-in: each record has the shape the ServiceNow Table
+API (<code>POST /api/now/table/incident</code>) creates, so pointing the tool at a real instance
+is a one-function change.</p>
+</div>
+<p><strong>1. Get the tool code.</strong> In a Bob IDE terminal, from <code>bobchestrate-confluent/</code>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="mac--linux_2" name="__tabbed_4" type="radio" /><input id="windows_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="mac--linux_2">Mac / Linux</label><label for="windows_2">Windows</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>stock_action_tools
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>-o<span class="w"> </span>stock_action_tools/stock_actions.py<span class="w"> </span>https://irpk026.github.io/docs-advanced/lab/stock_actions.py
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">stock_action_tools</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="nb">Invoke-WebRequest</span> <span class="n">https</span><span class="p">://</span><span class="n">irpk026</span><span class="p">.</span><span class="n">github</span><span class="p">.</span><span class="n">io</span><span class="p">/</span><span class="n">docs-advanced</span><span class="p">/</span><span class="n">lab</span><span class="p">/</span><span class="n">stock_actions</span><span class="p">.</span><span class="n">py</span> <span class="n">-OutFile</span> <span class="n">stock_action_tools</span><span class="p">/</span><span class="n">stock_actions</span><span class="p">.</span><span class="n">py</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>Or <a href="stock_actions.py"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> download <code>stock_actions.py</code></a> into a new
+<code>stock_action_tools/</code> folder yourself.</p>
+<p><strong>2. Read the guardrail.</strong> Open <code>stock_actions.py</code> and find:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">APPROVAL_LIMIT_USD</span> <span class="o">=</span> <span class="mi">20000</span>
+</span></code></pre></div>
+<p>Any order over $20,000 — or with an unknown cost — is created as <code>PENDING_APPROVAL</code>
+instead of being sent to logistics. The limit lives <strong>in the tool's code, not in the
+agent's instructions</strong>, so no prompt can talk the agent past it. That's the rule of thumb
+for anything that spends money: let the LLM decide, let code enforce the limits.</p>
+<p><strong>3. Give wxO the Confluent credentials.</strong> The tools read them from a key-value connection
+called <code>confluent_rest</code>, using the values you noted in Section 2.8:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="mac--linux_3" name="__tabbed_5" type="radio" /><input id="windows_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="mac--linux_3">Mac / Linux</label><label for="windows_3">Windows</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>orchestrate<span class="w"> </span>connections<span class="w"> </span>add<span class="w"> </span>-a<span class="w"> </span>confluent_rest
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="k">for</span><span class="w"> </span>env<span class="w"> </span><span class="k">in</span><span class="w"> </span>draft<span class="w"> </span>live<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="w">  </span>orchestrate<span class="w"> </span>connections<span class="w"> </span>configure<span class="w"> </span>-a<span class="w"> </span>confluent_rest<span class="w"> </span>--env<span class="w"> </span><span class="nv">$env</span><span class="w"> </span>--kind<span class="w"> </span>key_value<span class="w"> </span>--type<span class="w"> </span>team
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="w">  </span>orchestrate<span class="w"> </span>connections<span class="w"> </span>set-credentials<span class="w"> </span>-a<span class="w"> </span>confluent_rest<span class="w"> </span>--env<span class="w"> </span><span class="nv">$env</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">rest_endpoint</span><span class="o">=</span>https://pkc-xxxxx.eu-central-1.aws.confluent.cloud:443<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">cluster_id</span><span class="o">=</span>lkc-abc123<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-32-7"><a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">api_key</span><span class="o">=</span>YOUR_KAFKA_API_KEY<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-32-8"><a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">api_secret</span><span class="o">=</span>YOUR_KAFKA_API_SECRET
+</span><span id="__span-32-9"><a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a><span class="k">done</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="n">orchestrate</span> <span class="n">connections</span> <span class="n">add</span> <span class="n">-a</span> <span class="n">confluent_rest</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="k">foreach</span> <span class="p">(</span><span class="nv">$env</span> <span class="k">in</span> <span class="s2">"draft"</span><span class="p">,</span> <span class="s2">"live"</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>  <span class="n">orchestrate</span> <span class="n">connections</span> <span class="n">configure</span> <span class="n">-a</span> <span class="n">confluent_rest</span> <span class="p">-</span><span class="n">-env</span> <span class="nv">$env</span> <span class="p">-</span><span class="n">-kind</span> <span class="n">key_value</span> <span class="p">-</span><span class="n">-type</span> <span class="n">team</span>
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>  <span class="n">orchestrate</span> <span class="n">connections</span> <span class="nb">set-credentials</span> <span class="n">-a</span> <span class="n">confluent_rest</span> <span class="p">-</span><span class="n">-env</span> <span class="nv">$env</span> <span class="p">`</span>
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>    <span class="n">-e</span> <span class="n">rest_endpoint</span><span class="p">=</span><span class="n">https</span><span class="p">://</span><span class="n">pkc-xxxxx</span><span class="p">.</span><span class="n">eu-central</span><span class="p">-</span><span class="n">1</span><span class="p">.</span><span class="n">aws</span><span class="p">.</span><span class="n">confluent</span><span class="p">.</span><span class="n">cloud</span><span class="p">:</span><span class="n">443</span> <span class="p">`</span>
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>    <span class="n">-e</span> <span class="n">cluster_id</span><span class="p">=</span><span class="n">lkc-abc123</span> <span class="p">`</span>
+</span><span id="__span-33-7"><a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>    <span class="n">-e</span> <span class="n">api_key</span><span class="p">=</span><span class="n">YOUR_KAFKA_API_KEY</span> <span class="p">`</span>
+</span><span id="__span-33-8"><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a>    <span class="n">-e</span> <span class="n">api_secret</span><span class="p">=</span><span class="n">YOUR_KAFKA_API_SECRET</span>
+</span><span id="__span-33-9"><a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a><span class="p">}</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>Use your own REST endpoint, cluster ID and Kafka API key — the same key as <code>KAFKA_API_KEY</code>
+in <code>.env</code>.</p>
+<p><strong>4. Import the tools</strong> with the connection attached:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>orchestrate<span class="w"> </span>tools<span class="w"> </span>import<span class="w"> </span>-k<span class="w"> </span>python<span class="w"> </span>-f<span class="w"> </span>stock_action_tools/stock_actions.py<span class="w"> </span>-p<span class="w"> </span>stock_action_tools<span class="w"> </span>-a<span class="w"> </span>confluent_rest
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>orchestrate<span class="w"> </span>tools<span class="w"> </span>list
+</span></code></pre></div>
+<p>Both <code>create_restock_order</code> and <code>open_servicenow_ticket</code> should be listed.</p>
+<p><strong>5. Tell the agent when to act.</strong> Paste this into Bob:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>Update the agent Fashion_Inventory_Alert_Processor.
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>Add the tools create_restock_order and open_servicenow_ticket.
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>
+</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>Add this step to its instructions, after "8. Build the final payload", and keep every other instruction unchanged:
+</span><span id="__span-35-6"><a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>
+</span><span id="__span-35-7"><a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>9. Act on the decision
+</span><span id="__span-35-8"><a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a>- If reorderRecommendation.shouldReorder is true, call create_restock_order once, with alert_id, sku and store_id exactly as in the alert, quantity = reorderRecommendation.reorderQuantity, priority = reorderRecommendation.reorderPriority, current_stock from the alert, unit_price from the product history (0 if unknown), and a one-sentence reason.
+</span><span id="__span-35-9"><a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a>- If agentDecision.urgencyLevel is CRITICAL or HIGH, call open_servicenow_ticket once. The short description names the product, the store and the stock left; the description includes the order number from create_restock_order.
+</span><span id="__span-35-10"><a id="__codelineno-35-10" name="__codelineno-35-10" href="#__codelineno-35-10"></a>- Record the results in metadata, as strings: restockOrderId, restockOrderStatus, servicenowIncident. If a tool returns an error, put it in metadata.actionError and still return the decision.
+</span><span id="__span-35-11"><a id="__codelineno-35-11" name="__codelineno-35-11" href="#__codelineno-35-11"></a>- If the order status is PENDING_APPROVAL, set notifications.escalationRequired to true and escalationReason to the tool's message.
+</span><span id="__span-35-12"><a id="__codelineno-35-12" name="__codelineno-35-12" href="#__codelineno-35-12"></a>- Never call an action tool more than once per alert, and never invent order or incident numbers.
+</span></code></pre></div>
+<p><code>metadata</code> accepts any string values, so the response still passes the schema check in
+the consumer.</p>
+<div class="admonition warning">
+<p class="admonition-title">Every alert is a new order</p>
+<p>The agent handles each alert on its own and remembers nothing between them. The test
+data sends 18 alerts for the same parka, so you can end up with 18 restock orders —
+watch the <strong>Actions taken</strong> column in Section 6. That's a real design problem, not a
+lab glitch. How would you fix it? A tool that checks for open orders first? An
+idempotency key per SKU per day? Letting Flink stop repeating alerts for the same SKU?</p>
+</div>
+<h3 id="48-watch-the-agent-work">4.8 Watch the agent work<a class="headerlink" href="#48-watch-the-agent-work" title="Permanent link">&para;</a></h3>
 <p>Before wiring the agent into the pipeline, run it by hand and look inside. In Section 6
 the Python consumer calls this same agent over the API — but there you only see the
 alert going in and the JSON coming out. Here you see everything in between.</p>
 <p><strong>What wxO is doing.</strong> The agent you just created is a saved configuration: a model, the
-instructions, two tools, and a knowledge base. When a message arrives, wxO runs the model
+instructions, its tools, and a knowledge base. When a message arrives, wxO runs the model
 in a loop — the model reads the message, <em>decides for itself</em> which tool to call or what
 to search for, wxO executes that call and hands back the result, and the model keeps
 going until it can write the final answer. Nobody coded the order of those steps; the
 instructions describe the goal and the model works out the route.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>alert ─▶ model ─▶ "I need the store's location"  ─▶ get_store_location   ─┐
-</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>           ▲                                                               │
-</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>           ├──── result ◀──────────────────────────────────────────────────┘
-</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>           │
-</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>           ├──▶ "I need the weather there"       ─▶ get_weather_forecast ─┐
-</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>           ├──── result ◀──────────────────────────────────────────────────┘
-</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>           │
-</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>           ├──▶ "What is normal for this SKU?"   ─▶ knowledge base search ─┐
-</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>           ├──── result ◀──────────────────────────────────────────────────┘
-</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>           │
-</span><span id="__span-29-11"><a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a>           └──▶ final JSON decision
+<div class="language-text highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>alert ─▶ model ─▶ "I need the store's location"  ─▶ get_store_location   ─┐
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>           ▲                                                               │
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>           ├──── result ◀──────────────────────────────────────────────────┘
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>           │
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>           ├──▶ "I need the weather there"       ─▶ get_weather_forecast ─┐
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>           ├──── result ◀──────────────────────────────────────────────────┘
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>           │
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>           ├──▶ "What is normal for this SKU?"   ─▶ knowledge base search ─┐
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a>           ├──── result ◀──────────────────────────────────────────────────┘
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>           │
+</span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a>           └──▶ final JSON decision
 </span></code></pre></div>
 <p><strong>1. Open the agent's preview chat</strong></p>
 <p>In the watsonx Orchestrate console, open <strong>Agent Builder</strong> → <strong>Fashion Inventory Alert
@@ -3246,18 +3434,18 @@ Processor</strong>. The chat panel on the right is a live preview of the agent.<
 <p>This is exactly what the consumer will send for the last spike in the test data — the
 output of <code>agent_payload_builder.py</code> for one row of <code>fashion.velocity.anomalies</code>. Paste it
 into the preview chat:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="p">{</span>
-</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="w">  </span><span class="nt">"alertId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ALERT-1777453200-JACKET-001-M-BLACK"</span><span class="p">,</span>
-</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">  </span><span class="nt">"anomalyType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"VELOCITY_SPIKE"</span><span class="p">,</span>
-</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="w">  </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MEDIUM"</span><span class="p">,</span>
-</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="w">  </span><span class="nt">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-04-29T09:40:00Z"</span><span class="p">,</span>
-</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="w">  </span><span class="nt">"storeId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"STORE-NYC-001"</span><span class="p">,</span>
-</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="w">  </span><span class="nt">"productId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"JACKET-001"</span><span class="p">,</span>
-</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="w">  </span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="s2">"JACKET-001-M-BLACK"</span><span class="p">,</span>
-</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="w">  </span><span class="nt">"productDetails"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"productName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NorthStyle Outerwear"</span><span class="p">,</span><span class="w"> </span><span class="nt">"category"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Outerwear"</span><span class="p">,</span><span class="w"> </span><span class="nt">"brand"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NorthStyle"</span><span class="p">,</span><span class="w"> </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w"> </span><span class="nt">"color"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Black"</span><span class="p">,</span><span class="w"> </span><span class="nt">"unitPrice"</span><span class="p">:</span><span class="w"> </span><span class="mf">89.99</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-30-10"><a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a><span class="w">  </span><span class="nt">"velocityAnalysis"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"baselineVelocity"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="nt">"currentVelocity"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span><span class="w"> </span><span class="nt">"velocityRatio"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="nt">"velocityTrend"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ACCELERATING"</span><span class="p">,</span><span class="w"> </span><span class="nt">"durationHours"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"triggerType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"UNKNOWN"</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-30-11"><a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a><span class="w">  </span><span class="nt">"stockAnalysis"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"currentStock"</span><span class="p">:</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="nt">"hoursToStockout"</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="nt">"estimatedValue"</span><span class="p">:</span><span class="w"> </span><span class="mf">4319.52</span><span class="p">,</span><span class="w"> </span><span class="nt">"reorderPoint"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nt">"typicalStock"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-30-12"><a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="p">{</span>
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="w">  </span><span class="nt">"alertId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ALERT-1777453200-JACKET-001-M-BLACK"</span><span class="p">,</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="w">  </span><span class="nt">"anomalyType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"VELOCITY_SPIKE"</span><span class="p">,</span>
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a><span class="w">  </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MEDIUM"</span><span class="p">,</span>
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="w">  </span><span class="nt">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-04-29T09:40:00Z"</span><span class="p">,</span>
+</span><span id="__span-37-6"><a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a><span class="w">  </span><span class="nt">"storeId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"STORE-NYC-001"</span><span class="p">,</span>
+</span><span id="__span-37-7"><a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a><span class="w">  </span><span class="nt">"productId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"JACKET-001"</span><span class="p">,</span>
+</span><span id="__span-37-8"><a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a><span class="w">  </span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="s2">"JACKET-001-M-BLACK"</span><span class="p">,</span>
+</span><span id="__span-37-9"><a id="__codelineno-37-9" name="__codelineno-37-9" href="#__codelineno-37-9"></a><span class="w">  </span><span class="nt">"productDetails"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"productName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NorthStyle Outerwear"</span><span class="p">,</span><span class="w"> </span><span class="nt">"category"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Outerwear"</span><span class="p">,</span><span class="w"> </span><span class="nt">"brand"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NorthStyle"</span><span class="p">,</span><span class="w"> </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w"> </span><span class="nt">"color"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Black"</span><span class="p">,</span><span class="w"> </span><span class="nt">"unitPrice"</span><span class="p">:</span><span class="w"> </span><span class="mf">89.99</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-37-10"><a id="__codelineno-37-10" name="__codelineno-37-10" href="#__codelineno-37-10"></a><span class="w">  </span><span class="nt">"velocityAnalysis"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"baselineVelocity"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="nt">"currentVelocity"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span><span class="w"> </span><span class="nt">"velocityRatio"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="nt">"velocityTrend"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ACCELERATING"</span><span class="p">,</span><span class="w"> </span><span class="nt">"durationHours"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"triggerType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"UNKNOWN"</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-37-11"><a id="__codelineno-37-11" name="__codelineno-37-11" href="#__codelineno-37-11"></a><span class="w">  </span><span class="nt">"stockAnalysis"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"currentStock"</span><span class="p">:</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="nt">"hoursToStockout"</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="nt">"estimatedValue"</span><span class="p">:</span><span class="w"> </span><span class="mf">4319.52</span><span class="p">,</span><span class="w"> </span><span class="nt">"reorderPoint"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nt">"typicalStock"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-37-12"><a id="__codelineno-37-12" name="__codelineno-37-12" href="#__codelineno-37-12"></a><span class="p">}</span>
 </span></code></pre></div>
 <p><strong>3. Open the reasoning trace</strong></p>
 <p>Under the agent's reply, expand <strong>Show reasoning</strong> to see each step the agent took.
@@ -3285,6 +3473,11 @@ Look for:</p>
 <td>Knowledge base search</td>
 <td>Passages from <code>product-history-baselines.csv</code>, <code>decision-rules.pdf</code></td>
 <td>Where <code>typicalStock</code>, <code>reorderPoint</code> and the urgency score come from</td>
+</tr>
+<tr>
+<td><code>create_restock_order</code>, <code>open_servicenow_ticket</code></td>
+<td>The order and ticket, with the agent's chosen quantity and priority</td>
+<td>The agent acting on its decision — these are real writes to your topics</td>
 </tr>
 <tr>
 <td>Final answer</td>
@@ -3353,15 +3546,15 @@ trace.</p>
 <h2 id="section-5-configure-the-python-consumer-5-min">Section 5 — Configure the Python Consumer (5 min)<a class="headerlink" href="#section-5-configure-the-python-consumer-5-min" title="Permanent link">&para;</a></h2>
 <h3 id="51-add-the-watsonx-orchestrate-credentials-to-env">5.1 Add the watsonx Orchestrate credentials to <code>.env</code><a class="headerlink" href="#51-add-the-watsonx-orchestrate-credentials-to-env" title="Permanent link">&para;</a></h3>
 <p>Edit <code>retail-inventory-optimization/fashion-inventory-consumer/.env</code> and add the wxO section:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="c1"># Watsonx Orchestrate Configuration</span>
-</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="nv">WXO_INSTANCE_URL</span><span class="o">=</span>https://api.us-south.watson-orchestrate.cloud.ibm.com/instances/your-instance-id
-</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="nv">WXO_AGENT_ID_OR_NAME</span><span class="o">=</span>your-agent-id-from-section-4.6
-</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="nv">WXO_INSTANCE_CLOUD</span><span class="o">=</span>ibmcloud<span class="w">     </span><span class="c1"># use "aws" if your instance is on AWS</span>
-</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="nv">WXO_API_KEY</span><span class="o">=</span>your_wxo_api_key
-</span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="nv">WXO_TIMEOUT_SECONDS</span><span class="o">=</span><span class="m">60</span>
-</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>
-</span><span id="__span-31-8"><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="c1"># Agent Response Topic</span>
-</span><span id="__span-31-9"><a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="nv">AGENT_RESPONSE_TOPIC</span><span class="o">=</span>fashion.agent.responses
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="c1"># Watsonx Orchestrate Configuration</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="nv">WXO_INSTANCE_URL</span><span class="o">=</span>https://api.us-south.watson-orchestrate.cloud.ibm.com/instances/your-instance-id
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="nv">WXO_AGENT_ID_OR_NAME</span><span class="o">=</span>your-agent-id-from-section-4.6
+</span><span id="__span-38-4"><a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a><span class="nv">WXO_INSTANCE_CLOUD</span><span class="o">=</span>ibmcloud<span class="w">     </span><span class="c1"># use "aws" if your instance is on AWS</span>
+</span><span id="__span-38-5"><a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a><span class="nv">WXO_API_KEY</span><span class="o">=</span>your_wxo_api_key
+</span><span id="__span-38-6"><a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a><span class="nv">WXO_TIMEOUT_SECONDS</span><span class="o">=</span><span class="m">60</span>
+</span><span id="__span-38-7"><a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a>
+</span><span id="__span-38-8"><a id="__codelineno-38-8" name="__codelineno-38-8" href="#__codelineno-38-8"></a><span class="c1"># Agent Response Topic</span>
+</span><span id="__span-38-9"><a id="__codelineno-38-9" name="__codelineno-38-9" href="#__codelineno-38-9"></a><span class="nv">AGENT_RESPONSE_TOPIC</span><span class="o">=</span>fashion.agent.responses
 </span></code></pre></div>
 <p><strong>Where to find these values:</strong></p>
 <table>
@@ -3404,54 +3597,54 @@ trace.</p>
 <p><strong>Restart the dashboard</strong> in terminal 1 (<code>Ctrl+C</code>, then <code>uv run pipeline_dashboard.py</code>
 again). It reads <code>.env</code> only at start-up, and it needs the <code>WXO_*</code> settings you added in
 Section 5 to run alerts through the agent. On start-up it should print:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>Agent execution: enabled
+<div class="language-text highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>Agent execution: enabled
 </span></code></pre></div>
 <p>It replays everything so far, so you lose nothing. Then, in <strong>terminal 2</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
-</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts_with_agent.py
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts_with_agent.py
 </span></code></pre></div>
 <h3 id="62-in-terminal-3-run-the-test-producer">6.2 In terminal 3, run the test producer<a class="headerlink" href="#62-in-terminal-3-run-the-test-producer" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
-</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>uv<span class="w"> </span>run<span class="w"> </span>produce_inventory_events.py<span class="w"> </span>--csv-file<span class="w"> </span>../fashion-inventory-setup/data/test_winter_jacket_spike.csv
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization/fashion-inventory-consumer
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>uv<span class="w"> </span>run<span class="w"> </span>produce_inventory_events.py<span class="w"> </span>--csv-file<span class="w"> </span>../fashion-inventory-setup/data/test_winter_jacket_spike.csv
 </span></code></pre></div>
 <h3 id="63-expected-log-output">6.3 Expected log output<a class="headerlink" href="#63-expected-log-output" title="Permanent link">&para;</a></h3>
 <p>The consumer works through the same 18 alerts you saw in Section 3, one at a time. Each
 one goes through four stages:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>==================== VELOCITY ALERT AGENT CONSUMER =====================
-</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>Input topic : fashion.velocity.anomalies
-</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>Output topic: fashion.agent.responses
-</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>========================================================================
-</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>
-</span><span id="__span-35-6"><a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>--------------------- 1. VELOCITY ALERT RECEIVED -----------------------
-</span><span id="__span-35-7"><a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>Alert         : VELOCITY_SPIKE
-</span><span id="__span-35-8"><a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a>Product       : JACKET-001-M-BLACK
-</span><span id="__span-35-9"><a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a>Store         : STORE-NYC-001
-</span><span id="__span-35-10"><a id="__codelineno-35-10" name="__codelineno-35-10" href="#__codelineno-35-10"></a>Severity      : MEDIUM
-</span><span id="__span-35-11"><a id="__codelineno-35-11" name="__codelineno-35-11" href="#__codelineno-35-11"></a>Velocity      : 2.5x baseline
-</span><span id="__span-35-12"><a id="__codelineno-35-12" name="__codelineno-35-12" href="#__codelineno-35-12"></a>Stock         : 88 units (17.0 hours to stockout)
-</span><span id="__span-35-13"><a id="__codelineno-35-13" name="__codelineno-35-13" href="#__codelineno-35-13"></a>Kafka         : partition=1 offset=0
-</span><span id="__span-35-14"><a id="__codelineno-35-14" name="__codelineno-35-14" href="#__codelineno-35-14"></a>------------------------------------------------------------------------
-</span><span id="__span-35-15"><a id="__codelineno-35-15" name="__codelineno-35-15" href="#__codelineno-35-15"></a>
-</span><span id="__span-35-16"><a id="__codelineno-35-16" name="__codelineno-35-16" href="#__codelineno-35-16"></a>---------------------- 2. AGENT REVIEWING CASE -------------------------
-</span><span id="__span-35-17"><a id="__codelineno-35-17" name="__codelineno-35-17" href="#__codelineno-35-17"></a>Agent         : Fashion_Inventory_Alert_Processor
-</span><span id="__span-35-18"><a id="__codelineno-35-18" name="__codelineno-35-18" href="#__codelineno-35-18"></a>Status        : Invoking watsonx Orchestrate and waiting for response
-</span><span id="__span-35-19"><a id="__codelineno-35-19" name="__codelineno-35-19" href="#__codelineno-35-19"></a>------------------------------------------------------------------------
-</span><span id="__span-35-20"><a id="__codelineno-35-20" name="__codelineno-35-20" href="#__codelineno-35-20"></a>
-</span><span id="__span-35-21"><a id="__codelineno-35-21" name="__codelineno-35-21" href="#__codelineno-35-21"></a>---------------------- 3. AGENT DECISION READY -------------------------
-</span><span id="__span-35-22"><a id="__codelineno-35-22" name="__codelineno-35-22" href="#__codelineno-35-22"></a>Status        : Agent response received and schema validated
-</span><span id="__span-35-23"><a id="__codelineno-35-23" name="__codelineno-35-23" href="#__codelineno-35-23"></a>------------------------------------------------------------------------
-</span><span id="__span-35-24"><a id="__codelineno-35-24" name="__codelineno-35-24" href="#__codelineno-35-24"></a>Decision       : MEDIUM
-</span><span id="__span-35-25"><a id="__codelineno-35-25" name="__codelineno-35-25" href="#__codelineno-35-25"></a>Urgency        : MEDIUM (score: 5)
-</span><span id="__span-35-26"><a id="__codelineno-35-26" name="__codelineno-35-26" href="#__codelineno-35-26"></a>Actions        : STANDARD_REORDER, MONITOR
-</span><span id="__span-35-27"><a id="__codelineno-35-27" name="__codelineno-35-27" href="#__codelineno-35-27"></a>Reorder        : 60 units (STANDARD priority)
-</span><span id="__span-35-28"><a id="__codelineno-35-28" name="__codelineno-35-28" href="#__codelineno-35-28"></a>Pricing        : 0% adjustment
-</span><span id="__span-35-29"><a id="__codelineno-35-29" name="__codelineno-35-29" href="#__codelineno-35-29"></a>Summary        : Parka selling 2.5x baseline in cold weather; 17 hours of stock left ...
-</span><span id="__span-35-30"><a id="__codelineno-35-30" name="__codelineno-35-30" href="#__codelineno-35-30"></a>
-</span><span id="__span-35-31"><a id="__codelineno-35-31" name="__codelineno-35-31" href="#__codelineno-35-31"></a>------------------------ 4. RESULT PUBLISHED ---------------------------
-</span><span id="__span-35-32"><a id="__codelineno-35-32" name="__codelineno-35-32" href="#__codelineno-35-32"></a>Product       : JACKET-001-M-BLACK
-</span><span id="__span-35-33"><a id="__codelineno-35-33" name="__codelineno-35-33" href="#__codelineno-35-33"></a>Output topic  : fashion.agent.responses
-</span><span id="__span-35-34"><a id="__codelineno-35-34" name="__codelineno-35-34" href="#__codelineno-35-34"></a>Status        : Published successfully
-</span><span id="__span-35-35"><a id="__codelineno-35-35" name="__codelineno-35-35" href="#__codelineno-35-35"></a>------------------------------------------------------------------------
+<div class="language-text highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>==================== VELOCITY ALERT AGENT CONSUMER =====================
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>Input topic : fashion.velocity.anomalies
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>Output topic: fashion.agent.responses
+</span><span id="__span-42-4"><a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>========================================================================
+</span><span id="__span-42-5"><a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a>
+</span><span id="__span-42-6"><a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>--------------------- 1. VELOCITY ALERT RECEIVED -----------------------
+</span><span id="__span-42-7"><a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a>Alert         : VELOCITY_SPIKE
+</span><span id="__span-42-8"><a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a>Product       : JACKET-001-M-BLACK
+</span><span id="__span-42-9"><a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a>Store         : STORE-NYC-001
+</span><span id="__span-42-10"><a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a>Severity      : MEDIUM
+</span><span id="__span-42-11"><a id="__codelineno-42-11" name="__codelineno-42-11" href="#__codelineno-42-11"></a>Velocity      : 2.5x baseline
+</span><span id="__span-42-12"><a id="__codelineno-42-12" name="__codelineno-42-12" href="#__codelineno-42-12"></a>Stock         : 88 units (17.0 hours to stockout)
+</span><span id="__span-42-13"><a id="__codelineno-42-13" name="__codelineno-42-13" href="#__codelineno-42-13"></a>Kafka         : partition=1 offset=0
+</span><span id="__span-42-14"><a id="__codelineno-42-14" name="__codelineno-42-14" href="#__codelineno-42-14"></a>------------------------------------------------------------------------
+</span><span id="__span-42-15"><a id="__codelineno-42-15" name="__codelineno-42-15" href="#__codelineno-42-15"></a>
+</span><span id="__span-42-16"><a id="__codelineno-42-16" name="__codelineno-42-16" href="#__codelineno-42-16"></a>---------------------- 2. AGENT REVIEWING CASE -------------------------
+</span><span id="__span-42-17"><a id="__codelineno-42-17" name="__codelineno-42-17" href="#__codelineno-42-17"></a>Agent         : Fashion_Inventory_Alert_Processor
+</span><span id="__span-42-18"><a id="__codelineno-42-18" name="__codelineno-42-18" href="#__codelineno-42-18"></a>Status        : Invoking watsonx Orchestrate and waiting for response
+</span><span id="__span-42-19"><a id="__codelineno-42-19" name="__codelineno-42-19" href="#__codelineno-42-19"></a>------------------------------------------------------------------------
+</span><span id="__span-42-20"><a id="__codelineno-42-20" name="__codelineno-42-20" href="#__codelineno-42-20"></a>
+</span><span id="__span-42-21"><a id="__codelineno-42-21" name="__codelineno-42-21" href="#__codelineno-42-21"></a>---------------------- 3. AGENT DECISION READY -------------------------
+</span><span id="__span-42-22"><a id="__codelineno-42-22" name="__codelineno-42-22" href="#__codelineno-42-22"></a>Status        : Agent response received and schema validated
+</span><span id="__span-42-23"><a id="__codelineno-42-23" name="__codelineno-42-23" href="#__codelineno-42-23"></a>------------------------------------------------------------------------
+</span><span id="__span-42-24"><a id="__codelineno-42-24" name="__codelineno-42-24" href="#__codelineno-42-24"></a>Decision       : MEDIUM
+</span><span id="__span-42-25"><a id="__codelineno-42-25" name="__codelineno-42-25" href="#__codelineno-42-25"></a>Urgency        : MEDIUM (score: 5)
+</span><span id="__span-42-26"><a id="__codelineno-42-26" name="__codelineno-42-26" href="#__codelineno-42-26"></a>Actions        : STANDARD_REORDER, MONITOR
+</span><span id="__span-42-27"><a id="__codelineno-42-27" name="__codelineno-42-27" href="#__codelineno-42-27"></a>Reorder        : 60 units (STANDARD priority)
+</span><span id="__span-42-28"><a id="__codelineno-42-28" name="__codelineno-42-28" href="#__codelineno-42-28"></a>Pricing        : 0% adjustment
+</span><span id="__span-42-29"><a id="__codelineno-42-29" name="__codelineno-42-29" href="#__codelineno-42-29"></a>Summary        : Parka selling 2.5x baseline in cold weather; 17 hours of stock left ...
+</span><span id="__span-42-30"><a id="__codelineno-42-30" name="__codelineno-42-30" href="#__codelineno-42-30"></a>
+</span><span id="__span-42-31"><a id="__codelineno-42-31" name="__codelineno-42-31" href="#__codelineno-42-31"></a>------------------------ 4. RESULT PUBLISHED ---------------------------
+</span><span id="__span-42-32"><a id="__codelineno-42-32" name="__codelineno-42-32" href="#__codelineno-42-32"></a>Product       : JACKET-001-M-BLACK
+</span><span id="__span-42-33"><a id="__codelineno-42-33" name="__codelineno-42-33" href="#__codelineno-42-33"></a>Output topic  : fashion.agent.responses
+</span><span id="__span-42-34"><a id="__codelineno-42-34" name="__codelineno-42-34" href="#__codelineno-42-34"></a>Status        : Published successfully
+</span><span id="__span-42-35"><a id="__codelineno-42-35" name="__codelineno-42-35" href="#__codelineno-42-35"></a>------------------------------------------------------------------------
 </span></code></pre></div>
 <p>Stage 1 is fully predictable — those values come straight from Flink. Stage 3 is not:
 the urgency, actions, reorder quantity and summary are the agent's judgement, informed
@@ -3487,7 +3680,7 @@ alerts go by:</p>
 </table>
 <p>That gap between Flink's fixed <code>severity</code> and the agent's changing <code>urgencyLevel</code> is
 the value the agent adds. If a decision surprises you, copy that alert into the preview
-chat from <a href="#47-watch-the-agent-work">Section 4.7</a> and read the reasoning trace.</p>
+chat from <a href="#48-watch-the-agent-work">Section 4.8</a> and read the reasoning trace.</p>
 <div class="admonition note">
 <p class="admonition-title">This takes a few minutes</p>
 <p>The consumer calls the agent synchronously, and each call runs two tools and a
@@ -3505,6 +3698,11 @@ keeping the backlog until a consumer is ready for it.</p>
 <ul>
 <li><strong>Flink → agent</strong> on each alert card. Flink's <code>MEDIUM</code> never changes; the agent weighs
   stock, value, season and weather on top. That gap is what the agent adds.</li>
+<li><strong>Actions taken</strong>, the fourth column: every restock order and ServiceNow ticket the
+  agent created through its action tools. Orders over the $20,000 guardrail show as
+  <code>PENDING_APPROVAL</code>. Each alert card also lists what was done about it (<code>→ restock 240
+  (needs approval) · ticket INC…</code>). Count the orders for the one parka — that's the
+  duplicate-order problem from Section 4.7.</li>
 <li><strong>Hover</strong> over a decision to light up the alert and the sale behind it.</li>
 </ul>
 <h4 id="watch-the-agent-execute-an-alert">Watch the agent execute an alert<a class="headerlink" href="#watch-the-agent-execute-an-alert" title="Permanent link">&para;</a></h4>
@@ -3512,18 +3710,25 @@ keeping the backlog until a consumer is ready for it.</p>
 Click any <strong>alert</strong> card, then <strong>▶ Run this alert through the agent</strong>.</p>
 <p>The dashboard sends the agent exactly the request the consumer sends, and after 10–30
 seconds shows every step it took. The shape looks like this — your values and steps will vary:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>● Received the Flink alert
-</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>● Called get_store_location           storeId  STORE-NYC-001     [from Flink alert · storeId]
-</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>● get_store_location returned          { "city": "New York", "latitude": 40.758, ... }
-</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>● Called get_weather_forecast         latitude 40.758            [from get_store_location's result]
-</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>                                       longitude -73.9855         [from get_store_location's result]
-</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>                                       days      5                [agent's choice]
-</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>● get_weather_forecast returned        { "forecast": [ ... ], "summary": "..." }
-</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>● Called &lt;knowledge base search&gt;       query    "..."             [agent's choice]
-</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a>● ... returned                         passages from the knowledge base documents
-</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>● Answered                             &lt;urgency&gt; · score &lt;0–10&gt; · &lt;actions&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>● Received the Flink alert
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>● Called get_store_location           storeId  STORE-NYC-001     [from Flink alert · storeId]
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>● get_store_location returned          { "city": "New York", "latitude": 40.758, ... }
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>● Called get_weather_forecast         latitude 40.758            [from get_store_location's result]
+</span><span id="__span-43-5"><a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a>                                       longitude -73.9855         [from get_store_location's result]
+</span><span id="__span-43-6"><a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a>                                       days      5                [agent's choice]
+</span><span id="__span-43-7"><a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a>● get_weather_forecast returned        { "forecast": [ ... ], "summary": "..." }
+</span><span id="__span-43-8"><a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a>● Called &lt;knowledge base search&gt;       query    "..."             [agent's choice]
+</span><span id="__span-43-9"><a id="__codelineno-43-9" name="__codelineno-43-9" href="#__codelineno-43-9"></a>● ... returned                         passages from the knowledge base documents
+</span><span id="__span-43-10"><a id="__codelineno-43-10" name="__codelineno-43-10" href="#__codelineno-43-10"></a>● Called create_restock_order         sku       JACKET-001-M-BLACK [from Flink alert · sku]
+</span><span id="__span-43-11"><a id="__codelineno-43-11" name="__codelineno-43-11" href="#__codelineno-43-11"></a>                                       quantity  &lt;n&gt;              [agent's choice]
+</span><span id="__span-43-12"><a id="__codelineno-43-12" name="__codelineno-43-12" href="#__codelineno-43-12"></a>● create_restock_order returned        { "orderId": "PO-...", "status": "SUBMITTED" | "PENDING_APPROVAL" }
+</span><span id="__span-43-13"><a id="__codelineno-43-13" name="__codelineno-43-13" href="#__codelineno-43-13"></a>● Called open_servicenow_ticket       short_description "..."    [agent's choice]
+</span><span id="__span-43-14"><a id="__codelineno-43-14" name="__codelineno-43-14" href="#__codelineno-43-14"></a>● open_servicenow_ticket returned      { "number": "INC...", "state": "New" }
+</span><span id="__span-43-15"><a id="__codelineno-43-15" name="__codelineno-43-15" href="#__codelineno-43-15"></a>● Answered                             &lt;urgency&gt; · score &lt;0–10&gt; · &lt;actions&gt;
 </span></code></pre></div>
-<p>Read the labels on each argument. They show the agent turning the Flink alert into a plan:</p>
+<p>This is the whole journey in one trace: a Flink alert in, a restock order and a ticket
+out. Read the labels on each argument. They show the agent turning the Flink alert into a
+plan, and then into action:</p>
 <ul>
 <li><strong>from Flink alert</strong> — a value it lifted straight out of the alert. Only <code>storeId</code> is
   needed to start.</li>
@@ -3531,10 +3736,12 @@ seconds shows every step it took. The shape looks like this — your values and 
   <em>chaining</em> tools: the coordinates it passes to the weather tool came from the store
   tool, not from Flink.</li>
 <li><strong>agent's choice</strong> — a value it came up with: how many days of forecast to ask for, what
-  to search the knowledge base for. This is where the LLM's judgement shows up.</li>
+  to search the knowledge base for, <strong>how many units to order</strong>. This is where the LLM's
+  judgement shows up — and with action tools, it now spends money.</li>
 </ul>
 <p>Expand any <strong>returned</strong> line to see exactly what the tool gave back, and <strong>raw answer</strong> for
-the agent's full reply. Then click <strong>Run it again</strong> a few times. The steps and even the
+the agent's full reply. Each run that acts also adds a new card to the <strong>Actions taken</strong>
+column — running an alert by hand is a real execution, not a simulation. Then click <strong>Run it again</strong> a few times. The steps and even the
 urgency can change between runs of the <em>same</em> alert — the dashboard tells you when the
 answer differs from the decision the pipeline published.</p>
 <div class="admonition info">
@@ -3588,6 +3795,11 @@ as an audit trail.</p>
 <td>The published decision</td>
 </tr>
 <tr>
+<td><strong>6 · What it did</strong></td>
+<td>The restock order and ServiceNow ticket for this alert, with their status</td>
+<td><code>fashion.logistics.orders</code>, <code>servicenow.incidents</code></td>
+</tr>
+<tr>
 <td><strong>Check against the rulebook</strong></td>
 <td>The dashboard's own lookups, the points each rule in <code>decision-rules.pdf</code> adds, and the rulebook's answer next to the agent's</td>
 <td>Computed by the dashboard, not the agent</td>
@@ -3637,7 +3849,7 @@ judgement from a mistake is the core skill in building trustworthy agents.</p>
 <p>This is intentional: a schema violation means the agent produced an unreliable decision. It's safer to retry than to publish bad data downstream.</p>
 <h3 id="74-manual-offset-commit-pattern">7.4 Manual offset commit pattern<a class="headerlink" href="#74-manual-offset-commit-pattern" title="Permanent link">&para;</a></h3>
 <p><code>consume_velocity_alerts_with_agent.py</code> sets <code>"enable.auto.commit": False</code>. Offsets are committed explicitly only after all four steps succeed:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>read alert → call agent → validate response → publish to Kafka → commit offset
+<div class="language-text highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>read alert → call agent → validate response → publish to Kafka → commit offset
 </span></code></pre></div>
 <p>If any step throws, the offset is not committed, and the message is reprocessed. This gives the pipeline <strong>at-least-once delivery semantics</strong> — the same alert may be processed twice on retry, but no alert is silently dropped.</p>
 <blockquote>
@@ -3724,46 +3936,46 @@ the terminal panel. Everything else in this lab runs fine in PowerShell.</p>
 the order the lab needs it — tooling, workspace files, <code>.env</code> credentials, Confluent
 topics and schemas, and the watsonx Orchestrate tools, knowledge base and agent. Each
 failure names the section that fixes it.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>bash<span class="w"> </span>check-lab.sh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>bash<span class="w"> </span>check-lab.sh
 </span></code></pre></div>
 <p>It is read-only and safe to run at any point — including before you've configured
 anything, to see what's still outstanding. Add <code>--e2e</code> once Section 4 is done to run a
 real end-to-end test: it produces events, waits for the agent decision, and confirms the
 result was published.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>bash<span class="w"> </span>check-lab.sh<span class="w"> </span>--e2e
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>bash<span class="w"> </span>check-lab.sh<span class="w"> </span>--e2e
 </span></code></pre></div>
 <p>The script exits non-zero if any check fails, so it also works in CI.</p>
 <h3 id="watsonx-orchestrate-only">watsonx Orchestrate only<a class="headerlink" href="#watsonx-orchestrate-only" title="Permanent link">&para;</a></h3>
 <p><a href="import-all.sh"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> <strong><code>import-all.sh</code></strong></a> is the narrower check — just the
 tools, knowledge base and agent from Section 4:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>bash<span class="w"> </span>import-all.sh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>bash<span class="w"> </span>import-all.sh
 </span></code></pre></div>
 <hr />
 <h2 id="key-commands-reference">Key Commands Reference<a class="headerlink" href="#key-commands-reference" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="c1"># Install dependencies</span>
-</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>uv<span class="w"> </span>sync<span class="w"> </span>--locked
-</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>
-</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a><span class="c1"># Run test producer</span>
-</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a><span class="nb">cd</span><span class="w"> </span>fashion-inventory-consumer
-</span><span id="__span-41-6"><a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>uv<span class="w"> </span>run<span class="w"> </span>produce_inventory_events.py<span class="w"> </span>--csv-file<span class="w"> </span>../fashion-inventory-setup/data/test_winter_jacket_spike.csv
-</span><span id="__span-41-7"><a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a>
-</span><span id="__span-41-8"><a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a><span class="c1"># Run basic consumer (verify Flink detection, no agent)</span>
-</span><span id="__span-41-9"><a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts.py
-</span><span id="__span-41-10"><a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a>
-</span><span id="__span-41-11"><a id="__codelineno-41-11" name="__codelineno-41-11" href="#__codelineno-41-11"></a><span class="c1"># Run agent-enabled consumer (full pipeline)</span>
-</span><span id="__span-41-12"><a id="__codelineno-41-12" name="__codelineno-41-12" href="#__codelineno-41-12"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts_with_agent.py
-</span><span id="__span-41-13"><a id="__codelineno-41-13" name="__codelineno-41-13" href="#__codelineno-41-13"></a>
-</span><span id="__span-41-14"><a id="__codelineno-41-14" name="__codelineno-41-14" href="#__codelineno-41-14"></a><span class="c1"># Live pipeline dashboard on http://localhost:8050 (--replay: no Kafka, rulebook decisions)</span>
-</span><span id="__span-41-15"><a id="__codelineno-41-15" name="__codelineno-41-15" href="#__codelineno-41-15"></a>uv<span class="w"> </span>run<span class="w"> </span>pipeline_dashboard.py
-</span><span id="__span-41-16"><a id="__codelineno-41-16" name="__codelineno-41-16" href="#__codelineno-41-16"></a>
-</span><span id="__span-41-17"><a id="__codelineno-41-17" name="__codelineno-41-17" href="#__codelineno-41-17"></a><span class="c1"># Verify wxO agent exists</span>
-</span><span id="__span-41-18"><a id="__codelineno-41-18" name="__codelineno-41-18" href="#__codelineno-41-18"></a>orchestrate<span class="w"> </span>agents<span class="w"> </span>list
-</span><span id="__span-41-19"><a id="__codelineno-41-19" name="__codelineno-41-19" href="#__codelineno-41-19"></a>
-</span><span id="__span-41-20"><a id="__codelineno-41-20" name="__codelineno-41-20" href="#__codelineno-41-20"></a><span class="c1"># Verify tools are imported</span>
-</span><span id="__span-41-21"><a id="__codelineno-41-21" name="__codelineno-41-21" href="#__codelineno-41-21"></a>orchestrate<span class="w"> </span>tools<span class="w"> </span>list
-</span><span id="__span-41-22"><a id="__codelineno-41-22" name="__codelineno-41-22" href="#__codelineno-41-22"></a>
-</span><span id="__span-41-23"><a id="__codelineno-41-23" name="__codelineno-41-23" href="#__codelineno-41-23"></a><span class="c1"># Verify knowledge base is ready</span>
-</span><span id="__span-41-24"><a id="__codelineno-41-24" name="__codelineno-41-24" href="#__codelineno-41-24"></a>orchestrate<span class="w"> </span>knowledge-bases<span class="w"> </span>list
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="c1"># Install dependencies</span>
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a><span class="nb">cd</span><span class="w"> </span>retail-inventory-optimization<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>uv<span class="w"> </span>sync<span class="w"> </span>--locked
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>
+</span><span id="__span-48-4"><a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a><span class="c1"># Run test producer</span>
+</span><span id="__span-48-5"><a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a><span class="nb">cd</span><span class="w"> </span>fashion-inventory-consumer
+</span><span id="__span-48-6"><a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a>uv<span class="w"> </span>run<span class="w"> </span>produce_inventory_events.py<span class="w"> </span>--csv-file<span class="w"> </span>../fashion-inventory-setup/data/test_winter_jacket_spike.csv
+</span><span id="__span-48-7"><a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a>
+</span><span id="__span-48-8"><a id="__codelineno-48-8" name="__codelineno-48-8" href="#__codelineno-48-8"></a><span class="c1"># Run basic consumer (verify Flink detection, no agent)</span>
+</span><span id="__span-48-9"><a id="__codelineno-48-9" name="__codelineno-48-9" href="#__codelineno-48-9"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts.py
+</span><span id="__span-48-10"><a id="__codelineno-48-10" name="__codelineno-48-10" href="#__codelineno-48-10"></a>
+</span><span id="__span-48-11"><a id="__codelineno-48-11" name="__codelineno-48-11" href="#__codelineno-48-11"></a><span class="c1"># Run agent-enabled consumer (full pipeline)</span>
+</span><span id="__span-48-12"><a id="__codelineno-48-12" name="__codelineno-48-12" href="#__codelineno-48-12"></a>uv<span class="w"> </span>run<span class="w"> </span>consume_velocity_alerts_with_agent.py
+</span><span id="__span-48-13"><a id="__codelineno-48-13" name="__codelineno-48-13" href="#__codelineno-48-13"></a>
+</span><span id="__span-48-14"><a id="__codelineno-48-14" name="__codelineno-48-14" href="#__codelineno-48-14"></a><span class="c1"># Live pipeline dashboard on http://localhost:8050 (--replay: no Kafka, rulebook decisions)</span>
+</span><span id="__span-48-15"><a id="__codelineno-48-15" name="__codelineno-48-15" href="#__codelineno-48-15"></a>uv<span class="w"> </span>run<span class="w"> </span>pipeline_dashboard.py
+</span><span id="__span-48-16"><a id="__codelineno-48-16" name="__codelineno-48-16" href="#__codelineno-48-16"></a>
+</span><span id="__span-48-17"><a id="__codelineno-48-17" name="__codelineno-48-17" href="#__codelineno-48-17"></a><span class="c1"># Verify wxO agent exists</span>
+</span><span id="__span-48-18"><a id="__codelineno-48-18" name="__codelineno-48-18" href="#__codelineno-48-18"></a>orchestrate<span class="w"> </span>agents<span class="w"> </span>list
+</span><span id="__span-48-19"><a id="__codelineno-48-19" name="__codelineno-48-19" href="#__codelineno-48-19"></a>
+</span><span id="__span-48-20"><a id="__codelineno-48-20" name="__codelineno-48-20" href="#__codelineno-48-20"></a><span class="c1"># Verify tools are imported</span>
+</span><span id="__span-48-21"><a id="__codelineno-48-21" name="__codelineno-48-21" href="#__codelineno-48-21"></a>orchestrate<span class="w"> </span>tools<span class="w"> </span>list
+</span><span id="__span-48-22"><a id="__codelineno-48-22" name="__codelineno-48-22" href="#__codelineno-48-22"></a>
+</span><span id="__span-48-23"><a id="__codelineno-48-23" name="__codelineno-48-23" href="#__codelineno-48-23"></a><span class="c1"># Verify knowledge base is ready</span>
+</span><span id="__span-48-24"><a id="__codelineno-48-24" name="__codelineno-48-24" href="#__codelineno-48-24"></a>orchestrate<span class="w"> </span>knowledge-bases<span class="w"> </span>list
 </span></code></pre></div>
 <hr />
 <h2 id="reference-links">Reference Links<a class="headerlink" href="#reference-links" title="Permanent link">&para;</a></h2>

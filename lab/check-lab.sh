@@ -245,6 +245,11 @@ PYEOF
         printf '%s' "$KAFKA_MARK" | tr ' ' '\n' | grep -qx "$t" \
           && ok "topic $t exists" \
           || bad "topic $t missing" "Section 2.3" ;
+      done
+      for t in fashion.logistics.orders servicenow.incidents; do
+        printf '%s' "$KAFKA_MARK" | tr ' ' '\n' | grep -qx "$t" \
+          && ok "topic $t exists" \
+          || warn "topic $t missing (needed for the action tools)" "Section 2.3" ;
       done ;;
     ERROR*)
       bad "cannot reach Kafka" "${KAFKA_MARK#ERROR }" ;;
@@ -271,6 +276,9 @@ else
   else
     for t in get_store_location get_weather_forecast; do
       printf '%s' "$TOOLS" | grep -q "$t" && ok "tool $t" || bad "tool $t missing" "Section 4.1 / 4.2"
+    done
+    for t in create_restock_order open_servicenow_ticket; do
+      printf '%s' "$TOOLS" | grep -q "$t" && ok "action tool $t" || warn "action tool $t missing" "Section 4.7"
     done
   fi
 

@@ -47,7 +47,11 @@ from typing import Any, Dict, List, Optional
 TOPICS = {
     "fashion.inventory.events": "event",
     "fashion.velocity.anomalies": "alert",
+    # Written by the agent's action tools (stock_actions.py)
+    "fashion.logistics.orders": "order",
+    "servicenow.incidents": "incident",
 }
+APPROVAL_LIMIT_USD = 20000  # same guardrail as stock_actions.py
 
 _history: List[Dict[str, Any]] = []
 _clients: List[queue.Queue] = []
@@ -321,6 +325,30 @@ def _rulebook_decision(alert: Dict[str, Any], unit_price: float) -> None:
                           "escalationReason": "Rule 2.5" if rb["level"] == "CRITICAL" else None},
     })
 
+    # What the action tools would write, with the same approval guardrail.
+    time.sleep(0.5)
+    now = datetime.now(timezone.utc)
+    cost = round(rb["reorderQuantity"] * unit_price, 2)
+    approval = cost > APPROVAL_LIMIT_USD
+    publish("order", {
+        "orderId": f"PO-{now:%Y%m%d}-{uuid.uuid4().hex[:6].upper()}", "alertId": alert["alertId"],
+        "sku": alert["sku"], "storeId": alert["storeId"], "quantity": rb["reorderQuantity"],
+        "priority": rb["priority"], "currentStock": alert["currentStock"], "unitPrice": unit_price,
+        "estimatedCost": cost, "status": "PENDING_APPROVAL" if approval else "SUBMITTED",
+        "approvalReason": f"over the ${APPROVAL_LIMIT_USD:,} limit" if approval else None,
+        "reason": f"{alert['hoursToStockout']} h of cover left", "createdAt": f"{now:%Y-%m-%dT%H:%M:%SZ}",
+        "createdBy": "rulebook replay"})
+    if rb["level"] in ("CRITICAL", "HIGH"):
+        level = {"CRITICAL": "1", "HIGH": "2"}[rb["level"]]
+        publish("incident", {
+            "number": f"INC{uuid.uuid4().int % 90000 + 10000:07d}", "sys_id": uuid.uuid4().hex,
+            "short_description": f"{alert['sku']} at {alert['storeId']}: {alert['currentStock']} units left",
+            "description": f"{rb['level']} velocity alert. Restock order raised for {rb['reorderQuantity']} units.",
+            "urgency": level, "impact": level, "priority": level, "state": "1", "category": "inventory",
+            "assignment_group": "Store Operations", "caller_id": "rulebook replay",
+            "opened_at": f"{now:%Y-%m-%dT%H:%M:%SZ}", "u_alert_id": alert["alertId"], "u_sku": alert["sku"],
+            "u_store_id": alert["storeId"], "u_current_stock": alert["currentStock"], "u_urgency_level": rb["level"]})
+
 
 # ---------------------------------------------------------------------------------------
 # Agent execution: run one alert through the agent and capture every step it takes
@@ -474,14 +502,14 @@ PAGE = r"""<!doctype html>
     --bg: #f6f7f9; --panel: #ffffff; --text: #1b1f24; --muted: #5d6673; --line: #dde1e6;
     --event: #2f6fde; --alert: #c7771b; --decision: #1e8a5a;
     --low: #5d6673; --medium: #b58a00; --high: #d0661b; --critical: #c9303c;
-    --hl: #fff4c2;
+    --hl: #fff4c2; --action: #6d4bd1;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #111418; --panel: #1a1e24; --text: #e6e9ed; --muted: #98a1ad; --line: #2c323a;
       --event: #6b9bf0; --alert: #e3a04f; --decision: #4cc28a;
       --low: #98a1ad; --medium: #e0c04a; --high: #f08a4b; --critical: #f0606b;
-      --hl: #3a3420;
+      --hl: #3a3420; --action: #a68cf2;
     }
   }
   * { box-sizing: border-box; }
@@ -492,8 +520,8 @@ PAGE = r"""<!doctype html>
   .sub { color: var(--muted); margin: 0; }
   .demo { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px;
           background: var(--alert); color: #fff; font-size: 12px; vertical-align: 2px; }
-  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px;
-          align-items: center; padding: 16px; max-width: 1200px; margin: 0 auto; }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 8px;
+          align-items: center; padding: 16px; max-width: 1440px; margin: 0 auto; }
   .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
            padding: 12px; border-top: 4px solid var(--c); }
   .stage .n { font-size: 28px; font-weight: 650; font-variant-numeric: tabular-nums; }
@@ -501,8 +529,12 @@ PAGE = r"""<!doctype html>
   .stage .note { color: var(--muted); font-size: 12px; }
   .arrow { color: var(--muted); font-size: 22px; text-align: center; }
   .arrow small { display: block; font-size: 11px; }
-  .lanes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-           padding: 0 16px 24px; max-width: 1200px; margin: 0 auto; }
+  .lanes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+           padding: 0 16px 24px; max-width: 1440px; margin: 0 auto; }
+  .status { font-size: 11px; font-weight: 650; padding: 0 7px; border-radius: 999px; border: 1px solid; }
+  .status.ok { color: var(--decision); border-color: var(--decision); }
+  .status.wait { color: var(--high); border-color: var(--high); }
+  .did { margin-top: 4px; font-size: 12px; color: var(--action); }
   .lane h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em;
              color: var(--muted); margin: 0 0 8px; }
   .lane h2 code { text-transform: none; letter-spacing: 0; }
@@ -566,6 +598,11 @@ PAGE = r"""<!doctype html>
           background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
   .from.flink { border-color: var(--alert); color: var(--alert); }
   .from.tool { border-color: var(--event); color: var(--event); }
+  @media (max-width: 1100px) and (min-width: 761px) {
+    .flow { grid-template-columns: 1fr auto 1fr; }
+    .flow .arrow.wrap { display: none; }
+    .lanes { grid-template-columns: repeat(2, 1fr); }
+  }
   @media (max-width: 760px) {
     .flow { grid-template-columns: 1fr; }
     .arrow { transform: rotate(90deg); }
@@ -577,7 +614,7 @@ PAGE = r"""<!doctype html>
 <body>
 <header>
   <h1>Event-driven AI pipeline <span class="demo" id="demo" hidden>REPLAY · lab data, rulebook decisions, no LLM</span></h1>
-  <p class="sub">Hover any card to follow one sale through all three stages. Click an alert or decision to see what the agent does with it.</p>
+  <p class="sub">Hover any card to follow one sale from the till to the stock-up. Click an alert, decision or action to see what the agent did with it.</p>
 </header>
 
 <section class="flow">
@@ -598,12 +635,19 @@ PAGE = r"""<!doctype html>
     <div class="what">Agent decisions</div>
     <div class="note" id="waiting">fashion.agent.responses</div>
   </div>
+  <div class="arrow wrap">→<small>agent's action tools</small></div>
+  <div class="stage" style="--c: var(--action)">
+    <div class="n" id="n-action">0</div>
+    <div class="what">Actions taken</div>
+    <div class="note" id="action-note">logistics orders · ServiceNow tickets</div>
+  </div>
 </section>
 
 <section class="lanes">
   <div class="lane"><h2>1 · Sales <code>quantityChange</code></h2><div class="cards" id="lane-event"></div></div>
   <div class="lane"><h2>2 · Flink alert <code>severity</code></h2><div class="cards" id="lane-alert"></div></div>
   <div class="lane"><h2>3 · Agent decision <code>urgencyLevel</code></h2><div class="cards" id="lane-decision"></div></div>
+  <div class="lane"><h2>4 · Actions taken <code>orders · tickets</code></h2><div class="cards" id="lane-action"></div></div>
 </section>
 
 <dialog id="panel" aria-labelledby="panel-title">
@@ -616,16 +660,34 @@ PAGE = r"""<!doctype html>
 const MODE = "__MODE__";
 if (MODE === "replay") document.getElementById("demo").hidden = false;
 
-const data = { event: [], alert: [], decision: [] };
+const data = { event: [], alert: [], decision: [], order: [], incident: [] };
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const level = l => `<span class="chip" style="--k: var(--${String(l || "low").toLowerCase()})">${esc(l || "?")}</span>`;
 
 // A sale and its alert share sku + remaining stock; the agent copies currentStock through.
-const stockOf = (lane, p) => lane === "event" ? p.quantityAfter
-  : lane === "alert" ? p.currentStock : p.stockAnalysis?.currentStock;
+const stockOf = (lane, p) => ({ event: p.quantityAfter, alert: p.currentStock, order: p.currentStock,
+  incident: p.u_current_stock, decision: p.stockAnalysis?.currentStock })[lane];
+const skuOf = p => p.sku ?? p.u_sku;
+const actionsFor = key => [
+  ...data.order.filter(o => keyOf("order", o) === key).map(o => ({ kind: "order", p: o })),
+  ...data.incident.filter(i => keyOf("incident", i) === key).map(i => ({ kind: "incident", p: i })),
+].sort((x, y) => x.p._seq - y.p._seq);
+const orderStatus = o => `<span class="status ${o.status === "SUBMITTED" ? "ok" : "wait"}">${esc(o.status)}</span>`;
+function actionCard(kind, p, key) {
+  if (kind === "order") return `<div class="card clickable" style="--c: var(--action)" data-key="${esc(key)}">
+      <div class="row"><span class="mono">${esc(p.orderId)}</span>${orderStatus(p)}</div>
+      <div>Restock <b>${esc(p.quantity)}</b> × ${esc(p.sku)} · ${esc(p.priority)}</div>
+      <div class="muted">${p.estimatedCost != null ? Number(p.estimatedCost).toLocaleString("en-US", { style: "currency", currency: "USD" }) : "cost unknown"}
+        ${p.approvalReason ? ` · needs approval: ${esc(p.approvalReason)}` : " · sent to logistics"}</div></div>`;
+  return `<div class="card clickable" style="--c: var(--action)" data-key="${esc(key)}">
+      <div class="row"><span class="mono">${esc(p.number)}</span>
+        <span class="status wait">ServiceNow · P${esc(p.priority)}</span></div>
+      <div>${esc(p.short_description)}</div>
+      <div class="muted">${esc(p.assignment_group)} · New</div></div>`;
+}
 // Replaying the producer repeats the same stock levels, so the nth match pairs with the nth.
 const keyOf = (lane, p) => p._key ??= (() => {
-  const base = `${p.sku}|${stockOf(lane, p)}`;
+  const base = `${skuOf(p)}|${stockOf(lane, p)}`;
   const n = data[lane].filter(q => q !== p && q._key?.startsWith(base + "#")).length;
   return `${base}#${n}`;
 })();
@@ -643,6 +705,11 @@ function render() {
     `${filtered} sale${filtered === 1 ? "" : "s"} below the threshold, no alert`;
   document.getElementById("waiting").textContent =
     waiting ? `${waiting} alert${waiting === 1 ? "" : "s"} waiting for the agent` : "fashion.agent.responses";
+  const pendingApproval = data.order.filter(o => o.status === "PENDING_APPROVAL").length;
+  document.getElementById("n-action").textContent = data.order.length + data.incident.length;
+  document.getElementById("action-note").textContent = data.order.length + data.incident.length
+    ? `${data.order.length} orders (${pendingApproval} need approval) · ${data.incident.length} tickets`
+    : "logistics orders · ServiceNow tickets";
 
   fill("event", data.event, e => {
     const quiet = Math.abs(e.quantityChange) < 5;
@@ -657,10 +724,13 @@ function render() {
     const verdict = d
       ? `<div class="vs">Flink ${level(a.severity)} → agent ${level(d.agentDecision?.urgencyLevel)}</div>`
       : `<div class="vs muted">Waiting for the agent…</div>`;
+    const did = actionsFor(keyOf("alert", a)).map(x => x.kind === "order"
+      ? `restock ${esc(x.p.quantity)} (${x.p.status === "SUBMITTED" ? "sent" : "needs approval"})` : `ticket ${esc(x.p.number)}`);
     return `<div class="card clickable" style="--c: var(--alert)" data-key="${esc(keyOf("alert", a))}">
       <div class="row"><span class="mono">${esc(a.sku)}</span>${level(a.severity)}</div>
       <div>${Number(a.velocityRatio).toFixed(1)}× baseline · ${esc(a.currentStock)} units ·
-        ${esc(a.hoursToStockout)} h to stockout</div>${verdict}</div>`;
+        ${esc(a.hoursToStockout)} h to stockout</div>${verdict}
+      ${did.length ? `<div class="did">→ ${did.join(" · ")}</div>` : ""}</div>`;
   });
 
   fill("decision", data.decision, d => {
@@ -676,13 +746,18 @@ function render() {
     </div>`;
   });
 
-  for (const lane of Object.keys(data)) {
-    if (!data[lane].length) {
-      document.getElementById(`lane-${lane}`).innerHTML =
-        `<div class="empty">${{event: "No sales yet — run the producer.",
-          alert: "No alerts yet — is the Flink job running?",
-          decision: "No decisions yet — run the agent consumer."}[lane]}</div>`;
-    }
+  const actions = [...data.order.map(p => ["order", p]), ...data.incident.map(p => ["incident", p])]
+    .sort((x, y) => y[1]._seq - x[1]._seq);
+  if (actions.length) document.getElementById("lane-action").innerHTML =
+    actions.map(([kind, p]) => actionCard(kind, p, keyOf(kind, p))).join("");
+
+  const EMPTY = { event: "No sales yet — run the producer.",
+    alert: "No alerts yet — is the Flink job running?",
+    decision: "No decisions yet — run the agent consumer.",
+    action: "No actions yet — the agent places orders and opens tickets once it has its action tools (Section 4.7)." };
+  for (const lane of Object.keys(EMPTY)) {
+    const count = lane === "action" ? actions.length : data[lane].length;
+    if (!count) document.getElementById(`lane-${lane}`).innerHTML = `<div class="empty">${EMPTY[lane]}</div>`;
   }
 }
 
@@ -790,7 +865,8 @@ function rulebookSection(a, d) {
 }
 
 const WXO = __WXO__;
-const KNOWN_TOOLS = { get_store_location: "tool", get_weather_forecast: "tool" };
+const KNOWN_TOOLS = { get_store_location: "tool", get_weather_forecast: "tool",
+  create_restock_order: "action · writes fashion.logistics.orders", open_servicenow_ticket: "action · writes servicenow.incidents" };
 const toolKind = name => KNOWN_TOOLS[name] || (/knowledge|search|retriev/i.test(name || "") ? "knowledge base" : "tool");
 const stripPrivate = o => Object.fromEntries(Object.entries(o).filter(([k]) => !k.startsWith("_")));
 const pretty = v => { try { return JSON.stringify(typeof v === "string" ? JSON.parse(v) : v, null, 2); } catch { return String(v); } };
@@ -822,7 +898,7 @@ function renderExecution(r, a, d) {
   const items = r.steps.map(st => {
     if (st.kind === "call") {
       const args = Object.entries(st.args || {});
-      return `<li style="--c: var(--event)"><div class="t">Called ${esc(st.name)}<span class="kind">${toolKind(st.name)}</span></div>
+      return `<li style="--c: var(--${toolKind(st.name).startsWith("action") ? "action" : "event"})"><div class="t">Called ${esc(st.name)}<span class="kind">${toolKind(st.name)}</span></div>
         ${args.length ? `<dl class="kv">${args.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${show(v)}${provenance(k, v, a, results)}</dd>`).join("")}</dl>`
           : `<div class="muted">No arguments</div>`}</li>`;
     }
@@ -850,7 +926,7 @@ function renderExecution(r, a, d) {
         <details><summary class="muted">as the request agent_payload_builder.py builds from it</summary>
         <pre>${esc(pretty(r.request))}</pre></details></li>
       ${items || `<li><div class="hint">The agent answered without calling any tools or the knowledge base.
-        Check they're attached to the agent (lab Sections 4.3–4.5).</div></li>`}
+        Check they're attached to the agent (lab Sections 4.3–4.7).</div></li>`}
       <li style="--c: var(--decision)"><div class="t">Answered</div>
         ${nd ? `<div class="row" style="justify-content:flex-start;gap:8px">${level(nd.urgencyLevel)}
           <span class="muted">score ${show(nd.urgencyScore)} · ${esc((nd.recommendedActions || []).join(", "))}</span></div>
@@ -865,17 +941,18 @@ function executionSection(a, d) {
   const copy = `<button class="btn" id="copy-req">Copy as agent request</button>`;
   if (!WXO) return `<div class="hint">To watch the agent execute this alert, add the WXO_* settings to .env
     (lab Section 5) and restart the dashboard. Or copy the alert and paste it into the agent's preview chat
-    (lab Section 4.7).<br><br>${copy}</div>`;
+    (lab Section 4.8).<br><br>${copy}</div>`;
   return `<div id="exec"><div class="row" style="justify-content:flex-start;gap:8px">
       <button class="btn primary" id="run-agent">▶ Run this alert through the agent</button>${copy}</div>
     <div class="muted" style="margin-top:6px">Sends the same request the consumer sends as a new run, and shows
-      every step: which tools the agent called, with what, and what came back. Usually 10–30 seconds.</div></div>`;
+      every step: which tools the agent called, with what, and what came back. Usually 10–30 seconds.
+      <b>This is a real run</b>: if the agent decides to act, it places another order and opens another ticket.</div></div>`;
 }
 
 function openPanel(key) {
   const a = data.alert.find(x => keyOf("alert", x) === key);
   const d = data.decision.find(x => keyOf("decision", x) === key);
-  if (!a && !d) return;
+  if (!a && !d && !actionsFor(key).length) return;
   const ad = d?.agentDecision || {};
   const ph = d?.productHistorySummary || {};
   const ro = d?.reorderRecommendation || {};
@@ -941,6 +1018,11 @@ function openPanel(key) {
       : `<div class="muted">The matching alert hasn't arrived on the dashboard yet.</div>`}
     <h3>2 · Watch the agent execute</h3>${executionSection(a, d)}
     ${published}
+    <h3>6 · What it did</h3>${(() => {
+      const did = actionsFor(key);
+      return did.length ? did.map(x => actionCard(x.kind, x.p, key).replace(" clickable", "")).join("")
+        : `<div class="muted">No orders or tickets for this alert${d ? " — the agent decided not to act, or it has no action tools yet (Section 4.7)." : " yet."}</div>`;
+    })()}
     ${a ? rulebookSection(a, d) : ""}`;
 
   document.getElementById("copy-req")?.addEventListener("click", ev => {
@@ -973,10 +1055,11 @@ document.addEventListener("click", ev => {
   if (card) openPanel(card.dataset.key);
 });
 
-let pending = false;
+let pending = false, seq = 0;
 const source = new EventSource("/stream");
 source.onmessage = ev => {
   const { lane, payload } = JSON.parse(ev.data);
+  payload._seq = seq++;
   data[lane].push(payload);
   keyOf(lane, payload);
   if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; render(); }); }
