@@ -2590,7 +2590,10 @@ consumer will fail to connect.</p>
 </span></code></pre></div>
 </li>
 </ul>
-<p>Records should appear for every <code>SALE</code> event where <code>ABS(quantityChange) &gt;= 5</code> on <code>fashion.inventory.events</code>. If no records appear, check that the producer has run (Section 3.2) and that the Flink job status is <strong>Running</strong>.</p>
+<div class="admonition tip">
+<p class="admonition-title">No records yet? That's expected</p>
+<p>The output topic will be empty until test data is produced. You run the producer in Section 3.2 — come back here after that to confirm records are flowing. If the topic is still empty after producing, check that the Flink job status is <strong>Running</strong> and that the catalog and database are set correctly (Section 2.6).</p>
+</div>
 </li>
 </ol>
 <h3 id="28-generate-api-keys">2.8 Generate API keys<a class="headerlink" href="#28-generate-api-keys" title="Permanent link">&para;</a></h3>
