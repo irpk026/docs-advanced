@@ -2558,8 +2558,14 @@ consumer will fail to connect.</p>
 <p><code>fashion.inventory.events</code>, <code>fashion.velocity.anomalies</code>, and <code>fashion.agent.responses</code> appear in the <code>SHOW TABLES</code> output before proceeding.</p>
 </div>
 <h3 id="27-deploy-the-velocity-spike-detector">2.7 Deploy the velocity spike detector<a class="headerlink" href="#27-deploy-the-velocity-spike-detector" title="Permanent link">&para;</a></h3>
-<p>In the Flink SQL workspace, paste and run the query from <code>retail-inventory-optimization/fashion-inventory-setup/sql/velocity_anomaly_detection.sql</code>.</p>
-<p>The query monitors <code>fashion.inventory.events</code> and writes to <code>fashion.velocity.anomalies</code> whenever a SALE event removes 5 or more units:</p>
+<ol>
+<li>
+<p><strong>Open the SQL file</strong></p>
+<p>In Bob IDE, open <code>retail-inventory-optimization/fashion-inventory-setup/sql/velocity_anomaly_detection.sql</code>.</p>
+</li>
+<li>
+<p><strong>Paste the query into the Flink SQL workspace</strong></p>
+<p>Copy the full query and paste it into the Flink SQL workspace. The query monitors <code>fashion.inventory.events</code> and writes to <code>fashion.velocity.anomalies</code> whenever a SALE event removes 5 or more units:</p>
 <div class="language-sql highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="o">`</span><span class="n">fashion</span><span class="p">.</span><span class="n">velocity</span><span class="p">.</span><span class="n">anomalies</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">)</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">SELECT</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="p">...</span>
@@ -2575,10 +2581,11 @@ consumer will fail to connect.</p>
 </span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">eventType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'SALE'</span>
 </span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">    </span><span class="k">AND</span><span class="w"> </span><span class="k">ABS</span><span class="p">(</span><span class="n">quantityChange</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
 </span></code></pre></div>
-<blockquote>
-<p><strong>⚠️ Demo simplification — hardcoded baseline:</strong> The query uses a fixed baseline velocity of <code>2.0 units/hour</code>. In production you would compute a rolling 7-day average per SKU using Flink's windowing functions (<code>TUMBLE</code>, <code>HOP</code>, or <code>CUMULATE</code> windows with <code>ORDER BY eventTime</code>). The fixed value makes the demo deterministic and removes the warm-up period that a real rolling window requires. The pipeline logic and alert schema are production-grade; only the baseline calculation is simplified.</p>
-</blockquote>
-<ol>
+<div class="admonition note">
+<p class="admonition-title">Demo simplification — hardcoded baseline</p>
+<p>The query uses a fixed baseline velocity of <code>2.0 units/hour</code>. In production you would compute a rolling 7-day average per SKU using Flink's windowing functions (<code>TUMBLE</code>, <code>HOP</code>, or <code>CUMULATE</code> windows with <code>ORDER BY eventTime</code>). The fixed value makes the demo deterministic and removes the warm-up period that a real rolling window requires. The pipeline logic and alert schema are production-grade; only the baseline calculation is simplified.</p>
+</div>
+</li>
 <li>
 <p><strong>Run the query</strong></p>
 <p>Click <strong>Run</strong> (or press the run shortcut). Flink will start a continuous streaming job.</p>
