@@ -219,10 +219,6 @@ retail-inventory-optimization/
 You need a Confluent Cloud account, an environment with three topics, a Schema Registry,
 and a Flink compute pool.
 
-!!! info "Already have a Confluent Cloud account with the lab topics?"
-    Skip to [Section 3](#section-3-test-the-velocity-detection-pipeline-10-min) — just
-    confirm your topics and Flink query are running.
-
 ### 2.1 Create your account and redeem the workshop promo code
 
 !!! danger "Promo codes — enter these instead of a credit card"

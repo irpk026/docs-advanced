@@ -1,7 +1,7 @@
 # Setup & Environment
 
 <p align="center">
-  <img src="images/image_setup_adv.png" alt="Setting up the advanced workshop environment" width="640">
+  <img src="images/image_setup_adv.png" alt="Setting up your lab environment" width="640">
 </p>
 
 **Duration:** ~30 minutes · **Difficulty:** ⭐
