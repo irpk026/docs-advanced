@@ -53,6 +53,7 @@ theme:
 
 nav:
   - Home: index.md
+  - Before You Arrive: before-you-arrive.md
   - Setup: setup/index.md
   - The Lab: lab/index.md
   - Stretch Exercises: lab/exercises.md

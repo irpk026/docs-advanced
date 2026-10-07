@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Before you arrive — Agentic AI, Live · OpenSlava 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;600&display=block" rel="stylesheet">
+<style>
+  /* IBM Carbon tokens */
+  :root {
+    --gray-100: #161616; --gray-90: #262626; --gray-70: #525252; --gray-50: #8d8d8d;
+    --gray-20: #e0e0e0; --gray-10: #f4f4f4; --white: #ffffff;
+    --blue-60: #0f62fe; --blue-70: #0043ce; --blue-10: #edf5ff; --blue-30: #a6c8ff;
+    --yellow-30: #f1c21b; --yellow-10: #fcf4d6; --green-50: #24a148;
+  }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: "IBM Plex Sans", Helvetica, Arial, sans-serif; color: var(--gray-100);
+         font-size: 8.7pt; line-height: 1.36; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; display: flex; flex-direction: column; overflow: hidden; }
+  a { color: var(--blue-60); text-decoration: none; }
+  code { white-space: nowrap; font-family: "IBM Plex Mono", monospace; font-size: 8pt; background: var(--gray-10);
+         padding: 0 2px; }
+
+  /* Header */
+  header { background: var(--gray-100); color: var(--white); padding: 8mm 14mm 6.5mm; position: relative; }
+  header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2mm;
+                  background: linear-gradient(90deg, var(--blue-60) 0 62%, var(--blue-70) 62% 100%); }
+  .eyebrow { font-size: 8pt; letter-spacing: .16em; text-transform: uppercase; color: var(--blue-30); margin: 0 0 2.5mm; }
+  h1 { font-weight: 300; font-size: 21pt; line-height: 1.12; margin: 0; letter-spacing: -.01em; }
+  h1 b { font-weight: 600; }
+  .meta { display: flex; gap: 0; margin-top: 4mm; font-size: 8.5pt; }
+  .meta div { padding-right: 6mm; margin-right: 6mm; border-right: 1px solid var(--gray-70); }
+  .meta div:last-child { border: 0; }
+  .meta span { display: block; font-size: 7pt; text-transform: uppercase; letter-spacing: .1em; color: var(--gray-50); }
+
+  /* Intro strip */
+  .intro { display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: center;
+           padding: 4mm 14mm 3.5mm; border-bottom: 1px solid var(--gray-20); }
+  .intro h2 { font-weight: 300; font-size: 16pt; margin: 0 0 1.5mm; }
+  .intro h2 b { font-weight: 600; color: var(--blue-60); }
+  .intro p { margin: 0; color: var(--gray-70); font-size: 9.5pt; }
+  .deadline { background: var(--blue-60); color: var(--white); padding: 3mm 5mm; text-align: right; }
+  .deadline span { display: block; font-size: 7pt; text-transform: uppercase; letter-spacing: .1em; opacity: .85; }
+  .deadline b { font-size: 11pt; font-weight: 600; }
+
+  /* Steps */
+  main { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 5mm; padding: 4.5mm 14mm 0; align-content: start; }
+  .col { display: flex; flex-direction: column; gap: 4mm; min-width: 0; }
+  .step { border-top: 1mm solid var(--blue-60); background: var(--gray-10); padding: 3.5mm 4.5mm 2.5mm; }
+  .step.optional { border-top-color: var(--gray-50); background: var(--white); outline: 1px dashed var(--gray-20); outline-offset: -1px; }
+  .step-head { display: flex; align-items: baseline; gap: 3mm; margin-bottom: 2.5mm; }
+  .num { font-family: "IBM Plex Mono", monospace; font-size: 9pt; color: var(--blue-60); font-weight: 500; }
+  .optional .num { color: var(--gray-70); }
+  .step h3 { font-size: 11pt; font-weight: 600; margin: 0; }
+  .time { margin-left: auto; font-size: 7.5pt; color: var(--gray-70); white-space: nowrap; }
+  ul.check { list-style: none; margin: 0; padding: 0; }
+  ul.check > li { position: relative; padding-left: 6mm; margin-bottom: 2mm; }
+  ul.check > li::before { content: ""; position: absolute; left: 0; top: .6mm; width: 3.2mm; height: 3.2mm;
+                          border: 1.2px solid var(--gray-100); background: var(--white); }
+  li b { font-weight: 600; }
+  .sub { display: block; color: var(--gray-70); font-size: 8.2pt; margin-top: .4mm; }
+  pre { font-family: "IBM Plex Mono", monospace; font-size: 6.9pt; overflow: hidden; line-height: 1.45; background: var(--gray-100);
+        color: var(--gray-10); padding: 1.8mm 2.5mm; margin: 1.4mm 0 0; white-space: pre; }
+  pre .c { color: var(--gray-50); }
+
+  /* Callouts */
+  .callout { border-left: 1mm solid var(--yellow-30); background: var(--yellow-10); padding: 3mm 4mm; }
+  .callout.bring { border-left-color: var(--blue-60); background: var(--blue-10); }
+  .callout h4 { margin: 0 0 1mm; font-size: 9.5pt; font-weight: 600; }
+  .callout p, .callout ul { margin: 0; }
+  .callout ul { padding-left: 4mm; }
+
+  /* Footer */
+  footer { margin-top: 4mm; background: var(--gray-10); border-top: 1px solid var(--gray-20);
+           padding: 4mm 14mm 4mm; display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: center; }
+  footer h4 { margin: 0 0 2mm; font-size: 10pt; font-weight: 600; }
+  .ready { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2mm 6mm; list-style: none; padding: 0; margin: 0; }
+  .ready li { position: relative; padding-left: 5.5mm; font-size: 8.5pt; }
+  .ready li::before { content: ""; position: absolute; left: 0; top: .5mm; width: 3mm; height: 3mm; border: 1.2px solid var(--green-50); }
+  .stuck { margin: 3mm 0 0; color: var(--gray-70); font-size: 8.3pt; }
+  .qr { text-align: center; font-size: 7.2pt; color: var(--gray-70); width: 30mm; }
+  .qr svg { width: 23mm; height: 23mm; display: block; margin: 0 auto 1.5mm; }
+  .callout.tip { border-left-color: var(--gray-50); background: var(--gray-10); }
+  .ontheday { background: var(--gray-100); color: var(--white); padding: 4mm 5mm; font-size: 9pt; line-height: 1.4; width: 42mm; }
+  .ontheday span { display: block; font-size: 7pt; text-transform: uppercase; letter-spacing: .1em; color: var(--blue-30); margin-bottom: 1mm; }
+  .skip { margin: 1mm 0 0; font-size: 8pt; color: var(--gray-70); font-style: italic; }
+  .ready li.opt { color: var(--gray-70); }
+  .ready li.opt::before { border-style: dashed; border-color: var(--gray-50); }
+  .credit { color: var(--gray-50); font-size: 7.2pt; }
+  .brand { display: flex; justify-content: space-between; padding: 3mm 14mm; font-size: 7.2pt; color: var(--gray-70);
+           border-top: 1px solid var(--gray-20); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <p class="eyebrow">OpenSlava 2026 · Hands-on lab · IBM</p>
+  <h1><b>Agentic AI, Live:</b> Orchestrating Agents<br>with Real-Time Data</h1>
+  <div class="meta">
+    <div><span>Day</span>Wednesday 14 October</div>
+    <div><span>Time</span>15:00–17:30</div>
+    <div><span>Room</span>Room 2</div>
+    <div><span>Stack</span>watsonx Orchestrate · Confluent · IBM Bob</div>
+  </div>
+</header>
+
+<section class="intro">
+  <div>
+    <h2>Before you arrive: <b>15 minutes at home</b></h2>
+    <p>Set up IBM Bob and install the tools now. Verification emails and installers are the
+      slowest part of the day; do them at home and you start building straight away. You'll
+      get the workshop files and the step-by-step guide in the room.</p>
+  </div>
+  <div class="deadline"><span>Done by</span><b>Wed 14 Oct, 15:00</b></div>
+</section>
+
+<main>
+<div class="col">
+  <section class="step">
+    <div class="step-head"><span class="num">01</span><h3>IBMid + IBM Bob</h3><span class="time">~5 min</span></div>
+    <ul class="check">
+      <li><b>IBM Bob trial</b><br>
+        <a href="https://bob.ibm.com/trial">bob.ibm.com/trial</a> → Start your free trial
+        <span class="sub">Sign in with your IBMid, or create one when asked.
+          Free for 30 days, no payment details.</span></li>
+      <li><b>Sign up with your email</b>, not “Continue with Google”
+        <span class="sub">Social login causes access problems later in the lab.
+          No verification code? Check spam; use the newest one.</span></li>
+    </ul>
+  </section>
+
+  <section class="step optional">
+    <div class="step-head"><span class="num">03</span><h3>watsonx Orchestrate</h3><span class="time">optional · ~10 min</span></div>
+    <ul class="check">
+      <li><b>Start the trial</b> with the <b>same IBMid</b><br>
+        <a href="https://www.ibm.com/products/watsonx-orchestrate">ibm.com/products/watsonx-orchestrate</a> → Start your free trial
+        <span class="sub">Name <code>openslava-lab-&lt;yourname&gt;</code> · region <b>Frankfurt (eu-de)</b>.<br>
+          Done when you see the watsonx Orchestrate chat and the <b>Build</b> menu.</span></li>
+      <li><b>Get your credentials</b>: profile icon → <b>Settings</b> → <b>API details</b>.
+        Copy the <b>Service instance URL</b>, then <b>Generate API key</b> → <b>Create</b> → <b>Copy</b>
+        <span class="sub">The key is shown <b>only once</b>. Save both somewhere you can open on the day.</span></li>
+    </ul>
+    <p class="skip">Skipping this? No problem: we do it together at the start of the session.</p>
+  </section>
+
+</div>
+
+<div class="col">
+  <section class="step">
+    <div class="step-head"><span class="num">02</span><h3>Install</h3><span class="time">~10 min</span></div>
+    <ul class="check">
+      <li><b>Bob IDE</b> — <a href="https://bob.ibm.com/download">bob.ibm.com/download</a>, open it and sign in with your IBMid
+        <span class="sub">macOS: mac-ARM (M1 or newer) or mac-Intel · Windows: x64 (User)</span></li>
+      <li><b>watsonx Orchestrate ADK extension</b>, in Bob IDE: Extensions view
+        (<code>Cmd/Ctrl+Shift+X</code>) → search “watsonx Orchestrate” → Install
+        <span class="sub">Install only; don't open it or set up a workspace with it.</span></li>
+      <li><b>Python 3.11, 3.12 or 3.13</b> — check: <code>python3 --version</code>
+        <span class="sub">Mac <code>brew install python@3.11</code> · Win <code>winget install Python.Python.3.11</code><br>
+          Windows installer: tick “Add Python to PATH”.</span></li>
+      <li><b>uv</b> — check: <code>uv --version</code>
+        <span class="sub">Mac <code>brew install uv</code> · Win <code>winget install astral-sh.uv</code><br>
+          Then open a <b>new</b> terminal and check again.</span></li>
+    </ul>
+  </section>
+
+  <div class="callout">
+    <h4>Don't create a Confluent Cloud account yet</h4>
+    <p>We do it together in the lab, so the promo code goes in at the right moment and
+      you're never asked for a credit card. Already have one? Just bring the login.</p>
+  </div>
+
+  <div class="callout bring">
+    <h4>Bring</h4>
+    <ul>
+      <li>A laptop you can install software on (try at home: work laptops may block it)</li>
+      <li>Your charger, and access to your email for verification codes</li>
+      <li>If you did step 03: your watsonx Orchestrate URL and API key</li>
+    </ul>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div>
+    <h4>You're ready when</h4>
+    <ul class="ready">
+      <li>Bob IDE opens and you're signed in</li>
+      <li><code>python3 --version</code> shows 3.11–3.13</li>
+      <li>The ADK extension is installed in Bob IDE</li>
+      <li><code>uv --version</code> prints a version</li>
+      <li class="opt">Optional: watsonx Orchestrate trial + credentials</li>
+    </ul>
+    <p class="stuck">Stuck? No problem. Note the step and the error message, and we'll fix it in the first ten minutes.</p>
+  </div>
+  <div class="ontheday"><span>On the day</span>Workshop files,<br>step-by-step guide<br>and help in the room</div>
+</footer>
+
+
+</div>
+</body>
+</html>

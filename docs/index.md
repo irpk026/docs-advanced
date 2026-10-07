@@ -135,14 +135,18 @@ end to end.
 
 | Section | Time | Difficulty |
 | --- | --- | --- |
+| [**Before you arrive**](before-you-arrive.md) — IBM Bob and installs, at home | 15 min | ⭐ |
 | [**Setup & Environment**](setup/index.md) — accounts, Bob IDE, workspace, ADK | 30 min | ⭐ |
-| [**The Lab**](lab/index.md) — Confluent + Flink SQL + watsonx Orchestrate agent | 85–95 min | ⭐⭐⭐⭐ |
+| [**The Lab**](lab/index.md) — Confluent + Flink SQL + watsonx Orchestrate agent | 105–115 min | ⭐⭐⭐⭐ |
 | [**Stretch exercises**](lab/exercises.md) — optional, go deeper | 20 min | ⭐⭐⭐ |
 
 ## Before you start
 
-You need the following. The setup guide walks you through every one of them — don't install
-anything ahead of the session unless you want to save time.
+You need the following. The setup guide walks you through every one of them.
+
+!!! tip "Save time: do the [Before you arrive](before-you-arrive.md) checklist at home"
+    IBM Bob and the installs take about 15 minutes, mostly waiting for downloads and
+    verification emails. Do them before the session and you start the lab sooner.
 
 - [ ] Python **3.11–3.13**
 - [ ] [`uv`](https://docs.astral.sh/uv/) package manager

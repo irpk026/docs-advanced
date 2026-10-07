@@ -89,11 +89,15 @@ docs/
     ├── index.md                # Lab guide (Sections 0–7)
     ├── exercises.md            # Stretch exercises
     ├── exercises/              # Starter assets for the stretch exercises
+    ├── pipeline_dashboard.py   # Live/replay pipeline dashboard (downloadable)
+    ├── stock_actions.py        # Agent action tools: restock orders, ServiceNow tickets (downloadable)
+    ├── images/                 # Screenshots used in the lab guide
     ├── check-lab.sh            # Full preflight check (downloadable)
     ├── import-all.sh           # wxO-only verification (downloadable)
     └── bobchestrate-confluent.zip   # The single workspace attendees download
 INSTRUCTOR.md                   # Run-day notes — NOT published
 src/advanced-bob-config/        # Source of the .bob/ workspace configuration
+src/handouts/                   # Printable handouts: HTML source + build_pdf.py → docs/assets/*.pdf
 archive/                        # Superseded workspace bundles, kept for reference
 ```
 

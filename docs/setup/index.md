@@ -9,6 +9,13 @@
 Everything in this part is preparation. By the end you will have accounts, a configured
 Bob IDE workspace, and a working `orchestrate` CLI — the starting line for the lab itself.
 
+!!! tip "Done the [Before you arrive](../before-you-arrive.md) checklist?"
+    Then Steps 2–5 and the extension install in Step 9 are done. If you also did its
+    optional watsonx Orchestrate step, Step 1 is done and you have the credentials for
+    Step 12.1 — start at [Step 6](#step-6-download-and-extract-the-workshop-workspace).
+    Otherwise start with [Step 1](#step-1-create-your-watsonx-orchestrate-instance) and
+    use the same IBMid you used for Bob.
+
 ---
 
 ## Step 1: Create your watsonx Orchestrate instance
