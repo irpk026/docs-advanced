@@ -13,24 +13,66 @@
     Interactive 2.5-hour hands-on lab · Intermediate · Technical
     Presented by **Ivor Rothwell**, IBM
 
-    AI agents are easy to prototype and hard to run in production — the gap is usually
-    integration, live data, and control. In this hands-on lab, you'll build a working
-    agentic AI setup end-to-end: assembling and orchestrating agents (using IBM watsonx
-    Orchestrate), wiring real-time event streams (using IBM Confluent) so agents act on
-    current state instead of static snapshots, and applying governance controls.
-
     [View in the OpenSlava programme ↗](https://www.openslava.sk/2026/#/program/05da314c-f645-4755-84bd-0fc42b8cb028)
 
-!!! quote "The short version"
-    Build a production-shaped, **event-driven AI pipeline**: Kafka events are detected by
-    Flink SQL, handed to a watsonx Orchestrate agent for reasoning, and the agent's
-    schema-validated decision is published back onto a stream — all built with
-    **IBM Bob** as your pair programmer.
+AI agents are easy to prototype. They're hard to trust in production — because production
+data moves, and most agents don't notice. This lab is about closing that gap.
 
-## Why agents need real-time data
+You'll build a complete, **event-driven AI pipeline** end to end: real POS sale events
+arrive on Kafka, Flink SQL detects velocity spikes in real time, a watsonx Orchestrate
+agent reasons about each alert using live weather data and a knowledge base, and its
+schema-validated decision is published back onto a stream. **IBM Bob** is your pair
+programmer throughout.
+
+By the end, you won't just have a demo — you'll have a production-shaped pattern you can
+adapt: the separation of detection from reasoning, the schema contract at the output
+boundary, the audit trail that makes every decision replayable.
+
+---
+
+## What you'll build
+
+```text
+POS sale events ──▶ Confluent Cloud (Kafka)
+                       │
+                       ▼
+                  Flink SQL — velocity spike detector
+                       │  (filters: only spikes worth an agent's attention)
+                       ▼
+             Python bridge ──▶ watsonx Orchestrate agent
+                                 (tools + knowledge base)
+                       │
+                       ▼
+             Schema-validated decision ──▶ Kafka topic
+                                            │
+                              ┌─────────────┴──────────────┐
+                              ▼                            ▼
+                   fashion.logistics.orders      servicenow.incidents
+                   (restock order placed)        (store ticket opened)
+```
+
+A fashion retailer needs to know — within seconds — when a product is selling abnormally
+fast, and *what to do*: rush reorder, surge price, transfer stock, or keep watching. The
+agent doesn't just recommend — it places the restock order and opens the ServiceNow ticket
+itself, in the same run, through tools.
+
+| Component | Technology | Role |
+| --- | --- | --- |
+| Kafka topics | Confluent Cloud | Durable, ordered event log — the system of record |
+| Velocity spike detector | Flink SQL | Flags products selling far above baseline |
+| Python bridge | `confluent-kafka` + `httpx` | Reads alerts, calls the agent, validates and publishes decisions |
+| Inventory analysis agent | watsonx Orchestrate | Reasons about urgency, recommends and executes actions |
+| Knowledge base | watsonx Orchestrate KB | Decision rules, product history, guardrails |
+| Action tools | wxO Python tools | Place restock orders and open ServiceNow tickets |
+
+---
+
+## Why agents — and why streaming
+
+### The problem with static data
 
 An agent is only as good as the state it reasons over. Most agent demos read from a
-database snapshot, a nightly export, or a vector index built last week — and they look
+database snapshot, a nightly export, or a vector index built last week. They look
 convincing, because the question and the data were chosen together.
 
 Production breaks that arrangement. The data moves, and the agent doesn't notice.
@@ -44,159 +86,102 @@ This isn't an edge case — it's the default behaviour of any agent that reads f
 source. The snapshot was accurate when it was taken. By the time the agent acts on it,
 it may describe a world that no longer exists.
 
-**Why an agent specifically, rather than a rule?** Rules are fast, deterministic, and
-cheap. They're also brittle: a rule that says "reorder if stock < 20" can't weigh a cold
-snap in the forecast, a supplier's current lead time, and the product's price trajectory
-at the same time. An agent can. The LLM brings genuine reasoning capability — the ability
-to trade off multiple factors, consult unstructured knowledge, and produce a nuanced
-recommendation — that no static rule set can replicate. The cost is latency and
-unpredictability of output. That's why agents belong downstream of a stream processor,
-not in front of every raw event.
+### Why an agent, not a rule
 
-Three properties of streaming change what an agent can be trusted to do:
+Rules are fast, deterministic, and cheap. They're also context-free. A rule that says
+"reorder if stock < 20" fires identically whether the product is a $10 accessory or a
+$500 jacket, whether it's January or July, whether the nearest warehouse has spare stock
+or is empty. It has no access to context it wasn't explicitly given.
+
+An agent given the same alert can look up the store location, check the live weather
+forecast, pull the product's seasonal history from a knowledge base, weigh all of those
+factors simultaneously, and return a recommendation with a rationale a buyer can read and
+override. That's not something a rule can do — not because rules are bad, but because
+rules can only reason over what they were handed.
+
+The tradeoff: agents are slower (seconds, not microseconds) and non-deterministic. Both
+are acceptable when the agent sits *downstream of a filter*. Flink handles thousands of
+events per second; the agent handles the small fraction that actually need human-quality
+judgement. That's the pattern this lab is built on.
+
+### Why streaming, not a database
 
 | Property | What it gives the agent |
 | --- | --- |
 | **Events arrive as they happen** | The agent reasons about now, not about the last export |
 | **The stream is the audit trail** | Every input and every decision is replayable, in order |
-| **Detection is separable from reasoning** | Cheap, deterministic code finds candidates; the expensive model only judges the ones that matter |
+| **Detection is separable from reasoning** | Cheap, deterministic code filters; the model only judges what matters |
 
-That last point is the one most often missed. Running an LLM over every event is slow and
-costly. Running it over nothing is useless. The pattern in this lab — a stream processor
-deciding *what deserves attention*, an agent deciding *what to do about it* — is what
-makes agentic AI affordable at event-stream volume.
+That third property is the one most often missed. Running an LLM over every event is slow
+and costly. Running it over nothing is useless. Streaming lets you run it over exactly the
+right events.
 
-### What an agent adds that rules can't
-
-Consider the same inventory spike handled two ways:
-
-**Rule-based:** `IF velocity_ratio > 2.5 AND hours_to_stockout < 12 THEN flag=REORDER`
-
-This fires reliably and consistently. It also fires identically whether the product is a
-$10 accessory or a $500 jacket, whether it's January or July, whether the nearest
-warehouse has spare stock or is empty. The rule has no access to context it wasn't
-explicitly given.
-
-**Agent-based:** the same alert arrives, and the agent calls its tools. It discovers
-the store is in Manhattan, checks the forecast (snow for three days), looks up the
-product's seasonal history, notes that this SKU is typically low-margin but the winter
-run is short, and recommends a rush reorder with a modest price adjustment — with a
-one-paragraph rationale that a buyer can read and override.
-
-The agent output is richer, slower, and harder to unit-test. It's also the kind of
-judgement a buyer would give if they had time for every alert. That's the exchange.
-
-### Request-response vs event-driven
+### Chat agents vs event-driven agents
 
 ```text
-Chat agent:     Human ──▶ Agent ──▶ Human          (a person starts every interaction)
-Event-driven:   System ──▶ Agent ──▶ System        (the world starts it; nobody is waiting)
+Chat:         Human ──▶ Agent ──▶ Human          (a person starts it; a person reads it)
+Event-driven: System ──▶ Agent ──▶ System        (the world starts it; code acts on it)
 ```
 
-The second shape is where most enterprise value sits, and it's the harder one to build:
-no human in the loop to sanity-check the output, so the contract between the agent and
-everything downstream has to be enforced by machinery. That's why this lab spends real
-time on schema validation and delivery semantics, not just on prompting.
+In the chat shape, a vague or malformed reply prompts a follow-up. The human is the
+safety net. In the event-driven shape, the agent's reply goes directly to a downstream
+system. A missing field crashes the consumer. A wrong urgency level triggers the wrong
+routing. There is no human to ask for clarification.
 
-A chat agent can recover from a vague or malformed reply — the human asks for
-clarification. An event-driven agent publishes to a topic; a downstream system consumes
-it and acts. If the output is missing a field, the consumer fails. If the urgency level
-is a typo, the routing logic breaks. The agent's reply is not a message to a person; it's
-a message to code. Code is less forgiving than people.
+That's why this lab spends real time on schema validation and delivery semantics —
+not just on prompting. The schema is the contract between the agent and everything downstream.
 
 ---
 
-## The products, and what each is actually for
+## The stack
 
 !!! info "Four pieces, one job each"
-    The stack looks busy until you see that each product owns exactly one decision.
+    The stack looks busy until you see that each component owns exactly one responsibility.
 
-**Confluent Cloud** — managed Apache Kafka. It is the transport and the system of record
-for events: durable, ordered, replayable. Topics decouple producers from consumers, so
-the agent can be added, removed, or redeployed without touching the systems generating
-events. In this lab it carries raw sale events, velocity alerts, and the agent's
-decisions. *Owns: how events move and persist.*
+**Confluent Cloud — how events move and persist**
 
-Why Confluent specifically, rather than a message queue or a database change-feed? Three
-reasons matter here:
+Managed Apache Kafka. Topics are the contract between every component in the pipeline:
+producers write, consumers read, and neither knows about the other. Adding the AI layer
+requires no changes to the POS system or any other producer.
 
-- **Durability and replayability.** A Kafka topic is an append-only log. Every event
-  survives until its retention period expires, and any consumer can re-read the log from
-  the beginning. When the agent produces a decision, it goes onto a topic too — so the
-  full input→detection→decision chain is auditable indefinitely, not just while the
-  process is running.
-- **Decoupling.** The Python producer doesn't know the agent exists. The agent doesn't
-  know about the POS system. Topics are the contract. Adding, removing, or redeploying
-  any component doesn't require changing another. In production this means the AI layer
-  can be upgraded or replaced without a coordinated rollout across every producer and
-  consumer.
-- **Schema Registry.** Confluent's Schema Registry enforces a JSON (or Avro) schema at
-  the topic level, before a message is written. A producer that sends a malformed event
-  gets an error immediately — not a silent corruption that surfaces when the consumer
-  tries to parse it two hours later. This is the data-contract layer that makes an
-  automated pipeline trustworthy.
+Confluent specifically — not just any queue — because of three production-grade properties:
 
-**Apache Flink** — stream processing, also managed by Confluent Cloud and written here as
-Flink SQL. It runs continuously as a deployed job, not as a one-shot query. It watches every event and emits an alert only when a pattern matches.
-It is deterministic, fast, and cheap, and it makes no judgement calls. *Owns: what
-deserves the agent's attention.*
+- **Durability and replayability.** A Kafka topic is an append-only log. Every event,
+  alert, and agent decision survives until retention expires. When a decision looks wrong
+  tomorrow, you replay the exact input that produced it. No extra audit infrastructure needed.
+- **Decoupling.** Any component — the agent, Flink, the bridge — can be restarted,
+  upgraded, or replaced without touching anything else. Topics are the contract; nothing else is.
+- **Schema Registry.** Confluent validates messages against a registered schema when
+  they're *produced*, not when they're consumed. A malformed event is rejected at the
+  source, immediately — not discovered as a silent wrong value three steps downstream.
 
-**IBM watsonx Orchestrate** — the agent platform. It hosts the agent, gives it tools it
-can call, grounds it in a knowledge base, and enforces the instructions that shape its
-output. It handles the model, the reasoning loop, and the tool invocations so you don't
-build that machinery yourself. *Owns: judgement — urgency, trade-offs, recommended
-action.*
+**Apache Flink — what deserves the agent's attention**
 
-Why a platform rather than calling an LLM API directly? Because "agent" is more than a
-single model call. An agent reasons in a loop: it reads the input, decides it needs more
-information, calls a tool, reads the result, decides to search its knowledge base, reads
-those passages, and finally produces a structured answer. Building that loop reliably —
-handling tool errors, enforcing output structure, managing token limits, logging each step
-— is the infrastructure that watsonx Orchestrate provides. The tools and knowledge base
-you create in this lab are first-class platform objects: versioned, importable, inspectable
-through the CLI, and reusable across agents.
+Stream processing, managed by Confluent Cloud, written here as Flink SQL. It runs
+continuously as a deployed job — not a one-shot query. It watches every event, applies the
+detection rule, and emits an alert only when the pattern matches. Stateless, deterministic,
+fast. It makes no judgement calls.
 
-**IBM Bob** — the AI development environment you build in. With this workshop's
-configuration it knows the watsonx Orchestrate platform: it consults live ADK docs,
-inspects your environment through MCP, and generates platform-correct tools and agents
-from a plain-language description. *Owns: how fast you get from intent to a working
-artifact.*
+**IBM watsonx Orchestrate — judgement: urgency, trade-offs, action**
 
-And the glue you write yourself — a small Python bridge — reads alerts, calls the agent,
-**validates the response against a JSON schema**, and publishes the result. That
-validation step is not ceremony: it's the boundary that stops a plausible-sounding but
-malformed answer from reaching a downstream system.
+The agent platform. It hosts the agent, gives it tools to call, grounds it in a knowledge
+base, and enforces the instructions that shape its output. It runs the model in a
+reasoning loop — the model decides which tools to call and in what order, wxO executes
+each call and returns the result, and the model keeps going until it can produce a final
+answer. You don't build that loop yourself.
+
+The tools and knowledge base you create in this lab are first-class platform objects:
+versioned, importable via the CLI, reusable across agents. The agent doesn't just
+recommend; it acts — placing restock orders and opening ServiceNow tickets through tools.
+
+**IBM Bob — how fast you get from intent to a working artifact**
+
+The AI development environment you build in. This workspace's `.bob/` configuration gives
+Bob live access to watsonx Orchestrate ADK docs, your wxO environment via MCP, and
+platform-specific conventions. You describe what you want; Bob creates platform-correct
+tools, knowledge bases, and agents.
 
 ---
-
-## What you'll build
-
-```text
-POS sale events ──▶ Confluent Cloud (Kafka)
-                       │
-                       ▼
-                  Flink SQL — velocity spike detector
-                       │
-                       ▼
-             Python bridge ──▶ watsonx Orchestrate agent
-                                 (tools + knowledge base)
-                       │
-                       ▼
-             Schema-validated decision ──▶ Kafka topic
-```
-
-A fashion retailer needs to know — within seconds — when a product starts selling
-abnormally fast, and what to do about it: rush reorder, surge price, transfer stock, or
-just keep watching. By the end of the lab you will have that decision loop running
-end to end.
-
-| Component | Technology | Role |
-| --- | --- | --- |
-| Kafka topics | Confluent Cloud | Carry raw inventory events and velocity alerts |
-| Velocity spike detector | Flink SQL | Flags products selling far above baseline |
-| Python bridge | `confluent-kafka` + `httpx` | Reads alerts, calls the agent, publishes decisions |
-| Inventory analysis agent | watsonx Orchestrate | Reasons about urgency, recommends actions, emits strict JSON |
-| Knowledge base | watsonx Orchestrate KB | Decision rules, product history, guardrails |
 
 ## Agenda
 
@@ -208,8 +193,6 @@ end to end.
 | [**Stretch exercises**](lab/exercises.md) — optional, go deeper | 20 min | ⭐⭐⭐ |
 
 ## Before you start
-
-You need the following. The setup guide walks you through every one of them.
 
 !!! tip "Save time: do the [Before you arrive](before-you-arrive.md) checklist at home"
     IBM Bob and the installs take about 15 minutes, mostly waiting for downloads and
@@ -227,8 +210,8 @@ You need the following. The setup guide walks you through every one of them.
 
 ## How to use Bob in this lab
 
-The workspace you download ships with a `.bob/` configuration that gives Bob three
-layers of watsonx Orchestrate expertise:
+The workspace ships with a `.bob/` configuration that gives Bob three layers of watsonx
+Orchestrate expertise:
 
 <div class="grid cards" markdown>
 
