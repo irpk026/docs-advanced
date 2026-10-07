@@ -80,12 +80,43 @@ All Python code is **pre-built** in `retail-inventory-optimization/`. Your job i
 
 ### Why This Pattern Matters
 
+Most AI deployments in production are not chat. They're pipelines: data arrives
+continuously, a decision must be made quickly, and the result feeds another system rather
+than a person. That's the pattern you're building here.
+
+The distinction between event-driven and chat matters because the failure modes are
+completely different:
+
+- **Chat agents** fail conversationally. A vague answer prompts a follow-up. A wrong
+  recommendation gets corrected in the next message. A human is always in the loop to
+  catch the mistake.
+- **Event-driven agents** fail silently. A malformed response gets written to a Kafka
+  topic, consumed by a downstream system, and acted on — before anyone notices the
+  decision was wrong. The schema validation in Section 6 is not optional glue; it's the
+  automated sanity check that replaces the human in the loop.
+
 | Use event-driven AI when...                | Use a chat agent when...                  |
 | ------------------------------------------ | ----------------------------------------- |
 | Events happen continuously and at volume   | A human initiates each request            |
 | Decisions must be made in near-real-time   | Response latency of seconds is acceptable |
 | AI enrichment feeds a downstream system    | Output is for a human to read             |
 | You need audit trails of every AI decision | Conversation context is the primary state |
+
+Why Confluent for the streaming side? A simple message queue would let you get events
+from A to B. Confluent adds three things that matter at production scale:
+
+1. **The log is the audit trail.** Every event, alert, and agent decision is stored as an
+   immutable, ordered log. If a decision looks wrong tomorrow, you can replay the exact
+   input that produced it. No other persistence model gives you this without extra work.
+2. **Topics decouple everything.** The POS system, Flink, the Python bridge, and the
+   agent are all independent. Any one of them can be restarted, upgraded, or replaced
+   without coordinating with the others. That's what makes the AI layer composable: you
+   can swap the agent, keep everything else, and the topics are the contract.
+3. **Schema Registry enforces contracts before they're broken.** Confluent validates
+   messages against a registered schema when they're produced — not when they're consumed.
+   A bad message is rejected at the source, immediately, rather than discovered downstream
+   by a crash or a silent wrong value. This is the mechanism that keeps a multi-system
+   pipeline honest.
 
 ---
 
@@ -119,19 +150,71 @@ Event-driven:  System event → Agent → Downstream system
 
 This unlocks AI automation at scale. Inventory spikes, fraud signals, equipment anomalies, sensor readings — any event stream can be enriched with AI reasoning.
 
+### Why not just use rules?
+
+Flink's velocity spike detector is a rule: `ABS(quantityChange) >= 5`. It fires correctly,
+every time, in microseconds. Why does the pipeline then hand the alert to an LLM agent
+rather than another rule?
+
+Because rules are context-free. Flink sees a 5-unit spike and labels it `MEDIUM`. That's
+all it knows. An agent, given the same event, can:
+
+- Look up the store's location and check what the weather is doing there this week
+- Pull the product's sales history from a knowledge base to understand whether this spike is
+  unusual for the season
+- Weigh the remaining stock, the unit price, the supplier lead time, and the urgency against
+  each other simultaneously
+- Produce a recommendation with an explanation — one a buyer can read, disagree with, and
+  feed back into the system
+
+None of this is possible in a static rule. Writing rules for every combination of product,
+weather, season, and stock level would produce a rule set that is impossible to maintain
+and still less accurate than the agent. The agent's knowledge base and instructions encode
+the policy once, and the LLM applies it to each specific situation.
+
+The tradeoff is latency (seconds rather than milliseconds) and non-determinism (the same
+input can produce slightly different outputs on different days, because the weather is
+real). Both are acceptable here because the agent is called once per filtered alert, not
+once per raw event. Flink does the volume work; the agent does the judgement work.
+
+### Why Confluent for the streaming side?
+
+You could wire the same agent to a simpler queue — Redis Streams, SQS, a REST webhook. The
+pipeline would work at workshop scale. Confluent adds properties that matter when the
+pipeline runs in production:
+
+**Ordered, durable, replayable log.** When Flink writes an alert to `fashion.velocity.anomalies`,
+it persists. When the Python consumer crashes and restarts, Kafka knows exactly which
+offsets were committed and resumes without gaps or duplicates (at-least-once delivery).
+When an agent decision looks wrong three days later, you can replay `fashion.agent.responses`
+from offset 0 and compare it against the original alert on `fashion.velocity.anomalies`.
+No extra logging infrastructure required.
+
+**Consumer groups and independent reads.** The pipeline dashboard, the agent consumer, and
+any future analytics consumer all read every topic message independently — each tracks its
+own offset. Adding a new consumer doesn't affect any existing one. That's why you can run
+the dashboard alongside the agent consumer without either missing messages.
+
+**Schema Registry at the perimeter.** The three schemas in `fashion-inventory-setup/schemas/`
+are registered in Confluent's Schema Registry. Producers validate before writing;
+consumers validate before processing. A message that doesn't match the schema is rejected,
+immediately, at the boundary where it was produced — not silently stored and discovered
+as a bug later in the pipeline.
+
 ### The three roles in this pipeline
 
-**Stream processor (Flink SQL)** — Watches the raw event stream and detects patterns. Stateless, deterministic, fast. Produces structured alerts. Does not make judgment calls.
+**Stream processor (Flink SQL)** — Watches the raw event stream and detects patterns. Stateless, deterministic, fast. Produces structured alerts. Does not make judgment calls. This is the component you want handling thousands of events per second — it never calls an LLM.
 
-**AI agent (watsonx Orchestrate)** — Receives a structured alert, reasons about it using knowledge and tools, and returns a structured decision. Slow relative to Flink (seconds), but capable of nuanced judgment.
+**AI agent (watsonx Orchestrate)** — Receives a structured alert, reasons about it using knowledge and tools, and returns a structured decision. Slow relative to Flink (seconds, not microseconds), but capable of nuanced judgment that no rule set can replicate. This is the component you want handling the small fraction of events that actually need human-quality reasoning.
 
-**Bridge (Python consumer)** — Connects the two worlds. Reads Kafka alerts, calls the agent synchronously, validates the response against a JSON schema, and publishes the enriched result to a new Kafka topic.
+**Bridge (Python consumer)** — Connects the two worlds. Reads Kafka alerts, calls the agent synchronously, validates the response against a JSON schema, and publishes the enriched result to a new Kafka topic. The validation step is the safety net: it ensures a well-formed-looking but semantically wrong agent response never reaches a downstream system.
 
 ### What you learned
 
-- Event-driven AI separates fast pattern detection from slow AI reasoning
-- A Python bridge connects streaming infrastructure to an AI agent
-- Schema validation at the output boundary is essential for downstream reliability
+- Event-driven AI separates fast pattern detection from slow AI reasoning — Flink handles volume, the agent handles judgement
+- Agents add value over rules when the decision requires weighing multiple contextual factors simultaneously
+- Confluent provides durability, decoupling, and schema enforcement that make the pipeline reliable at production scale
+- Schema validation at the output boundary is the automated check that replaces a human reviewer in a fully automated pipeline
 
 ---
 

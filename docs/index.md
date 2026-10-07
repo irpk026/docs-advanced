@@ -40,6 +40,19 @@ Production breaks that arrangement. The data moves, and the agent doesn't notice
     sold in the last hour, nothing in the system raises an exception. You get a fluent,
     well-argued recommendation to do the wrong thing, and no stack trace to tell you.
 
+This isn't an edge case — it's the default behaviour of any agent that reads from a batch
+source. The snapshot was accurate when it was taken. By the time the agent acts on it,
+it may describe a world that no longer exists.
+
+**Why an agent specifically, rather than a rule?** Rules are fast, deterministic, and
+cheap. They're also brittle: a rule that says "reorder if stock < 20" can't weigh a cold
+snap in the forecast, a supplier's current lead time, and the product's price trajectory
+at the same time. An agent can. The LLM brings genuine reasoning capability — the ability
+to trade off multiple factors, consult unstructured knowledge, and produce a nuanced
+recommendation — that no static rule set can replicate. The cost is latency and
+unpredictability of output. That's why agents belong downstream of a stream processor,
+not in front of every raw event.
+
 Three properties of streaming change what an agent can be trusted to do:
 
 | Property | What it gives the agent |
@@ -53,6 +66,26 @@ costly. Running it over nothing is useless. The pattern in this lab — a stream
 deciding *what deserves attention*, an agent deciding *what to do about it* — is what
 makes agentic AI affordable at event-stream volume.
 
+### What an agent adds that rules can't
+
+Consider the same inventory spike handled two ways:
+
+**Rule-based:** `IF velocity_ratio > 2.5 AND hours_to_stockout < 12 THEN flag=REORDER`
+
+This fires reliably and consistently. It also fires identically whether the product is a
+$10 accessory or a $500 jacket, whether it's January or July, whether the nearest
+warehouse has spare stock or is empty. The rule has no access to context it wasn't
+explicitly given.
+
+**Agent-based:** the same alert arrives, and the agent calls its tools. It discovers
+the store is in Manhattan, checks the forecast (snow for three days), looks up the
+product's seasonal history, notes that this SKU is typically low-margin but the winter
+run is short, and recommends a rush reorder with a modest price adjustment — with a
+one-paragraph rationale that a buyer can read and override.
+
+The agent output is richer, slower, and harder to unit-test. It's also the kind of
+judgement a buyer would give if they had time for every alert. That's the exchange.
+
 ### Request-response vs event-driven
 
 ```text
@@ -64,6 +97,12 @@ The second shape is where most enterprise value sits, and it's the harder one to
 no human in the loop to sanity-check the output, so the contract between the agent and
 everything downstream has to be enforced by machinery. That's why this lab spends real
 time on schema validation and delivery semantics, not just on prompting.
+
+A chat agent can recover from a vague or malformed reply — the human asks for
+clarification. An event-driven agent publishes to a topic; a downstream system consumes
+it and acts. If the output is missing a field, the consumer fails. If the urgency level
+is a typo, the routing logic breaks. The agent's reply is not a message to a person; it's
+a message to code. Code is less forgiving than people.
 
 ---
 
@@ -78,6 +117,25 @@ the agent can be added, removed, or redeployed without touching the systems gene
 events. In this lab it carries raw sale events, velocity alerts, and the agent's
 decisions. *Owns: how events move and persist.*
 
+Why Confluent specifically, rather than a message queue or a database change-feed? Three
+reasons matter here:
+
+- **Durability and replayability.** A Kafka topic is an append-only log. Every event
+  survives until its retention period expires, and any consumer can re-read the log from
+  the beginning. When the agent produces a decision, it goes onto a topic too — so the
+  full input→detection→decision chain is auditable indefinitely, not just while the
+  process is running.
+- **Decoupling.** The Python producer doesn't know the agent exists. The agent doesn't
+  know about the POS system. Topics are the contract. Adding, removing, or redeploying
+  any component doesn't require changing another. In production this means the AI layer
+  can be upgraded or replaced without a coordinated rollout across every producer and
+  consumer.
+- **Schema Registry.** Confluent's Schema Registry enforces a JSON (or Avro) schema at
+  the topic level, before a message is written. A producer that sends a malformed event
+  gets an error immediately — not a silent corruption that surfaces when the consumer
+  tries to parse it two hours later. This is the data-contract layer that makes an
+  automated pipeline trustworthy.
+
 **Apache Flink** — stream processing, also managed by Confluent Cloud and written here as
 Flink SQL. It runs continuously as a deployed job, not as a one-shot query. It watches every event and emits an alert only when a pattern matches.
 It is deterministic, fast, and cheap, and it makes no judgement calls. *Owns: what
@@ -88,6 +146,15 @@ can call, grounds it in a knowledge base, and enforces the instructions that sha
 output. It handles the model, the reasoning loop, and the tool invocations so you don't
 build that machinery yourself. *Owns: judgement — urgency, trade-offs, recommended
 action.*
+
+Why a platform rather than calling an LLM API directly? Because "agent" is more than a
+single model call. An agent reasons in a loop: it reads the input, decides it needs more
+information, calls a tool, reads the result, decides to search its knowledge base, reads
+those passages, and finally produces a structured answer. Building that loop reliably —
+handling tool errors, enforcing output structure, managing token limits, logging each step
+— is the infrastructure that watsonx Orchestrate provides. The tools and knowledge base
+you create in this lab are first-class platform objects: versioned, importable, inspectable
+through the CLI, and reusable across agents.
 
 **IBM Bob** — the AI development environment you build in. With this workshop's
 configuration it knows the watsonx Orchestrate platform: it consults live ADK docs,
