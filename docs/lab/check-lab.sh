@@ -36,6 +36,7 @@ PASS=0; FAIL=0; WARN=0
 KAFKA_PLACEHOLDER=0
 SR_PLACEHOLDER=0
 S4_PENDING=0
+WXO_DOWN=0
 FAILED_ITEMS=()
 
 ok()   { printf '  %s✓%s %s\n' "$GRN" "$RST" "$1"; PASS=$((PASS+1)); }
@@ -261,7 +262,11 @@ PYEOF
           || warn "topic $t missing (needed for the action tools)" "Section 2.3" ;
       done ;;
     ERROR*)
-      bad "cannot reach Kafka" "${KAFKA_MARK#ERROR }" ;;
+      if printf '%s' "$KAFKA_OUT" | grep -qi 'authentication failed'; then
+        bad "Kafka rejected the API key/secret" "KAFKA_API_KEY/SECRET must be a key created on the cluster in KAFKA_BOOTSTRAP_SERVERS — Section 2.8"
+      else
+        bad "cannot reach Kafka" "${KAFKA_MARK#ERROR }"
+      fi ;;
     *)
       warn "Kafka check did not run" "$(printf '%s' "$KAFKA_OUT" | tail -1 | cut -c1-120)" ;;
   esac
@@ -279,9 +284,13 @@ else
     bad "orchestrate env list failed" "$(printf '%s' "$ENVS" | head -1)"
   fi
 
-  TOOLS=$(orchestrate tools list 2>/dev/null || echo "")
-  if [ -z "$TOOLS" ]; then
-    bad "cannot list tools" "session may have expired — re-run: orchestrate env activate <env> -a <key>"
+  # The ADK prints "[ERROR] ..." on stdout and still exits 0 when the session has
+  # expired, so read the text, not the exit code.
+  TOOLS=$(orchestrate tools list 2>&1)
+  if [ -z "$TOOLS" ] || printf '%s' "$TOOLS" | grep -q '\[ERROR\]'; then
+    WXO_MSG=$(printf '%s' "$TOOLS" | grep '\[ERROR\]' | head -1 | sed $'s/\033\\[[0-9;]*m//g' | sed 's/^\[ERROR\] - //; s/\. .*$/./' | cut -c1-110)
+    bad "cannot query watsonx Orchestrate" "${WXO_MSG:-no response} — re-run: orchestrate env activate <env> -a <key> (Setup, Step 12.2)"
+    WXO_DOWN=1
   else
     for t in get_store_location get_weather_forecast; do
       if printf '%s' "$TOOLS" | grep -q "$t"; then ok "tool $t"; else bad "tool $t missing" "Section 4.1 / 4.2"; S4_PENDING=1; fi
@@ -291,15 +300,19 @@ else
     done
   fi
 
-  KBL=$(orchestrate knowledge-bases list 2>/dev/null || echo "")
-  if printf '%s' "$KBL" | grep -q "inventory-alert-knowledge"; then
+  KBL=""; [ "$WXO_DOWN" -eq 0 ] && KBL=$(orchestrate knowledge-bases list 2>/dev/null || echo "")
+  if [ "$WXO_DOWN" -eq 1 ]; then
+    warn "skipping knowledge base and agent checks" "fix the watsonx Orchestrate connection above first"
+  elif printf '%s' "$KBL" | grep -q "inventory-alert-knowledge"; then
     ok "knowledge base inventory-alert-knowledge"
   else
     bad "knowledge base missing" "Section 4.4"; S4_PENDING=1
   fi
 
-  AGENTS=$(orchestrate agents list 2>/dev/null || echo "")
-  if printf '%s' "$AGENTS" | grep -qiE "fashion.*inventory|Fashion_Inventory_Alert_Processor"; then
+  AGENTS=""; [ "$WXO_DOWN" -eq 0 ] && AGENTS=$(orchestrate agents list 2>/dev/null || echo "")
+  if [ "$WXO_DOWN" -eq 1 ]; then
+    :
+  elif printf '%s' "$AGENTS" | grep -qiE "fashion.*inventory|Fashion_Inventory_Alert_Processor"; then
     ok "agent Fashion_Inventory_Alert_Processor"
   else
     bad "agent missing" "Section 4.5"; S4_PENDING=1
