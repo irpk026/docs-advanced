@@ -760,6 +760,11 @@ agent yet. Hover over an alert to see which sale triggered it.
 
 If you see alerts flowing — **the Flink pipeline is working**. Stop the consumer with `Ctrl+C` and move to Section 4. Leave the dashboard running.
 
+!!! tip "Want a quick check first?"
+    Run `bash check-lab.sh` (see [Check your setup](#check-your-setup)). At this point the
+    tooling, workspace, `.env` and Confluent lines should be green. The watsonx
+    Orchestrate tools, knowledge base and agent will show as missing — that's Section 4.
+
 ### What you learned
 
 - Flink SQL runs as a persistent job; events flow through as soon as they arrive on the input topic
@@ -1264,6 +1269,11 @@ Edit the alert and send it again. Each experiment isolates one input:
     just watched. When a decision looks wrong, paste that alert back in here and read the
     trace.
 
+!!! tip "Check what you built"
+    Run `bash check-lab.sh` again (see [Check your setup](#check-your-setup)). The two
+    tools, the two action tools, the knowledge base and the agent should now all be
+    green. The `WXO_*` lines in `.env` are still placeholders until Section 5.
+
 ### What you learned
 
 - Bob creates watsonx Orchestrate artifacts (tools, knowledge bases, agents) programmatically via the ADK MCP server
@@ -1620,7 +1630,8 @@ The most common causes:
 ## Check your setup
 
 Two scripts verify your environment. Download either into your `bobchestrate-confluent/`
-folder and run it from there.
+folder and run it from there. You can run them at any point — anything from a section you
+haven't reached yet simply shows as still to do.
 
 !!! info "Windows users"
     Both are bash scripts. Run them from **Git Bash** (installed with
@@ -1640,13 +1651,23 @@ bash check-lab.sh
 ```
 
 It is read-only and safe to run at any point — including before you've configured
-anything, to see what's still outstanding. Add `--e2e` once Section 4 is done to run a
-real end-to-end test: it produces events, waits for the agent decision, and confirms the
-result was published.
+anything, to see what's still outstanding. Each ✗ names the section that fixes it. A
+missing tool, knowledge base or agent just means Section 4 isn't done yet.
+
+For a real end-to-end test, add `--e2e` once Sections 4 and 5 are done:
 
 ```bash
 bash check-lab.sh --e2e
 ```
+
+It produces the 25 test events, waits for the agent's decision, and confirms it was
+published.
+
+!!! warning "`--e2e` is a real run, not a read-only check"
+    It sends the agent real alerts, so the action tools write restock orders and
+    ServiceNow tickets to your topics. It also runs the agent consumer, which commits
+    its Kafka offsets. Use it **instead of** the Section 6 run, not as well — or expect
+    duplicate orders and a Section 6 that starts partway through the backlog.
 
 The script exits non-zero if any check fails, so it also works in CI.
 
