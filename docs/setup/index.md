@@ -31,6 +31,10 @@ and click **Start your free trial**.
 
 Enter your email address to create an IBMid.
 
+!!! note "Already have an IBMid?"
+    If you set up IBM Bob at home, you already have one. Sign in with it instead of
+    creating a new account.
+
 !!! warning
     Do **not** use **Continue with Google**. Sign up with your email directly —
     social login can cause access problems later in the lab.
@@ -89,7 +93,7 @@ Go to [bob.ibm.com/trial](https://bob.ibm.com/trial) and click **Start your free
 
 ![The IBM Bob homepage with the Get free trial button highlighted](images/bob-trial-1-get-free-trial.png){ width="560" }
 
-Sign in with the **same IBMid** you created in Step 1. When the page shows
+Sign in with the **same IBMid** you used in Step 1. When the page shows
 **Logged in with IBMid**, click **Submit**:
 
 ![Start Your Free Trial page with the Submit button highlighted](images/bob-trial-2-submit.png){ width="560" }
