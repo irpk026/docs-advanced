@@ -413,8 +413,8 @@ redeem a promo code first. So the order of these steps matters.
    and click **Start Free**. Signing up itself asks for no card.
 2. Confirm your email address via the link Confluent sends you, then work through the
    onboarding screens.
-3. Confluent offers to set up a first cluster. Keep the default choice, or pick your
-   preferred cloud provider, region and availability — it doesn't matter for this lab.
+3. Confluent offers to set up a first cluster. Select **AWS** as the cloud provider and
+   **`Europe (Frankfurt)`** as the region; keep the default availability.
    If you're asked **"Do you need a private network?"**, answer **No**.
 4. **You now reach the payment screen.** Do **not** enter card details. At the bottom,
    find **"Have a promo code?"** and click **Click Here** — then enter **`CONFLUENTDEV1`**.
@@ -484,7 +484,7 @@ payment screen without entering `CONFLUENTDEV1`:
 2. Click **Add cloud environment** → name it `retail-inventory-bootcamp`
 3. Inside the Cloud Environment, click **Add cluster** → choose **Basic**
 4. When asked **"Do you need a private network?"** — answer **No**
-5. Select a cloud provider and region — select **`Europe (Frankfurt)`**, then name the cluster `retail-inventory-cluster`
+5. Select cloud provider **AWS** and region **`Europe (Frankfurt)`**, then name the cluster `retail-inventory-cluster`
 6. Note the **Bootstrap server URL** — you'll need it for `.env`
 
 !!! warning "Answer No to the private networking question"
@@ -522,7 +522,7 @@ For each topic, attach the corresponding schema from `retail-inventory-optimizat
 ### 2.5 Create a Flink compute pool
 
 1. In your Cloud Environment, click **Stream Processing** (or **Flink**) in the left sidebar
-2. Click **Create compute pool** → choose region **`Europe (Frankfurt)`** (must match your Kafka cluster region) → name it `retail-inventory-flink` → **Continue**
+2. Click **Create compute pool** → choose **AWS** and region **`Europe (Frankfurt)`** (must match your Kafka cluster) → name it `retail-inventory-flink` → **Continue**
 3. Once the pool is ready, click **Open SQL workspace**
 
 ### 2.6 Set catalog and database
@@ -647,11 +647,11 @@ Confluent section with the values from [Section 2.8](#28-generate-api-keys). Lea
 `WXO_*` lines as placeholders for now:
 
 ```bash
-KAFKA_BOOTSTRAP_SERVERS=pkc-xxxxx.us-east-1.aws.confluent.cloud:9092
+KAFKA_BOOTSTRAP_SERVERS=pkc-xxxxx.eu-central-1.aws.confluent.cloud:9092
 KAFKA_API_KEY=your_kafka_api_key
 KAFKA_API_SECRET=your_kafka_api_secret
 
-SCHEMA_REGISTRY_URL=https://psrc-xxxxx.us-east-1.aws.confluent.cloud
+SCHEMA_REGISTRY_URL=https://psrc-xxxxx.eu-central-1.aws.confluent.cloud
 SCHEMA_REGISTRY_API_KEY=your_schema_registry_api_key
 SCHEMA_REGISTRY_API_SECRET=your_schema_registry_api_secret
 ```
@@ -1282,7 +1282,7 @@ Edit `retail-inventory-optimization/fashion-inventory-consumer/.env` and add the
 
 ```bash
 # Watsonx Orchestrate Configuration
-WXO_INSTANCE_URL=https://api.us-south.watson-orchestrate.cloud.ibm.com/instances/your-instance-id
+WXO_INSTANCE_URL=https://api.eu-de.watson-orchestrate.cloud.ibm.com/instances/your-instance-id
 WXO_AGENT_ID_OR_NAME=your-agent-id-from-section-4.6
 WXO_INSTANCE_CLOUD=ibmcloud     # use "aws" if your instance is on AWS
 WXO_API_KEY=your_wxo_api_key
