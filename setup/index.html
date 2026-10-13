@@ -1499,17 +1499,15 @@ already in place. You do not need to clone any repository.</p>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>├── .bob/                               # Bob IDE configuration (auto-loaded)
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>│   ├── custom_modes.yaml               # WXO Agent Architect mode
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>│   ├── mcp.json                        # ADK + docs MCP servers
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>│   ├── rules/
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>│   │   └── wxo-dev-rule-enhanced.md    # wxO best-practice rule
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>│   └── skills/
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>│       └── wxo-langgraph/              # LangGraph-for-wxO reference skill
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>└── retail-inventory-optimization/      # Pre-built lab code and data
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    ├── pyproject.toml
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    ├── uv.lock
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    ├── fashion-inventory-consumer/     # Python scripts
-</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>    ├── fashion-inventory-setup/        # Schemas, Flink SQL, test data
-</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>    └── labs/part2-watsonx-orchestrate/
-</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>        └── inventory-alert-demo-knowledge/   # Knowledge base documents
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>│   └── rules/
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>│       └── wxo-dev-rule-enhanced.md    # wxO best-practice rule
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>└── retail-inventory-optimization/      # Pre-built lab code and data
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    ├── pyproject.toml
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    ├── uv.lock
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    ├── fashion-inventory-consumer/     # Python scripts
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    ├── fashion-inventory-setup/        # Schemas, Flink SQL, test data
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    └── labs/part2-watsonx-orchestrate/
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>        └── inventory-alert-demo-knowledge/   # Knowledge base documents
 </span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1541,10 +1539,6 @@ That's expected — Bob IDE finds it automatically.</p>
 <td><strong><code>watsonx-orchestrate-adk-docs</code> MCP server</strong></td>
 <td>Real-time access to the full watsonx Orchestrate ADK documentation, which Bob searches automatically to verify platform specifics</td>
 </tr>
-<tr>
-<td><strong><code>wxo-langgraph</code> skill</strong></td>
-<td>Deep LangGraph-for-wxO knowledge: entry point contract, platform constraints, credential patterns, checkpointers and a troubleshooting reference</td>
-</tr>
 </tbody>
 </table>
 <p>These layers complement each other:</p>
@@ -1552,8 +1546,6 @@ That's expected — Bob IDE finds it automatically.</p>
 <li><strong>Mode</strong> — sets Bob's <em>persona and behaviour</em> for a session. It's the "who Bob is" layer.</li>
 <li><strong>Rule</strong> — sets <em>always-on constraints</em> that apply to every response regardless of mode
   or topic, so Bob never generates code that violates wxO conventions.</li>
-<li><strong>Skill</strong> — provides <em>deep, topic-specific knowledge</em> that Bob loads on demand when the
-  topic matches, without you having to remind it of the rules.</li>
 </ul>
 <hr />
 <h2 id="step-7-open-the-workspace-in-bob-ide">Step 7: Open the workspace in Bob IDE<a class="headerlink" href="#step-7-open-the-workspace-in-bob-ide" title="Permanent link">&para;</a></h2>
