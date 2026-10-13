@@ -85,7 +85,14 @@ IBM Bob is IBM's AI development partner. The free trial runs for **30 days** and
 **50 Bobcoins**, with no payment details needed. Setup takes about 5 minutes.
 
 Go to [bob.ibm.com/trial](https://bob.ibm.com/trial) and click **Start your free trial**.
-Sign in with the **same IBMid** you created in Step 1.
+(If you land on the [bob.ibm.com](https://bob.ibm.com/) homepage instead, click **Get free trial**.)
+
+![The IBM Bob homepage with the Get free trial button highlighted](images/bob-trial-1-get-free-trial.png){ width="560" }
+
+Sign in with the **same IBMid** you created in Step 1. When the page shows
+**Logged in with IBMid**, click **Submit**:
+
+![Start Your Free Trial page with the Submit button highlighted](images/bob-trial-2-submit.png){ width="560" }
 
 !!! tip
     If you're asked to verify your email again, follow the same steps as in
@@ -104,7 +111,24 @@ operating system:
 | Windows | **x64 (User)** `.exe` |
 | Linux | `.deb` (Debian/Ubuntu) or `.rpm` (Red Hat/Fedora) |
 
-Install it, open it, and sign in with your IBMid.
+Install it, open it, and sign in with your IBMid:
+
+1. In Bob IDE, click **Log in to Bob**:
+
+    ![Bob IDE with the Log in to Bob button highlighted](images/bob-ide-1-login.png){ width="560" }
+
+2. When asked whether Bob can open the external website, click **Open**. Sign in with your IBMid in the browser:
+
+    ![Dialog asking to open bob.ibm.com, with Open highlighted](images/bob-ide-2-open-browser.png){ width="560" }
+
+3. Back in the IDE, click **Allow** when it asks to sign in using Bob:
+
+    ![Dialog asking to allow the IBM Bob extension to sign in, with Allow highlighted](images/bob-ide-3-allow.png){ width="560" }
+
+4. Open the Bob panel's budget indicator to confirm your trial is active — it shows the
+   trial plan, your remaining budget and the days left:
+
+    ![Bob IDE showing the trial plan, 100% budget remaining and days left](images/bob-ide-4-trial-active.png){ width="560" }
 
 !!! warning
     You must be logged in to use Bob's AI capabilities throughout the lab. If you hit
