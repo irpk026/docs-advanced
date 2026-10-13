@@ -210,7 +210,7 @@ tools, knowledge bases, and agents.
 
 ## How to use Bob in this lab
 
-The workspace ships with a `.bob/` configuration that gives Bob three layers of watsonx
+The workspace ships with a `.bob/` configuration that gives Bob two layers of watsonx
 Orchestrate expertise:
 
 <div class="grid cards" markdown>
@@ -226,12 +226,6 @@ Orchestrate expertise:
     ---
 
     Always-on platform conventions, so generated code adheres to wxO best practices even outside that mode.
-
--   :material-school-outline: **`wxo-langgraph` skill**
-
-    ---
-
-    Deep, on-demand reference knowledge that activates automatically when the topic matches.
 
 </div>
 

@@ -214,10 +214,8 @@ bobchestrate-confluent/
 ├── .bob/                               # Bob IDE configuration (auto-loaded)
 │   ├── custom_modes.yaml               # WXO Agent Architect mode
 │   ├── mcp.json                        # ADK + docs MCP servers
-│   ├── rules/
-│   │   └── wxo-dev-rule-enhanced.md    # wxO best-practice rule
-│   └── skills/
-│       └── wxo-langgraph/              # LangGraph-for-wxO reference skill
+│   └── rules/
+│       └── wxo-dev-rule-enhanced.md    # wxO best-practice rule
 └── retail-inventory-optimization/      # Pre-built lab code and data
     ├── pyproject.toml
     ├── uv.lock
@@ -239,15 +237,12 @@ bobchestrate-confluent/
 | **`wxo-dev-rule-enhanced`** | A workspace rule that loads watsonx Orchestrate best practices into every Bob response — naming conventions, tool patterns, agent YAML structure, connection setup |
 | **`watsonx-orchestrate-adk` MCP server** | Direct access to your wxO environment — list agents, tools and connections, import artifacts, and chat with agents without leaving the IDE |
 | **`watsonx-orchestrate-adk-docs` MCP server** | Real-time access to the full watsonx Orchestrate ADK documentation, which Bob searches automatically to verify platform specifics |
-| **`wxo-langgraph` skill** | Deep LangGraph-for-wxO knowledge: entry point contract, platform constraints, credential patterns, checkpointers and a troubleshooting reference |
 
 These layers complement each other:
 
 - **Mode** — sets Bob's *persona and behaviour* for a session. It's the "who Bob is" layer.
 - **Rule** — sets *always-on constraints* that apply to every response regardless of mode
   or topic, so Bob never generates code that violates wxO conventions.
-- **Skill** — provides *deep, topic-specific knowledge* that Bob loads on demand when the
-  topic matches, without you having to remind it of the rules.
 
 ---
 
