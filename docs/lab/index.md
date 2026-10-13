@@ -1156,7 +1156,7 @@ Add the tools create_restock_order and open_servicenow_ticket.
 Add this step to its instructions, after "8. Build the final payload", and keep every other instruction unchanged:
 
 9. Act on the decision
-- If reorderRecommendation.shouldReorder is true, call create_restock_order once, with alert_id, sku and store_id exactly as in the alert, quantity = reorderRecommendation.reorderQuantity, priority = reorderRecommendation.reorderPriority, current_stock from the alert, unit_price from the product history (0 if unknown), and a one-sentence reason.
+- If reorderRecommendation.shouldReorder is true, call create_restock_order once, with alert_id, sku and store_id exactly as in the alert, quantity = reorderRecommendation.reorderQuantity, priority = reorderRecommendation.reorderPriority, current_stock from the alert, unit_price from the product history, or else stockAnalysis.estimatedValue divided by currentStock (0 only if neither is known), and a one-sentence reason.
 - If agentDecision.urgencyLevel is CRITICAL or HIGH, call open_servicenow_ticket once. The short description names the product, the store and the stock left; the description includes the order number from create_restock_order.
 - Record the results in metadata, as strings: restockOrderId, restockOrderStatus, servicenowIncident. If a tool returns an error, put it in metadata.actionError and still return the decision.
 - If the order status is PENDING_APPROVAL, set notifications.escalationRequired to true and escalationReason to the tool's message.
