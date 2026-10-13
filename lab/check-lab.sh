@@ -2,11 +2,12 @@
 # check-lab.sh — preflight check for the Event-Driven AI Agents lab
 #
 # Verifies everything the lab needs, in the order the lab needs it, and tells
-# you which section to go back to when something is missing.
+# you which section to go back to when something is missing. Safe to run at any
+# stage: things from sections you haven't reached yet simply show as still to do.
 #
 # Usage:
 #   bash check-lab.sh              # all offline + API checks (safe, read-only)
-#   bash check-lab.sh --e2e        # also run a real end-to-end pipeline test
+#   bash check-lab.sh --e2e        # also run the real pipeline (writes orders + tickets)
 #   bash check-lab.sh --help
 #
 # Run it from your bobchestrate-confluent/ workspace folder.
@@ -32,8 +33,9 @@ else
 fi
 
 PASS=0; FAIL=0; WARN=0
-CREDS_CONFLUENT=0
-CREDS_PLACEHOLDER=0
+KAFKA_PLACEHOLDER=0
+SR_PLACEHOLDER=0
+S4_PENDING=0
 FAILED_ITEMS=()
 
 ok()   { printf '  %s✓%s %s\n' "$GRN" "$RST" "$1"; PASS=$((PASS+1)); }
@@ -150,7 +152,7 @@ head_ "3. Credentials (.env)"
 
 [ -n "${CONSUMER:-}" ] && ENV_FILE="$CONSUMER/.env"
 if [ -z "$ENV_FILE" ] || [ ! -f "$ENV_FILE" ]; then
-  bad ".env not found" "cp .env.example .env in fashion-inventory-consumer/ — Section 2"
+  bad ".env not found" "cp .env.example .env in fashion-inventory-consumer/ — lab 'Before you start'"
 else
   ok ".env found"
 
@@ -158,11 +160,18 @@ else
            SCHEMA_REGISTRY_URL SCHEMA_REGISTRY_API_KEY SCHEMA_REGISTRY_API_SECRET \
            WXO_INSTANCE_URL WXO_API_KEY WXO_AGENT_ID_OR_NAME WXO_INSTANCE_CLOUD; do
     val=$(get_env "$v")
+    case "$v" in
+      WXO_*) where="Section 5.1" ;;
+      *)     where="Section 3.1" ;;
+    esac
     if [ -z "$val" ]; then
-      bad "$v is empty"
+      bad "$v is empty" "set it in .env — $where"
     elif printf '%s' "$val" | grep -qiE 'your_|xxxxx|changeme|<.*>|placeholder|your-'; then
-      bad "$v still holds a placeholder" "value: $val"
-      CREDS_PLACEHOLDER=1
+      bad "$v still holds a placeholder" "value: $val — fill it in: $where"
+      case "$v" in
+        KAFKA_*)  KAFKA_PLACEHOLDER=1 ;;
+        SCHEMA_*) SR_PLACEHOLDER=1 ;;
+      esac
     else
       ok "$v is set"
     fi
@@ -176,7 +185,7 @@ else
 
   KBS=$(get_env KAFKA_BOOTSTRAP_SERVERS)
   if [ -n "$KBS" ] && ! printf '%s' "$KBS" | grep -qE ':[0-9]+$'; then
-    warn "KAFKA_BOOTSTRAP_SERVERS has no port" "expected host:9092 — Section 2.7"
+    warn "KAFKA_BOOTSTRAP_SERVERS has no port" "expected host:9092 — Section 3.1"
   fi
 fi
 
@@ -187,8 +196,8 @@ SR_URL=$(get_env SCHEMA_REGISTRY_URL)
 SR_KEY=$(get_env SCHEMA_REGISTRY_API_KEY)
 SR_SEC=$(get_env SCHEMA_REGISTRY_API_SECRET)
 
-if [ "$CREDS_PLACEHOLDER" -eq 1 ]; then
-  warn "skipping Confluent checks" "fill in the Confluent credentials first — Section 2.7"
+if [ "$SR_PLACEHOLDER" -eq 1 ]; then
+  warn "skipping Schema Registry checks" "fill in the SCHEMA_REGISTRY_* values first — Section 3.1"
 elif [ -z "$SR_URL" ] || [ -z "$SR_KEY" ]; then
   warn "skipping Schema Registry checks" "credentials not set"
 else
@@ -201,7 +210,7 @@ else
         || warn "no schema registered for $t" "Section 2.4"
     done
   else
-    bad "Schema Registry rejected the request" "check SCHEMA_REGISTRY_* values — Section 2.7"
+    bad "Schema Registry rejected the request" "check SCHEMA_REGISTRY_* values — Section 2.8"
   fi
 fi
 
@@ -209,8 +218,8 @@ KBS=$(get_env KAFKA_BOOTSTRAP_SERVERS)
 K_KEY=$(get_env KAFKA_API_KEY)
 K_SEC=$(get_env KAFKA_API_SECRET)
 
-if [ "$CREDS_PLACEHOLDER" -eq 1 ]; then
-  :
+if [ "$KAFKA_PLACEHOLDER" -eq 1 ]; then
+  warn "skipping Kafka checks" "fill in the KAFKA_* values first — Section 3.1"
 elif [ -z "$KBS" ] || [ -z "$K_KEY" ] || [ -z "${ROOT:-}" ]; then
   warn "skipping Kafka checks" "credentials or workspace not available"
 else
@@ -275,7 +284,7 @@ else
     bad "cannot list tools" "session may have expired — re-run: orchestrate env activate <env> -a <key>"
   else
     for t in get_store_location get_weather_forecast; do
-      printf '%s' "$TOOLS" | grep -q "$t" && ok "tool $t" || bad "tool $t missing" "Section 4.1 / 4.2"
+      if printf '%s' "$TOOLS" | grep -q "$t"; then ok "tool $t"; else bad "tool $t missing" "Section 4.1 / 4.2"; S4_PENDING=1; fi
     done
     for t in create_restock_order open_servicenow_ticket; do
       printf '%s' "$TOOLS" | grep -q "$t" && ok "action tool $t" || warn "action tool $t missing" "Section 4.7"
@@ -283,14 +292,18 @@ else
   fi
 
   KBL=$(orchestrate knowledge-bases list 2>/dev/null || echo "")
-  printf '%s' "$KBL" | grep -q "inventory-alert-knowledge" \
-    && ok "knowledge base inventory-alert-knowledge" \
-    || bad "knowledge base missing" "Section 4.4"
+  if printf '%s' "$KBL" | grep -q "inventory-alert-knowledge"; then
+    ok "knowledge base inventory-alert-knowledge"
+  else
+    bad "knowledge base missing" "Section 4.4"; S4_PENDING=1
+  fi
 
   AGENTS=$(orchestrate agents list 2>/dev/null || echo "")
-  printf '%s' "$AGENTS" | grep -qiE "fashion.*inventory|Fashion_Inventory_Alert_Processor" \
-    && ok "agent Fashion_Inventory_Alert_Processor" \
-    || bad "agent missing" "Section 4.5"
+  if printf '%s' "$AGENTS" | grep -qiE "fashion.*inventory|Fashion_Inventory_Alert_Processor"; then
+    ok "agent Fashion_Inventory_Alert_Processor"
+  else
+    bad "agent missing" "Section 4.5"; S4_PENDING=1
+  fi
 fi
 
 # ── 6. Optional end-to-end pipeline test ─────────────────────────────────────
@@ -337,10 +350,11 @@ printf '  %s%d passed%s   %s%d failed%s   %s%d warnings%s\n' \
 
 if [ "$FAIL" -eq 0 ]; then
   printf '  %sReady to run the lab.%s\n' "$GRN" "$RST"
-  [ "$RUN_E2E" -eq 0 ] && printf '  %sTip: bash check-lab.sh --e2e runs the full pipeline.%s\n' "$DIM" "$RST"
+  [ "$RUN_E2E" -eq 0 ] && printf '  %sTip: after Sections 4 and 5, bash check-lab.sh --e2e runs a real end-to-end test (it writes orders and tickets).%s\n' "$DIM" "$RST"
 else
-  printf '  %sFix these before starting:%s\n' "$RED" "$RST"
+  printf '  %sNot ready yet — still to do:%s\n' "$RED" "$RST"
   for i in "${FAILED_ITEMS[@]}"; do printf '    · %s\n' "$i"; done
+  [ "$S4_PENDING" -eq 1 ] && printf '  %sA missing tool, knowledge base or agent just means Section 4 is not done yet.%s\n' "$DIM" "$RST"
 fi
 printf '%s────────────────────────────────────────────────%s\n\n' "$BOLD" "$RST"
 

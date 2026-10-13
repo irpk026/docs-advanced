@@ -3186,6 +3186,12 @@ is free to disagree.</p>
 and the middle column shows the 18 alerts. The third column stays empty — there's no
 agent yet. Hover over an alert to see which sale triggered it.</p>
 <p>If you see alerts flowing — <strong>the Flink pipeline is working</strong>. Stop the consumer with <code>Ctrl+C</code> and move to Section 4. Leave the dashboard running.</p>
+<div class="admonition tip">
+<p class="admonition-title">Want a quick check first?</p>
+<p>Run <code>bash check-lab.sh</code> (see <a href="#check-your-setup">Check your setup</a>). At this point the
+tooling, workspace, <code>.env</code> and Confluent lines should be green. The watsonx
+Orchestrate tools, knowledge base and agent will show as missing — that's Section 4.</p>
+</div>
 <h3 id="what-you-learned_2">What you learned<a class="headerlink" href="#what-you-learned_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Flink SQL runs as a persistent job; events flow through as soon as they arrive on the input topic</li>
@@ -3696,6 +3702,12 @@ same kind of message. Every decision it publishes went through a loop like the o
 just watched. When a decision looks wrong, paste that alert back in here and read the
 trace.</p>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">Check what you built</p>
+<p>Run <code>bash check-lab.sh</code> again (see <a href="#check-your-setup">Check your setup</a>). The two
+tools, the two action tools, the knowledge base and the agent should now all be
+green. The <code>WXO_*</code> lines in <code>.env</code> are still placeholders until Section 5.</p>
+</div>
 <h3 id="what-you-learned_3">What you learned<a class="headerlink" href="#what-you-learned_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Bob creates watsonx Orchestrate artifacts (tools, knowledge bases, agents) programmatically via the ADK MCP server</li>
@@ -4087,7 +4099,8 @@ judgement from a mistake is the core skill in building trustworthy agents.</p>
 <hr />
 <h2 id="check-your-setup">Check your setup<a class="headerlink" href="#check-your-setup" title="Permanent link">&para;</a></h2>
 <p>Two scripts verify your environment. Download either into your <code>bobchestrate-confluent/</code>
-folder and run it from there.</p>
+folder and run it from there. You can run them at any point — anything from a section you
+haven't reached yet simply shows as still to do.</p>
 <div class="admonition info">
 <p class="admonition-title">Windows users</p>
 <p>Both are bash scripts. Run them from <strong>Git Bash</strong> (installed with
@@ -4103,11 +4116,20 @@ failure names the section that fixes it.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>bash<span class="w"> </span>check-lab.sh
 </span></code></pre></div>
 <p>It is read-only and safe to run at any point — including before you've configured
-anything, to see what's still outstanding. Add <code>--e2e</code> once Section 4 is done to run a
-real end-to-end test: it produces events, waits for the agent decision, and confirms the
-result was published.</p>
+anything, to see what's still outstanding. Each ✗ names the section that fixes it. A
+missing tool, knowledge base or agent just means Section 4 isn't done yet.</p>
+<p>For a real end-to-end test, add <code>--e2e</code> once Sections 4 and 5 are done:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>bash<span class="w"> </span>check-lab.sh<span class="w"> </span>--e2e
 </span></code></pre></div>
+<p>It produces the 25 test events, waits for the agent's decision, and confirms it was
+published.</p>
+<div class="admonition warning">
+<p class="admonition-title"><code>--e2e</code> is a real run, not a read-only check</p>
+<p>It sends the agent real alerts, so the action tools write restock orders and
+ServiceNow tickets to your topics. It also runs the agent consumer, which commits
+its Kafka offsets. Use it <strong>instead of</strong> the Section 6 run, not as well — or expect
+duplicate orders and a Section 6 that starts partway through the backlog.</p>
+</div>
 <p>The script exits non-zero if any check fails, so it also works in CI.</p>
 <h3 id="watsonx-orchestrate-only">watsonx Orchestrate only<a class="headerlink" href="#watsonx-orchestrate-only" title="Permanent link">&para;</a></h3>
 <p><a href="import-all.sh"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> <strong><code>import-all.sh</code></strong></a> is the narrower check — just the
