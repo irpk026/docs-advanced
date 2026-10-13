@@ -9,6 +9,10 @@
 
 set -euo pipefail
 
+# The ADK's list tables wrap long names to fit the terminal, which hides them from
+# grep in a narrow window. Render them wide.
+export COLUMNS=1000
+
 echo ""
 echo "╔══════════════════════════════════════════════════╗"
 echo "║  Event-Driven AI Agents — wxO verification       ║"

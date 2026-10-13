@@ -275,6 +275,10 @@ fi
 # ── 5. watsonx Orchestrate ───────────────────────────────────────────────────
 head_ "5. watsonx Orchestrate"
 
+# The ADK's list tables wrap long names to fit the terminal ("inventory-alert-know"
+# / "ledge"), which hides them from grep in a narrow window. Render them wide.
+export COLUMNS=1000
+
 if ! command -v orchestrate >/dev/null 2>&1; then
   warn "skipping wxO checks" "orchestrate CLI not on PATH"
 else
@@ -314,6 +318,25 @@ else
     :
   elif printf '%s' "$AGENTS" | grep -qiE "fashion.*inventory|Fashion_Inventory_Alert_Processor"; then
     ok "agent Fashion_Inventory_Alert_Processor"
+    # The agent lists its tools by ID, so map them to names. An imported action
+    # tool the agent doesn't have means Section 4.7 step 5 hasn't been done.
+    if [ -n "$PY" ] && printf '%s' "$TOOLS" | grep -q "create_restock_order"; then
+      UNATTACHED=$(TJ="$(orchestrate tools list -v 2>/dev/null)" AJ="$(orchestrate agents list -v 2>/dev/null)" "$PY" - <<'PYEOF' 2>/dev/null
+import json, os
+try:
+    ids = {t["id"]: t["name"] for t in json.loads(os.environ["TJ"])}
+    agents = json.loads(os.environ["AJ"])
+    agent = next(a for a in agents.get("native", []) if a["name"] == "Fashion_Inventory_Alert_Processor")
+    have = {ids.get(i, i) for i in agent.get("tools", [])}
+    print(" ".join(t for t in ("create_restock_order", "open_servicenow_ticket") if t not in have))
+except Exception:
+    pass
+PYEOF
+)
+      for t in $UNATTACHED; do
+        warn "agent does not have action tool $t" "Section 4.7, step 5"
+      done
+    fi
   else
     bad "agent missing" "Section 4.5"; S4_PENDING=1
   fi
