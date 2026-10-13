@@ -83,12 +83,12 @@ head_ "1. Local tooling"
 PY=""
 for c in python3 python; do command -v "$c" >/dev/null 2>&1 && { PY="$c"; break; }; done
 if [ -z "$PY" ]; then
-  bad "Python not found" "Install Python 3.11-3.13 — Setup, Step 4"
+  bad "Python not found" "Install Python 3.12 or 3.13 — Setup, Step 4"
 else
   PYV=$("$PY" -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null)
   case "$PYV" in
-    3.11|3.12|3.13) ok "Python $PYV" ;;
-    *) bad "Python $PYV is unsupported" "The lab needs 3.11, 3.12 or 3.13 — Setup, Step 4" ;;
+    3.12|3.13) ok "Python $PYV" ;;
+    *) bad "Python $PYV is unsupported" "The lab needs 3.12 or 3.13 — Setup, Step 4" ;;
   esac
 fi
 

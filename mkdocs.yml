@@ -9,6 +9,13 @@ docs_dir: docs
 site_dir: site
 strict: true
 
+# Keep local build artefacts out of the published site
+exclude_docs: |
+  __pycache__/
+  .pytest_cache/
+  .DS_Store
+  **/.DS_Store
+
 validation:
   omitted_files: warn
   absolute_links: warn

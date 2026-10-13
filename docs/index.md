@@ -198,7 +198,7 @@ tools, knowledge bases, and agents.
     IBM Bob and the installs take about 15 minutes, mostly waiting for downloads and
     verification emails. Do them before the session and you start the lab sooner.
 
-- [ ] Python **3.11–3.13**
+- [ ] Python **3.12–3.13**
 - [ ] [`uv`](https://docs.astral.sh/uv/) package manager
 - [ ] **IBM Bob IDE** + a Bob trial account
 - [ ] A **watsonx Orchestrate** instance (free trial)

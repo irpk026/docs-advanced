@@ -153,13 +153,13 @@ python --version
 python3 --version
 ```
 
-You need Python **3.11, 3.12, or 3.13**. If Python is not installed:
+You need Python **3.12 or 3.13**. If Python is not installed:
 
 === "Mac"
 
     ```bash
     # Using Homebrew (recommended)
-    brew install python@3.11
+    brew install python@3.12
 
     # Or download the installer from:
     # https://www.python.org/downloads/
@@ -169,7 +169,7 @@ You need Python **3.11, 3.12, or 3.13**. If Python is not installed:
 
     ```powershell
     # Using winget
-    winget install Python.Python.3.11
+    winget install Python.Python.3.12
 
     # Or download the installer from:
     # https://www.python.org/downloads/
@@ -289,7 +289,7 @@ The workspace opens with the `.bob/` configuration already active.
 1. Open the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`)
 2. Type **"Python: Create Environment"** and select it
 3. Choose **Venv**
-4. Select Python 3.11, 3.12, or 3.13
+4. Select Python 3.12 or 3.13
 5. Wait for the environment to be created
 
 A `.venv` folder appears in your workspace. Bob IDE activates it automatically in all new

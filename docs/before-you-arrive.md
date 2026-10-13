@@ -33,9 +33,9 @@ files and the step-by-step guide in the room.
 - [ ] **watsonx Orchestrate ADK extension**: in Bob IDE, open the Extensions view
   (`Cmd+Shift+X` / `Ctrl+Shift+X`), search for **watsonx Orchestrate** and click
   **Install**. Install it only — don't open it or set up a workspace with it.
-- [ ] **Python 3.11, 3.12 or 3.13**: check with `python3 --version` (Mac) or
+- [ ] **Python 3.12 or 3.13**: check with `python3 --version` (Mac) or
   `python --version` (Windows).
-  Install: `brew install python@3.11` · `winget install Python.Python.3.11` (on Windows,
+  Install: `brew install python@3.12` · `winget install Python.Python.3.12` (on Windows,
   tick **Add Python to PATH**).
 - [ ] **uv**: check with `uv --version`.
   Install: `brew install uv` · `winget install astral-sh.uv`. Then open a **new**
@@ -71,7 +71,7 @@ Do this at home if you have time — otherwise we do it together at the start of
 
 - [ ] Bob IDE opens and you're signed in
 - [ ] The watsonx Orchestrate ADK extension is installed in Bob IDE
-- [ ] `python3 --version` shows 3.11–3.13, and `uv --version` prints a version
+- [ ] `python3 --version` shows 3.12 or 3.13, and `uv --version` prints a version
 - [ ] *Optional:* you can log in to watsonx Orchestrate, and your instance URL and API key are saved
 
 Stuck on any step? Don't worry — bring your laptop and we'll fix it in the first ten

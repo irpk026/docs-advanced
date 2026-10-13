@@ -345,7 +345,9 @@ rating doesn't simply climb as stock runs down: rule 1.3 adds a point while the 
 stock is worth over $5,000 and takes it away once it isn't. Rules are precise, and
 sometimes awkward. You'll see whether the agent follows them to the letter.
 
-That's the whole lab on one screen. **5. Stop it** with `Ctrl+C` in the terminal. From
+That's the whole lab on one screen.
+
+**5. Stop it** with `Ctrl+C` in the terminal. From
 [Section 3.2](#32-start-the-live-dashboard) onwards you'll run it against your real topics
 and watch each column fill as you build that stage.
 
@@ -1200,8 +1202,8 @@ Processor**. The chat panel on the right is a live preview of the agent.
 
 **2. Send it a real alert**
 
-This is exactly what the consumer will send for the last spike in the test data — the
-output of `agent_payload_builder.py` for one row of `fashion.velocity.anomalies`. Paste it
+This is what the consumer sends for a spike partway through the test data (the 9th
+alert) — the output of `agent_payload_builder.py` for one row of `fashion.velocity.anomalies`. Paste it
 into the preview chat:
 
 ```json
@@ -1298,7 +1300,7 @@ AGENT_RESPONSE_TOPIC=fashion.agent.responses
 | ------------------------ | --------------------------------------------------------------------------------- |
 | `WXO_INSTANCE_URL`     | wxO console → profile icon → Settings → API details → Service Instance URL    |
 | `WXO_AGENT_ID_OR_NAME` | Returned by Bob in Section 4.6                                                    |
-| `WXO_INSTANCE_CLOUD`   | `ibmcloud` for TechZone/IBM Cloud instances; `aws` for AWS-deployed instances |
+| `WXO_INSTANCE_CLOUD`   | `ibmcloud` for IBM Cloud-hosted instances (the Frankfurt trial from Setup); `aws` for AWS-hosted instances |
 | `WXO_API_KEY`          | wxO console → Settings → API details → Generate API key                        |
 
 ### 5.2 How the consumer uses these credentials
@@ -1587,7 +1589,7 @@ The schema is also registered in Confluent Schema Registry for the `fashion.agen
 ### Authentication errors (`401 Unauthorized`)
 
 - Verify `WXO_API_KEY` is correct and not expired
-- Confirm `WXO_INSTANCE_CLOUD` matches your deployment: `ibmcloud` for TechZone/IBM Cloud, `aws` for AWS
+- Confirm `WXO_INSTANCE_CLOUD` matches your deployment: `ibmcloud` for IBM Cloud-hosted instances (the Setup trial), `aws` for AWS-hosted
 - Check `WXO_INSTANCE_URL` includes the correct region segment (e.g. `us-south`, `eu-de`)
 - wxO API keys expire — regenerate from the Settings → API details page if needed
 
