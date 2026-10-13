@@ -201,11 +201,11 @@ tools, knowledge bases, and agents.
 - [ ] Python **3.11–3.13**
 - [ ] [`uv`](https://docs.astral.sh/uv/) package manager
 - [ ] **IBM Bob IDE** + a Bob trial account
-- [ ] A **watsonx Orchestrate** instance (free trial, or one provided by your instructor)
+- [ ] A **watsonx Orchestrate** instance (free trial)
 - [ ] A **Confluent Cloud** account — created during the lab with an instructor-supplied promo code, so **no credit card is needed**
 
 !!! tip "Region matters"
-    If you create your own watsonx Orchestrate trial, use **Frankfurt (eu-de)** so the
+    When you create your watsonx Orchestrate trial, use **Frankfurt (eu-de)** so the
     Confluent connection steps later in the lab match what everyone else sees.
 
 ## How to use Bob in this lab
