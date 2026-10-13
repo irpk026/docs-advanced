@@ -78,9 +78,9 @@ convincing, because the question and the data were chosen together.
 Production breaks that arrangement. The data moves, and the agent doesn't notice.
 
 !!! danger "The failure mode is not an error — it's a confident wrong answer"
-    An agent told "stock: 75 units" will reason impeccably about 75 units. If 60 of them
-    sold in the last hour, nothing in the system raises an exception. You get a fluent,
-    well-argued recommendation to do the wrong thing, and no stack trace to tell you.
+    Tell an agent "stock: 75 units" and it will reason soundly about 75 units. It has no
+    way to know that 60 of them sold in the last hour. Nothing fails, so you get a fluent,
+    well-argued recommendation to do the wrong thing, with no stack trace to warn you.
 
 This isn't an edge case — it's the default behaviour of any agent that reads from a batch
 source. The snapshot was accurate when it was taken. By the time the agent acts on it,
